@@ -6,14 +6,16 @@ import lombok.NoArgsConstructor;
 import thumbtack.buscompany.validators.Fio;
 import thumbtack.buscompany.validators.MaxSize;
 import thumbtack.buscompany.validators.MinPassLength;
+import thumbtack.buscompany.validators.Phone;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminRequest {
+public class ClientRegisterRequest {
     @Fio
     @MaxSize
     @NotBlank
@@ -25,7 +27,10 @@ public class AdminRequest {
     @Fio
     @MaxSize
     private String patronymic;
-    private String position;
+    @Email
+    private String email;
+    @Phone
+    private String phone;
     @NotBlank(message = "null login")
     @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z\\d]+$")
     @MaxSize
@@ -34,5 +39,4 @@ public class AdminRequest {
     @MaxSize
     @MinPassLength
     private String password;
-
 }

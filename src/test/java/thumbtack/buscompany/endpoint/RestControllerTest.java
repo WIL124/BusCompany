@@ -12,11 +12,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import thumbtack.buscompany.BuscompanyApplication;
-import thumbtack.buscompany.request.AdminRequest;
+import thumbtack.buscompany.request.AdminRegisterRequest;
+import thumbtack.buscompany.request.AdminUpdateRequest;
 
 import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BuscompanyApplication.class)
@@ -43,12 +45,20 @@ public abstract class RestControllerTest {
         return mapper.readValue(json, clazz);
     }
 
-    protected static AdminRequest getAdminRegisterRequest() {
-        return new AdminRequest("Владислав", "Инютин", "абс", "admin", "goodLogin", "goodPassword");
+    protected static AdminRegisterRequest getAdminRegisterRequest() {
+        return new AdminRegisterRequest("Владислав", "Инютин", "Игоревич", "admin", "goodLogin", "goodPassword");
+    }
+    protected static AdminUpdateRequest getAdminUpdateRequest() {
+        return new AdminUpdateRequest("Владислав", "Инютин", "Игоревич", "admin", "goodNewPass", "goodOldPass");
     }
 
     protected ResultActions postRequestWithBody(String URL, Object obj) throws Exception {
         return mockMvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(obj)));
+    }
+    protected ResultActions putRequestWithBody(String URL, Object obj) throws Exception {
+        return mockMvc.perform(put(URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapToJson(obj)));
     }

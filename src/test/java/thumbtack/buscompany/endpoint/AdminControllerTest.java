@@ -8,15 +8,19 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
-import thumbtack.buscompany.Errors;
-import thumbtack.buscompany.request.AdminRequest;
-import thumbtack.buscompany.response.AdminResponse;
+import thumbtack.buscompany.model.UserType;
+import thumbtack.buscompany.request.AdminRegisterRequest;
+import thumbtack.buscompany.request.AdminUpdateRequest;
+import thumbtack.buscompany.response.AdminRegisterResponse;
+import thumbtack.buscompany.response.AdminUpdateResponse;
+import thumbtack.buscompany.response.Errors;
 import thumbtack.buscompany.service.AdminService;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminControllerTest extends RestControllerTest {
@@ -32,17 +36,17 @@ public class AdminControllerTest extends RestControllerTest {
     }
 
     @Test
-    public void adminRegister_ShouldReturnResponse() throws Exception {
-        AdminRequest adminRequest = getAdminRegisterRequest();
-        given(adminService.register(adminRequest)).willReturn(new AdminResponse("goodLogin"));
-        postRequestWithBody(URL, adminRequest).andExpect(status().isOk());
+    public void adminRegister_ShouldCallAdminService() throws Exception {
+        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        postRequestWithBody(URL, adminRegisterRequest).andExpect(status().isOk());
+        verify(adminService).register(adminRegisterRequest);
     }
 
     @Test
     public void registerAdmin_NullLogin_shouldReturn400AndMessage() throws Exception {
-        AdminRequest adminRequest = getAdminRegisterRequest();
-        adminRequest.setLogin(null);
-        MvcResult result = postRequestWithBody(URL, adminRequest)
+        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        adminRegisterRequest.setLogin(null);
+        MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
         assertEquals(result.getResponse().getStatus(), 400);
         assertTrue(result.getResponse().getContentAsString().contains("message\":\"null login\""));
@@ -67,10 +71,10 @@ public class AdminControllerTest extends RestControllerTest {
 
     @ParameterizedTest
     @MethodSource("parametersForFioValidation")
-    public void registerAdmin_invalidFirstname_shouldReturn400AndMessage(String name) throws Exception {
-        AdminRequest adminRequest = getAdminRegisterRequest();
-        adminRequest.setFirstName(name);
-        MvcResult result = postRequestWithBody(URL, adminRequest)
+    public void registerAdmin_invalidFirstname_shouldReturn400AndMessage(String name) throws Exception { //Testing Fio annotation
+        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        adminRegisterRequest.setFirstName(name);
+        MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
         assertEquals(result.getResponse().getStatus(), 400);
         assertFalse(result.getResponse().getContentAsString().contains("field\":\"firstname\""));
@@ -79,10 +83,10 @@ public class AdminControllerTest extends RestControllerTest {
     }
 
     @Test
-    public void registerAdmin_invalidLogin_shouldReturn400_andMaxLengthMessage() throws Exception {
-        AdminRequest adminRequest = getAdminRegisterRequest();
-        adminRequest.setLogin("veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeryLongLogin");
-        MvcResult result = postRequestWithBody(URL, adminRequest)
+    public void registerAdmin_invalidLogin_shouldReturn400_andMaxLengthMessage() throws Exception {  //Testing MaxSize annotation
+        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        adminRegisterRequest.setLogin("veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeryLongLogin");
+        MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
         assertEquals(result.getResponse().getStatus(), 400);
         assertTrue(result.getResponse().getContentAsString().contains("field\":\"login\""));
@@ -90,5 +94,25 @@ public class AdminControllerTest extends RestControllerTest {
                 .getErrors().stream().findFirst().get().getMessage());
         assertEquals(1, mapFromJson(result.getResponse().getContentAsString(), Errors.class)
                 .getErrors().size());
+    }
+
+    @Test
+    public void registerAdmin_invalidPassword_shouldReturn400_andMinPasswordLengthMessage() throws Exception {  //Testing MinPasswordSize annotation
+        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        adminRegisterRequest.setPassword("pass");
+        MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
+                .andReturn();
+        assertEquals(result.getResponse().getStatus(), 400);
+        assertEquals("8 is min password length", mapFromJson(result.getResponse().getContentAsString(), Errors.class)
+                .getErrors().stream().findFirst().get().getMessage());
+        assertEquals(1, mapFromJson(result.getResponse().getContentAsString(), Errors.class)
+                .getErrors().size());
+    }
+
+    @Test
+    public void updateAdmin_ShouldCallAdminService() throws Exception {
+        AdminUpdateRequest adminUpdateRequest = getAdminUpdateRequest();
+        putRequestWithBody(URL, adminUpdateRequest).andExpect(status().isOk());
+        verify(adminService).update(adminUpdateRequest);
     }
 }

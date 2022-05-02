@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class AppProperties {
     public static int PORT;
 
-    @Value("${port}")
+    @Value("${server.port}")
     public void setPort(int port) {
         PORT = port;
     }

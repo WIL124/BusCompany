@@ -1,4 +1,4 @@
-package thumbtack.buscompany;
+package thumbtack.buscompany.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

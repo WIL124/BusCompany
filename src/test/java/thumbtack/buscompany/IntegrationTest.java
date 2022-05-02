@@ -8,8 +8,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import thumbtack.buscompany.request.AdminRequest;
-import thumbtack.buscompany.response.AdminResponse;
+import thumbtack.buscompany.request.AdminRegisterRequest;
+import thumbtack.buscompany.response.AdminRegisterResponse;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,9 +21,9 @@ public class IntegrationTest {
 
     @Test
     public void testName() {
-        ResponseEntity<AdminResponse> response = restTemplate.postForEntity("/api/admins",
-                new AdminRequest("Владислав", "Инютин", null, "admin", "goodLogin", "goodPassword"),
-                AdminResponse.class);
+        ResponseEntity<AdminRegisterResponse> response = restTemplate.postForEntity("/api/admins",
+                new AdminRegisterRequest("Владислав", "Инютин", null, "admin", "goodLogin", "goodPassword"),
+                AdminRegisterResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }
