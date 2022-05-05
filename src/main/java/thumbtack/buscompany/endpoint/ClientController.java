@@ -9,13 +9,15 @@ import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.response.ClientRegisterResponse;
 import thumbtack.buscompany.service.ClientService;
 
+import javax.validation.Valid;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/clients")
 public class ClientController {
     private ClientService service;
     @PostMapping
-    public ClientRegisterResponse register(@RequestBody ClientRegisterRequest request){
+    public ClientRegisterResponse register(@Valid @RequestBody ClientRegisterRequest request){
         return service.register(request);
     }
 }

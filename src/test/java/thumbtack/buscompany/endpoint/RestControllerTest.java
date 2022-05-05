@@ -14,6 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 import thumbtack.buscompany.BuscompanyApplication;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
+import thumbtack.buscompany.request.ClientRegisterRequest;
 
 import java.io.IOException;
 
@@ -51,7 +52,9 @@ public abstract class RestControllerTest {
     protected static AdminUpdateRequest getAdminUpdateRequest() {
         return new AdminUpdateRequest("Владислав", "Инютин", "Игоревич", "admin", "goodNewPass", "goodOldPass");
     }
-
+    protected static ClientRegisterRequest getClientRegisterRequest(){
+        return new ClientRegisterRequest("Яна","Никифорова", "Михайловна", "enka@gmail.com","+79087961203", "yanayana1", "goodPassword");
+    }
     protected ResultActions postRequestWithBody(String URL, Object obj) throws Exception {
         return mockMvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)

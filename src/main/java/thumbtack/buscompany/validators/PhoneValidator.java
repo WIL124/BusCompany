@@ -14,7 +14,12 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) return false;
+        if (value == null) {
+            return false;
+        }
+        if (value.startsWith("-") || value.endsWith("-")){
+            return false;
+        }
         String number = value.replaceAll("-", "");
         return Pattern.matches(pattern, number);
     }
