@@ -1,6 +1,8 @@
 package thumbtack.buscompany.endpoint;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
@@ -16,11 +18,11 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping
-    public AdminRegisterResponse register(@Valid @RequestBody AdminRegisterRequest request) {
-        return adminService.register(request);
+    public ResponseEntity<AdminRegisterResponse> register(@Valid @RequestBody AdminRegisterRequest request) {
+        return new ResponseEntity<>(adminService.register(request), HttpStatus.OK);
     }
     @PutMapping
-    public AdminRegisterResponse update(@Valid @RequestBody AdminUpdateRequest request){
-        return adminService.update(request);
+    public ResponseEntity<AdminRegisterResponse> update(@Valid @RequestBody AdminUpdateRequest request) {
+        return new ResponseEntity<>(adminService.update(request), HttpStatus.OK);
     }
 }
