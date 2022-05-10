@@ -2,17 +2,14 @@ package thumbtack.buscompany.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import thumbtack.buscompany.model.UserType;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminRegisterResponse {
-    private Integer id;
-    private String firstName;
-    private String lastName;
-    private String patronymic;
+@EqualsAndHashCode(callSuper = true)
+public class AdminRegisterResponse extends UserResponse {
     private String position;
-    private UserType userType;
 }

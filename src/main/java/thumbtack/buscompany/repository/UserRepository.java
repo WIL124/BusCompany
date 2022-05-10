@@ -1,11 +1,13 @@
-package thumbtack.buscompany.dao;
+package thumbtack.buscompany.repository;
 
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.User;
 
 @Mapper
-public interface UserDao {
+@Repository
+public interface UserRepository {
     @Select("SELECT * FROM users WHERE id = #{id}")
     User getUser(@Param("id") Integer id);
 

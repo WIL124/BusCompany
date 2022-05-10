@@ -21,7 +21,7 @@ public class IntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void testName() {
+    public void successAdminRegistration() {
         AdminRegisterRequest requestBody = new AdminRegisterRequest("Владислав", "Инютин",
                 null, "admin", "goodLogin", "goodPassword");
         ResponseEntity<AdminRegisterResponse> response = restTemplate

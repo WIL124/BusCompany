@@ -1,8 +1,10 @@
 package thumbtack.buscompany.response;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class ClientRegisterResponse {
+@EqualsAndHashCode(callSuper = true)
+public class ClientRegisterResponse extends UserResponse {
 
 }

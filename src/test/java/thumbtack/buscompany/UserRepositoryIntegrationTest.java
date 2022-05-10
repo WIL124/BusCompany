@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import thumbtack.buscompany.dao.UserDao;
+import thumbtack.buscompany.repository.UserRepository;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.model.UserType;
 
@@ -14,14 +14,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserDaoIntegrationTest {
+public class UserRepositoryIntegrationTest {
 
     @Autowired
-    UserDao userDao;
+    UserRepository userRepository;
 
     @Test
     public void whenRecordsInDatabase_shouldReturnUserWithGivenId() {
-        User user = userDao.getUser(1);
+        User user = userRepository.getUser(1);
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);
         assertThat(user.getFirstName()).isEqualTo("Владислав");
