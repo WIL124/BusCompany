@@ -3,10 +3,10 @@ package thumbtack.buscompany.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.UserType;
-import thumbtack.buscompany.repository.UserRepository;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
 import thumbtack.buscompany.response.AdminRegisterResponse;
@@ -14,7 +14,7 @@ import thumbtack.buscompany.response.AdminRegisterResponse;
 @Service
 @AllArgsConstructor
 public class AdminService {
-    UserRepository userRepository;
+    UserDao userDao;
     UserMapper userMapper;
 
     @Transactional
@@ -23,8 +23,7 @@ public class AdminService {
         admin.loginToLowerCase();
         admin.setUserType(UserType.ADMIN);
 
-        userRepository.insertUserProperties(admin);
-        userRepository.insertAdminProperties(admin);
+        userDao.insert(admin);
 
         return userMapper.adminToAdminResponse(admin);
     }
