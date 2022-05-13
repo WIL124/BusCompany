@@ -1,4 +1,4 @@
-package thumbtack.buscompany.response;
+package thumbtack.buscompany.exception;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
