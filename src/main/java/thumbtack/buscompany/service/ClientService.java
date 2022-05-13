@@ -3,6 +3,8 @@ package thumbtack.buscompany.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.UserDao;
+import thumbtack.buscompany.exception.ErrorCode;
+import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.UserType;
@@ -20,9 +22,11 @@ public class ClientService {
     UserDao userDao;
     UserMapper userMapper;
 
-    public UserResponse register(ClientRegisterRequest request, HttpServletResponse response) {
+    public UserResponse register(ClientRegisterRequest request, HttpServletResponse response) throws ServerException {
+        if (userDao.getUserByLogin(request.getLogin()) != null) {
+            throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
+        }
         Client client = userMapper.clientFromRegisterRequest(request);
-        client.loginToLowerCase();
         client.phoneNumberFormat();
         client.setUserType(UserType.CLIENT);
         userDao.insert(client);

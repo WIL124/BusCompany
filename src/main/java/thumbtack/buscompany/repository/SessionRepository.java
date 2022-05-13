@@ -12,5 +12,8 @@ public interface SessionRepository {
     Session getByUserId(@Param("id") Integer id);
 
     @Delete("DELETE FROM sessions WHERE session_id = #{session_id}")
-    void delete(@Param("session_id") String session_id);
+    int delete(@Param("session_id") String session_id);
+
+    @Select("SELECT FROM sessions WHERE session_id = #{session_id}")
+    Session getBySessionId(@Param("session_id") String session_id);
 }

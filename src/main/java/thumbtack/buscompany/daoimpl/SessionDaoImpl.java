@@ -28,7 +28,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public Session getByUserId(Integer userId) {
-        return sessionRepository.getByUserId(userId);
+    public Session getBySessionId(String session_id) {
+        return sessionRepository.getBySessionId(session_id);
     }
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.UserDao;
+import thumbtack.buscompany.exception.ErrorCode;
+import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.User;
@@ -24,11 +26,12 @@ public class AdminService {
     private UserMapper userMapper;
 
     @Transactional
-    public UserResponse register(AdminRegisterRequest adminRegisterRequest, HttpServletResponse response) {
-        Admin admin = userMapper.adminFromRegisterRequest(adminRegisterRequest);
-        admin.loginToLowerCase();
+    public UserResponse register(AdminRegisterRequest request, HttpServletResponse response) throws ServerException {
+        if (userDao.getUserByLogin(request.getLogin()) != null) {
+            throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
+        }
+        Admin admin = userMapper.adminFromRegisterRequest(request);
         admin.setUserType(UserType.ADMIN);
-
         userDao.insert(admin);
         return sessionService.login(loginRequest(admin), response);
     }
@@ -36,7 +39,8 @@ public class AdminService {
     public AdminRegisterResponse update(AdminUpdateRequest request) {
         return null;
     }
-    private LoginRequest loginRequest(User user){
+
+    private LoginRequest loginRequest(User user) {
         return new LoginRequest(user.getLogin(), user.getPassword());
     }
 }

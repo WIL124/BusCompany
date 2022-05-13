@@ -11,7 +11,7 @@ public class DebugService {
     DebugDao debugDao;
 
     public ResponseEntity<Void> clear() {
-
+        debugDao.clear();
         return null;
     }
 }

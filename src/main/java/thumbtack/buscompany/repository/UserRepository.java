@@ -24,7 +24,7 @@ public interface UserRepository {
             "VALUES (#{client.id}, #{client.email}, #{client.phone})")
     int insertClientProperties(@Param("client") Client client);
 
-    @Select("SELECT * FROM users WHERE login = #{login}")
+    @Select("SELECT * FROM users WHERE login = #{login} COLLATE utf8mb4_0900_ai_ci")
     User getUserByLogin(@Param("login") String login);
 
     @Select("SELECT * FROM users INNER JOIN admins USING(id) WHERE id = #{id}")
@@ -32,4 +32,7 @@ public interface UserRepository {
 
     @Select("SELECT * FROM users INNER JOIN clients USING(id) WHERE id = #{id}")
     Client getClient(@Param("id") Integer id);
+
+    @Update("UPDATE users SET active = false WHERE id = #{id}")
+    void deactivate(@Param("id") Integer id);
 }

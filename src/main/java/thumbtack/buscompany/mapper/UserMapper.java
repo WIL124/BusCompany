@@ -20,5 +20,5 @@ public interface UserMapper {
 
     ClientRegisterResponse clientToClientResponse(Client client);
 
-     LoginRequest userToLoginRequest(User user);
+    LoginRequest userToLoginRequest(User user);
 }

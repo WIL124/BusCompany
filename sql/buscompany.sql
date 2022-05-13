@@ -9,12 +9,12 @@ CREATE TABLE IF NOT EXISTS users
     lastname   VARCHAR(50) NOT NULL,
     patronymic VARCHAR(50),
     login      VARCHAR(50) NOT NULL,
-    PASSWORD   VARCHAR(50) NOT NULL,
+    password   VARCHAR(50) NOT NULL,
     userType  VARCHAR(10) NOT NULL,
+    active boolean NOT NULL DEFAULT TRUE,
     PRIMARY KEY (id),
     UNIQUE KEY (login)
-) ENGINE = INNODB
-  DEFAULT CHARSET = utf8;
+) ENGINE = INNODB DEFAULT CHARSET = utf8;
 
 create table if not exists clients
 (

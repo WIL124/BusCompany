@@ -1,5 +1,6 @@
 package thumbtack.buscompany.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,6 @@ public class User {
     private String login;
     private String password;
     private UserType userType;
-
-    public void loginToLowerCase() {
-        login = login.toLowerCase();
-    }
+    @JsonIgnore
+    private boolean active = true;
 }

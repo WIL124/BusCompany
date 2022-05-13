@@ -1,8 +1,5 @@
 package thumbtack.buscompany.validators;
 
-import org.springframework.beans.factory.annotation.Value;
-import thumbtack.buscompany.AppProperties;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 

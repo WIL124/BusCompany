@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
+import thumbtack.buscompany.exception.ErrorCode;
+import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.LoginRequest;
@@ -22,17 +24,18 @@ public class SessionService {
     SessionDao sessionDao;
     UserMapper userMapper;
 
-    public UserResponse login(LoginRequest request, HttpServletResponse response) {
+    public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin());
         if (!user.getPassword().equals(request.getPassword())) {
-            //TODO Выбросить ошибку
+            throw new ServerException(ErrorCode.WRONG_PASSWORD, "password");
         }
-        if (user.getUserType() == UserType.ADMIN) {
-            user = userDao.getAdminById(user.getId());
+        if (!user.isActive()){
+            throw new ServerException(ErrorCode.DELETED_USER, null);
         }
-        if (user.getUserType() == UserType.CLIENT) {
-            user = userDao.getClientById(user.getId());
-        }
+        user = user.getUserType() == UserType.ADMIN ?
+                userDao.getAdminById(user.getId()):
+                userDao.getClientById(user.getId());
+
         Session session = createSession(user);
         sessionDao.insert(session);
         Cookie cookie = new Cookie("JAVASESSIONID", session.getSessionId());

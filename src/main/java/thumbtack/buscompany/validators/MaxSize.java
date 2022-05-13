@@ -1,7 +1,5 @@
 package thumbtack.buscompany.validators;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
