@@ -1,9 +1,6 @@
 package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
@@ -51,5 +48,9 @@ public class SessionService {
         return (user.getUserType() == UserType.ADMIN) ?
                 userMapper.adminToAdminResponse((Admin) user) :
                 userMapper.clientToClientResponse((Client) user);
+    }
+
+    public void logout(String session_id) {
+        sessionDao.delete(session_id);
     }
 }

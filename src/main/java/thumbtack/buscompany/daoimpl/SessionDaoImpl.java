@@ -18,8 +18,8 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void delete() {
-
+    public void delete(String session_id) {
+        sessionRepository.delete(session_id);
     }
 
     @Override

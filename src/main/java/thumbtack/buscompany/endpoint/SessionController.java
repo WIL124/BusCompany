@@ -10,6 +10,7 @@ import thumbtack.buscompany.service.SessionService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @AllArgsConstructor
@@ -23,7 +24,8 @@ public class SessionController {
     }
 
     @DeleteMapping
-    public void delete() {
-
+    public ResponseEntity<Void> logout(@CookieValue(name = "JAVASESSIONID", value = "session_id") @NotNull String session_id) {
+        service.logout(session_id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
