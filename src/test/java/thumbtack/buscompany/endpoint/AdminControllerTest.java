@@ -16,10 +16,12 @@ import thumbtack.buscompany.response.AdminUpdateResponse;
 import thumbtack.buscompany.response.Errors;
 import thumbtack.buscompany.service.AdminService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,13 +35,6 @@ public class AdminControllerTest extends RestControllerTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-    }
-
-    @Test
-    public void adminRegister_ShouldCallAdminService() throws Exception {
-        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
-        postRequestWithBody(URL, adminRegisterRequest).andExpect(status().isOk());
-        verify(adminService).register(adminRegisterRequest);
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,5 +36,8 @@ public class IntegrationTest {
         assertThat(body.getPatronymic()).isEqualTo(requestBody.getPatronymic());
         assertThat(body.getPosition()).isEqualTo(requestBody.getPosition());
         assertThat(body.getUserType()).isEqualTo(UserType.ADMIN);
+        HttpHeaders headers = response.getHeaders();
+        String set_cookie = headers.getFirst(HttpHeaders.SET_COOKIE);
+        System.out.println(response);
     }
 }

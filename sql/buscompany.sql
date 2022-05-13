@@ -32,7 +32,7 @@ create table if not exists admins
     FOREIGN KEY (id) REFERENCES users (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
-create table if not exists cookies
+create table if not exists sessions
 (
     user_id            INT         NOT NULL,
     session_id         VARCHAR(36) NOT NULL,
