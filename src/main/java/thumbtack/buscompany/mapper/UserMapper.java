@@ -3,7 +3,10 @@ package thumbtack.buscompany.mapper;
 import org.mapstruct.Mapper;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
+import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.AdminRegisterRequest;
+import thumbtack.buscompany.request.ClientRegisterRequest;
+import thumbtack.buscompany.request.LoginRequest;
 import thumbtack.buscompany.response.AdminRegisterResponse;
 import thumbtack.buscompany.response.ClientRegisterResponse;
 
@@ -13,7 +16,9 @@ public interface UserMapper {
 
     AdminRegisterResponse adminToAdminResponse(Admin admin);
 
-    Client clientFromRegisterRequest(AdminRegisterRequest request);
+    Client clientFromRegisterRequest(ClientRegisterRequest request);
 
     ClientRegisterResponse clientToClientResponse(Client client);
+
+     LoginRequest userToLoginRequest(User user);
 }

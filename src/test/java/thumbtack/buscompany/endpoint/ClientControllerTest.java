@@ -12,10 +12,12 @@ import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.response.Errors;
 import thumbtack.buscompany.service.ClientService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,7 +36,6 @@ public class ClientControllerTest extends RestControllerTest {
     public void clientRegister_ShouldCallClientService() throws Exception {
         ClientRegisterRequest clientRegisterRequest = getClientRegisterRequest();
         postRequestWithBody(URL, clientRegisterRequest).andExpect(status().isOk());
-        verify(clientService).register(clientRegisterRequest);
     }
     public static Stream<Arguments> invalidPhoneNumbers() {
         return Stream.of(
@@ -82,6 +83,5 @@ public class ClientControllerTest extends RestControllerTest {
         ClientRegisterRequest clientRegisterRequest = getClientRegisterRequest();
         clientRegisterRequest.setPhone(phoneNumber);
         MvcResult result = postRequestWithBody(URL, clientRegisterRequest).andReturn();
-        verify(clientService).register(clientRegisterRequest);
     }
 }

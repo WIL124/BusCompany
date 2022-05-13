@@ -20,8 +20,8 @@ public class AdminController {
 
 
     @PostMapping
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody AdminRegisterRequest request, HttpServletResponse response) {
-        return new ResponseEntity<>(adminService.register(request, response), HttpStatus.OK);
+    public UserResponse register(@Valid @RequestBody AdminRegisterRequest request, HttpServletResponse response) {
+        return adminService.register(request, response);
     }
     @PutMapping
     public ResponseEntity<UserResponse> update(@Valid @RequestBody AdminUpdateRequest request) {

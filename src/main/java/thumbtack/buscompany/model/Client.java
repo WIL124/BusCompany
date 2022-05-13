@@ -14,4 +14,7 @@ public class Client extends User {
         this.email = email;
         this.phone = phone;
     }
+    public void phoneNumberFormat(){
+        phone = phone.replaceAll("-", "");
+    }
 }
