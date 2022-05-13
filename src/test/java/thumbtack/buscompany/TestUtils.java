@@ -10,7 +10,7 @@ import thumbtack.buscompany.request.ClientRegisterRequest;
 public class TestUtils {
     public static User createUser() {
         return new User(null, "Владислав", "Инютин", "Игоревич",
-                "userLogin", "goodPassword", UserType.ADMIN);
+                "userLogin", "goodPassword", UserType.ADMIN, true);
     }
 
     public static Client createClient() {

@@ -1,14 +1,15 @@
 package thumbtack.buscompany;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import thumbtack.buscompany.dao.DebugDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
-import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,15 +21,20 @@ import static thumbtack.buscompany.TestUtils.*;
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DebugDao debugDao;
+
+    @Before
+    public void clear() {
+        debugDao.clear();
+    }
 
     @Test
-    public void whenRecordsInDatabase_shouldReturnUserWithGivenId() {
-        User user = userRepository.getUserById(1);
-        assertThat(user).isNotNull();
-        assertThat(user.getId()).isEqualTo(1);
-        assertThat(user.getFirstName()).isEqualTo("Владислав");
-        assertThat(user.getLastName()).isEqualTo("Инютин");
-        assertThat(user.getUserType()).isEqualTo(UserType.ADMIN);
+    public void insertAndGetUser() {
+        User insertedUser = createUser();
+        userRepository.insertUserProperties(insertedUser);
+        User user = userRepository.getUserById(insertedUser.getId());
+        assertThat(user).isEqualTo(insertedUser);
     }
 
     @Test
@@ -53,6 +59,7 @@ public class UserRepositoryTest {
         assertThat(userRepository.insertAdminProperties(admin)).isEqualTo(1);
         assertThat(admin.getId()).isNotNull();
     }
+
     @Test
     public void selectAdmin() {
         Admin admin = createAdmin();
@@ -61,6 +68,7 @@ public class UserRepositoryTest {
         assertThat(admin.getId()).isNotNull();
         assertThat(userRepository.getAdmin(admin.getId())).isEqualTo(admin);
     }
+
     @Test
     public void selectClient() {
         Client client = createClient();

@@ -8,19 +8,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
-import thumbtack.buscompany.model.UserType;
+import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
-import thumbtack.buscompany.response.AdminRegisterResponse;
-import thumbtack.buscompany.response.AdminUpdateResponse;
-import thumbtack.buscompany.response.Errors;
 import thumbtack.buscompany.service.AdminService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
