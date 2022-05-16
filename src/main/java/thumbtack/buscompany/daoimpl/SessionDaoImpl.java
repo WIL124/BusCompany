@@ -6,6 +6,8 @@ import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.model.Session;
 import thumbtack.buscompany.repository.SessionRepository;
 
+import java.util.Date;
+
 @Repository
 @AllArgsConstructor
 public class SessionDaoImpl implements SessionDao {
@@ -28,8 +30,8 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void updateTime() {
-
+    public void updateTime(String session_id) {
+        sessionRepository.updateTime(session_id, new Date().getTime());
     }
 
     @Override

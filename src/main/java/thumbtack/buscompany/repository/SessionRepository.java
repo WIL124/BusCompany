@@ -19,4 +19,7 @@ public interface SessionRepository {
 
     @Select("SELECT COUNT(*) FROM sessions WHERE user_type = 'ADMIN'")
     int adminCount();
+
+    @Update("UPDATE sessions SET last_activity_time = #{time} WHERE session_id = #{session_id}")
+    void updateTime(@Param("session_id") String session_id, @Param("time") long time);
 }

@@ -24,6 +24,8 @@ public class SessionService {
     SessionDao sessionDao;
     UserMapper userMapper;
 
+    static final long DISCONNECT_TIME = 10000;
+
     public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin());
         if (!user.getPassword().equals(request.getPassword())) {
@@ -60,6 +62,10 @@ public class SessionService {
         if (session == null) {
             throw new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID");
         }
+        if (new Date().getTime() - session.getLastActivityTime() > DISCONNECT_TIME) {
+            sessionDao.delete(sessionId);
+            throw new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID");
+        }
         return session.getUserType() == UserType.ADMIN ?
                 userDao.getAdminById(session.getUserId()) :
                 userDao.getClientById(session.getUserId());
@@ -81,5 +87,9 @@ public class SessionService {
         } else {
             throw new ServerException(ErrorCode.ONE_ACTIVE_ADMIN, "JAVASESSIONID");
         }
+    }
+
+    public void updateTime(String session_id) {
+        sessionDao.updateTime(session_id);
     }
 }
