@@ -29,11 +29,11 @@ public class SessionService {
         if (!user.getPassword().equals(request.getPassword())) {
             throw new ServerException(ErrorCode.WRONG_PASSWORD, "password");
         }
-        if (!user.isActive()){
+        if (!user.isActive()) {
             throw new ServerException(ErrorCode.DELETED_USER, null);
         }
         user = user.getUserType() == UserType.ADMIN ?
-                userDao.getAdminById(user.getId()):
+                userDao.getAdminById(user.getId()) :
                 userDao.getClientById(user.getId());
 
         Session session = createSession(user);
@@ -44,7 +44,7 @@ public class SessionService {
     }
 
     private Session createSession(User user) {
-        return new Session(user.getId(), UUID.randomUUID().toString(), new Date().getTime());
+        return new Session(user.getId(), UUID.randomUUID().toString(), new Date().getTime(), user.getUserType());
     }
 
     private UserResponse userToResponse(User user) {
@@ -53,7 +53,23 @@ public class SessionService {
                 userMapper.clientToClientResponse((Client) user);
     }
 
-    public void logout(String session_id) {
-        sessionDao.delete(session_id);
+    public void logout(String sessionId) throws ServerException {
+        Session session = sessionDao.getBySessionId(sessionId);
+        if (session == null) {
+            throw new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID");
+        }
+        if (session.getUserType() == UserType.CLIENT) {
+            sessionDao.delete(sessionId);
+        } else {
+            adminLogout(sessionId);
+        }
+    }
+
+    private void adminLogout(String sessionId) throws ServerException {
+        if (sessionDao.adminCount() > 1) {
+            sessionDao.delete(sessionId);
+        } else {
+            throw new ServerException(ErrorCode.ONE_ACTIVE_ADMIN, "JAVASESSIONID");
+        }
     }
 }

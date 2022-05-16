@@ -9,4 +9,5 @@ public class Session {
     private Integer userId;
     private String sessionId;
     private Long lastActivityTime;
+    private UserType userType;
 }

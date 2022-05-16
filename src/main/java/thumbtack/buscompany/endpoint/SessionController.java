@@ -25,8 +25,8 @@ public class SessionController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> logout(@CookieValue(name = "JAVASESSIONID", value = "session_id") @NotNull String session_id) {
-        service.logout(session_id);
+    public ResponseEntity<Void> logout(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+        service.logout(sessionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

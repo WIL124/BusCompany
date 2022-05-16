@@ -23,6 +23,11 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
+    public int adminCount() {
+        return sessionRepository.adminCount();
+    }
+
+    @Override
     public void updateTime() {
 
     }

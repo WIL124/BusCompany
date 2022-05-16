@@ -7,10 +7,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.ResponseBody;
 import thumbtack.buscompany.dao.DebugDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
@@ -20,7 +19,10 @@ import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.response.AdminRegisterResponse;
 import thumbtack.buscompany.response.ClientRegisterResponse;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 import static thumbtack.buscompany.TestUtils.createClientRegReq;
 
@@ -78,7 +80,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void twiceRegister_400_shouldBeHandled() {
+    public void twiceRegisterShouldBeHandled() {
         AdminRegisterRequest requestBody = createAdminRegReq();
         ResponseEntity<AdminRegisterResponse> goodResponse = restTemplate
                 .postForEntity("/api/admins", requestBody, AdminRegisterResponse.class);
@@ -93,5 +95,37 @@ public class IntegrationTest {
         ApiErrors apiErrors = errors.getErrors().get(0);
         assertThat(apiErrors.getErrorCode()).isEqualTo(ErrorCode.LOGIN_ALREADY_EXISTS.toString());
         assertThat(apiErrors.getField()).isEqualTo("login");
+    }
+
+    @Test
+    public void adminLogout() {
+        AdminRegisterRequest firstAdmin = createAdminRegReq();
+        ResponseEntity<AdminRegisterResponse> response1 = restTemplate
+                .postForEntity("/api/admins", firstAdmin, AdminRegisterResponse.class);
+        String session1 = getSessionId(response1);
+        AdminRegisterRequest secondAdmin = createAdminRegReq();
+        secondAdmin.setLogin("anotherLogin");
+        ResponseEntity<AdminRegisterResponse> response2 = restTemplate
+                .postForEntity("/api/admins", secondAdmin, AdminRegisterResponse.class);
+        String session2 = getSessionId(response2);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, session1);
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        assertThat(restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity, Void.class)
+                .getStatusCode().value()).isEqualTo(200);
+
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.add(HttpHeaders.COOKIE, session2);
+        HttpEntity<String> entity2 = new HttpEntity<>(headers2);
+        ResponseEntity<Errors> errorsResponseEntity = restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity2, Errors.class);
+        assertThat(errorsResponseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        List<ApiErrors> errors = errorsResponseEntity.getBody().getErrors();
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors.get(0)).isEqualTo(new ApiErrors("ONE_ACTIVE_ADMIN", "JAVASESSIONID", "At least one admin must be online"));
+    }
+
+    private String getSessionId(ResponseEntity<?> response) {
+        return response.getHeaders().get(HttpHeaders.SET_COOKIE).get(0);
     }
 }
