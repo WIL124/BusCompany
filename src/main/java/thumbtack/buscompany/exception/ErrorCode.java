@@ -10,6 +10,7 @@ public enum ErrorCode {
     WRONG_PASSWORD("Wrong password, try again"),
     DELETED_USER("User deleted"),
     ONE_ACTIVE_ADMIN("At least one admin must be online"),
+    USER_NOT_FOUND("User not found"),
     SESSION_NOT_FOUND("Session not found");
     private final String message;
 }

@@ -30,7 +30,7 @@ public class SessionService {
             throw new ServerException(ErrorCode.WRONG_PASSWORD, "password");
         }
         if (!user.isActive()) {
-            throw new ServerException(ErrorCode.DELETED_USER, null);
+            throw new ServerException(ErrorCode.DELETED_USER, "login");
         }
         user = user.getUserType() == UserType.ADMIN ?
                 userDao.getAdminById(user.getId()) :
