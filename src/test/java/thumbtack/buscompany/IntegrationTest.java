@@ -10,6 +10,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import thumbtack.buscompany.dao.DebugDao;
+import thumbtack.buscompany.exception.ApiErrors;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.model.UserType;
@@ -40,7 +41,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void successAdminRegistration() {
+    public void successAdminRegistrationAndLogin() {
         AdminRegisterRequest requestBody = createAdminRegReq();
         ResponseEntity<AdminRegisterResponse> response = restTemplate
                 .postForEntity("/api/admins", requestBody, AdminRegisterResponse.class);
@@ -59,7 +60,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void successClientRegistration() {
+    public void successClientRegistrationAndLogin() {
         ClientRegisterRequest requestBody = createClientRegReq();
         ResponseEntity<ClientRegisterResponse> response = restTemplate
                 .postForEntity("/api/clients", requestBody, ClientRegisterResponse.class);

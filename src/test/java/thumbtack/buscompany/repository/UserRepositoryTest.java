@@ -1,4 +1,4 @@
-package thumbtack.buscompany;
+package thumbtack.buscompany.repository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +10,6 @@ import thumbtack.buscompany.dao.DebugDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
-import thumbtack.buscompany.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static thumbtack.buscompany.TestUtils.*;
@@ -21,6 +20,8 @@ import static thumbtack.buscompany.TestUtils.*;
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    SessionRepository sessionRepository;
     @Autowired
     DebugDao debugDao;
 
@@ -76,5 +77,15 @@ public class UserRepositoryTest {
         assertThat(userRepository.insertClientProperties(client)).isEqualTo(1);
         assertThat(client.getId()).isNotNull();
         assertThat(userRepository.getClient(client.getId())).isEqualTo(client);
+    }
+
+    @Test
+    public void getAdminCount() {
+        sessionRepository.adminCount();
+    }
+
+    @Test
+    public void deleteAdmin() {
+        sessionRepository.delete("79d52190-31bb-4661-b288-b768cdf97504");
     }
 }

@@ -8,6 +8,8 @@ import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.repository.UserRepository;
 
+import java.util.List;
+
 @Repository
 @AllArgsConstructor
 public class UserDaoImpl implements UserDao {
@@ -44,5 +46,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Client getClientById(Integer id) {
         return userRepository.getClient(id);
+    }
+
+    @Override
+    public List<Client> getAllClients() {
+        return userRepository.getAllClients();
     }
 }

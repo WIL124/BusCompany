@@ -6,13 +6,14 @@ import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
-import thumbtack.buscompany.model.Client;
-import thumbtack.buscompany.model.UserType;
+import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.repository.UserRepository;
 import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.response.UserResponse;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,5 +32,14 @@ public class ClientService {
         client.setUserType(UserType.CLIENT);
         userDao.insert(client);
         return sessionService.login(userMapper.userToLoginRequest(client), response);
+    }
+
+    public List<UserResponse> getAllClients(String sessionId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Client) {
+            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "userType");
+        }
+        return userDao.getAllClients().stream()
+                .map(client -> userMapper.clientToClientResponse(client)).collect(Collectors.toList());
     }
 }

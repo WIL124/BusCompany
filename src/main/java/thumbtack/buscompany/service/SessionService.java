@@ -43,16 +43,6 @@ public class SessionService {
         return userToResponse(user);
     }
 
-    private Session createSession(User user) {
-        return new Session(user.getId(), UUID.randomUUID().toString(), new Date().getTime(), user.getUserType());
-    }
-
-    private UserResponse userToResponse(User user) {
-        return (user.getUserType() == UserType.ADMIN) ?
-                userMapper.adminToAdminResponse((Admin) user) :
-                userMapper.clientToClientResponse((Client) user);
-    }
-
     public void logout(String sessionId) throws ServerException {
         Session session = sessionDao.getBySessionId(sessionId);
         if (session == null) {
@@ -63,6 +53,26 @@ public class SessionService {
         } else {
             adminLogout(sessionId);
         }
+    }
+
+    public User getUserBySessionId(String sessionId) throws ServerException {
+        Session session = sessionDao.getBySessionId(sessionId);
+        if (session == null) {
+            throw new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID");
+        }
+        return session.getUserType() == UserType.ADMIN ?
+                userDao.getAdminById(session.getUserId()) :
+                userDao.getClientById(session.getUserId());
+    }
+
+    private Session createSession(User user) {
+        return new Session(user.getId(), UUID.randomUUID().toString(), new Date().getTime(), user.getUserType());
+    }
+
+    private UserResponse userToResponse(User user) {
+        return (user.getUserType() == UserType.ADMIN) ?
+                userMapper.adminToAdminResponse((Admin) user) :
+                userMapper.clientToClientResponse((Client) user);
     }
 
     private void adminLogout(String sessionId) throws ServerException {

@@ -5,6 +5,8 @@ import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 
+import java.util.List;
+
 public interface UserDao {
     void insert(Admin admin);
 
@@ -17,4 +19,6 @@ public interface UserDao {
     Admin getAdminById(Integer id);
 
     Client getClientById(Integer id);
+
+    List<Client> getAllClients();
 }

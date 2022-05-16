@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import thumbtack.buscompany.ApiErrors;
+import thumbtack.buscompany.exception.ApiErrors;
 import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.exception.ServerException;
 

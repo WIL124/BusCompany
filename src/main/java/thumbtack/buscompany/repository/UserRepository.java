@@ -5,6 +5,8 @@ import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 
+import java.util.List;
+
 @Mapper
 public interface UserRepository {
     @Select("SELECT * FROM users WHERE id = #{id}")
@@ -35,4 +37,7 @@ public interface UserRepository {
 
     @Update("UPDATE users SET active = false WHERE id = #{id}")
     void deactivate(@Param("id") Integer id);
+
+    @Select("SELECT * FROM users INNER JOIN clients USING(id)")
+    List<Client> getAllClients();
 }

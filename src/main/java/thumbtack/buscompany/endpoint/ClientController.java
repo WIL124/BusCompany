@@ -1,10 +1,7 @@
 package thumbtack.buscompany.endpoint;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.response.UserResponse;
@@ -12,6 +9,8 @@ import thumbtack.buscompany.service.ClientService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -21,5 +20,9 @@ public class ClientController {
     @PostMapping
     public UserResponse register(@Valid @RequestBody ClientRegisterRequest request, HttpServletResponse response) throws ServerException {
         return service.register(request, response);
+    }
+    @GetMapping
+    public List<UserResponse> getAllClients(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+        return service.getAllClients(sessionId);
     }
 }
