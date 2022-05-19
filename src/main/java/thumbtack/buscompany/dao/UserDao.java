@@ -4,17 +4,18 @@ import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
+import thumbtack.buscompany.model.UserType;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserDao {
     void insert(Admin admin);
 
     void insert(Client client);
+    Optional<UserType> getUserType(String login);
 
-    User getUserById(Integer id) throws ServerException;
-
-    User getUserByLogin(String login);
+    Optional<? extends User> getUserByLogin(String login) throws ServerException;
 
     Admin getAdminById(Integer id);
 
@@ -22,5 +23,5 @@ public interface UserDao {
 
     List<Client> getAllClients();
 
-    void updateAdmin(Admin admin);
+    boolean updateAdmin(Admin admin);
 }

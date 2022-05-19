@@ -6,11 +6,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface DebugRepository {
     @Delete("DELETE FROM sessions")
-    void clearSessions();
+    boolean clearSessions();
     @Delete("DELETE FROM clients")
-    void clearClients();
+    boolean clearClients();
     @Delete("DELETE FROM admins")
-    void clearAdmins();
+    boolean clearAdmins();
     @Delete("DELETE FROM users")
-    void clearUsers();
+    boolean clearUsers();
 }

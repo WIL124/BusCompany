@@ -12,7 +12,8 @@ import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static thumbtack.buscompany.TestUtils.*;
+import static thumbtack.buscompany.TestUtils.createAdmin;
+import static thumbtack.buscompany.TestUtils.createClient;
 
 
 @RunWith(SpringRunner.class)
@@ -31,52 +32,53 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void insertAndGetUser() {
-        User insertedUser = createUser();
+    public void insertAndGetAdmin() {
+        Admin insertedUser = createAdmin();
         userRepository.insertUserProperties(insertedUser);
-        User user = userRepository.getUserById(insertedUser.getId());
+        userRepository.insertAdminProperties(insertedUser);
+        User user = userRepository.getAdminById(insertedUser.getId());
         assertThat(user).isEqualTo(insertedUser);
     }
 
     @Test
-    public void insertUserProperties_shouldReturn1() {
-        User user = createUser();
-        assertThat(userRepository.insertUserProperties(user)).isEqualTo(1);
+    public void insertUserProperties_shouldReturnId() {
+        User user = createClient();
+        userRepository.insertUserProperties(user);
         assertThat(user.getId()).isNotNull();
     }
 
     @Test
-    public void insertClientProperties_shouldReturn1() {
+    public void insertClientProperties_shouldReturnId() {
         Client client = createClient();
-        assertThat(userRepository.insertUserProperties(client)).isEqualTo(1);
-        assertThat(userRepository.insertClientProperties(client)).isEqualTo(1);
+        userRepository.insertUserProperties(client);
+        userRepository.insertClientProperties(client);
         assertThat(client.getId()).isNotNull();
     }
 
     @Test
-    public void insertAdminProperties_shouldReturn1() {
+    public void insertAdminProperties_shouldReturnId() {
         Admin admin = createAdmin();
-        assertThat(userRepository.insertUserProperties(admin)).isEqualTo(1);
-        assertThat(userRepository.insertAdminProperties(admin)).isEqualTo(1);
+        userRepository.insertUserProperties(admin);
+        userRepository.insertAdminProperties(admin);
         assertThat(admin.getId()).isNotNull();
     }
 
     @Test
     public void selectAdmin() {
         Admin admin = createAdmin();
-        assertThat(userRepository.insertUserProperties(admin)).isEqualTo(1);
-        assertThat(userRepository.insertAdminProperties(admin)).isEqualTo(1);
+        userRepository.insertUserProperties(admin);
+        userRepository.insertAdminProperties(admin);
         assertThat(admin.getId()).isNotNull();
-        assertThat(userRepository.getAdmin(admin.getId())).isEqualTo(admin);
+        assertThat(userRepository.getAdminById(admin.getId())).isEqualTo(admin);
     }
 
     @Test
     public void selectClient() {
         Client client = createClient();
-        assertThat(userRepository.insertUserProperties(client)).isEqualTo(1);
-        assertThat(userRepository.insertClientProperties(client)).isEqualTo(1);
+        userRepository.insertUserProperties(client);
+        userRepository.insertClientProperties(client);
         assertThat(client.getId()).isNotNull();
-        assertThat(userRepository.getClient(client.getId())).isEqualTo(client);
+        assertThat(userRepository.getClientById(client.getId())).isEqualTo(client);
     }
 
     @Test

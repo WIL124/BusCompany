@@ -7,6 +7,7 @@ import thumbtack.buscompany.model.Session;
 import thumbtack.buscompany.repository.SessionRepository;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -20,8 +21,8 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void delete(String session_id) {
-        sessionRepository.delete(session_id);
+    public boolean delete(String session_id) {
+        return sessionRepository.delete(session_id);
     }
 
     @Override
@@ -30,12 +31,12 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void updateTime(String session_id) {
-        sessionRepository.updateTime(session_id, new Date().getTime());
+    public boolean updateTime(String session_id) {
+       return sessionRepository.updateTime(session_id, new Date().getTime());
     }
 
     @Override
-    public Session getBySessionId(String session_id) {
-        return sessionRepository.getBySessionId(session_id);
+    public Optional<Session> getBySessionId(String session_id) {
+        return Optional.ofNullable(sessionRepository.getBySessionId(session_id));
     }
 }

@@ -27,7 +27,7 @@ public class AdminService {
 
     @Transactional
     public UserResponse register(AdminRegisterRequest request, HttpServletResponse response) throws ServerException {
-        if (userDao.getUserByLogin(request.getLogin()) != null) {
+        if (userDao.getUserByLogin(request.getLogin()).isPresent()) {
             throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
         }
         Admin admin = userMapper.adminFromRegisterRequest(request);

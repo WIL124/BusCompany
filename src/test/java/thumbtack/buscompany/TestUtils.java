@@ -8,20 +8,16 @@ import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
 
 public class TestUtils {
-    public static User createUser() {
-        return new User(null, "Владислав", "Инютин", "Игоревич",
-                "userLogin", "goodPassword", UserType.ADMIN, true);
-    }
 
     public static Client createClient() {
         return new Client(null, "Владислав", "Инютин", "Игоревич",
-                "clientLogin", "goodPassword", UserType.ADMIN,
+                "clientLogin", "goodPassword",
                 "vladislav@mail.ru", "89087961203");
     }
 
     public static Admin createAdmin() {
         return new Admin(null, "Владислав", "Инютин", "Игоревич",
-                "adminLogin", "goodPassword", UserType.ADMIN,
+                "adminLogin", "goodPassword",
                 "leader");
     }
     public static AdminRegisterRequest createAdminRegReq(){

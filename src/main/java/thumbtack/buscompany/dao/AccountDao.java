@@ -1,5 +1,5 @@
 package thumbtack.buscompany.dao;
 
 public interface AccountDao {
-    void deactivateUser(Integer id);
+    boolean deactivateUser(Integer id);
 }

@@ -24,7 +24,7 @@ public class ClientService {
     UserMapper userMapper;
 
     public UserResponse register(ClientRegisterRequest request, HttpServletResponse response) throws ServerException {
-        if (userDao.getUserByLogin(request.getLogin()) != null) {
+        if (userDao.getUserByLogin(request.getLogin()).isPresent()) {
             throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
         }
         Client client = userMapper.clientFromRegisterRequest(request);

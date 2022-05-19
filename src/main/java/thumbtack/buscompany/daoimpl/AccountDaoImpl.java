@@ -10,7 +10,7 @@ import thumbtack.buscompany.repository.UserRepository;
 public class AccountDaoImpl implements AccountDao {
     UserRepository userRepository;
     @Override
-    public void deactivateUser(Integer user_id) {
-        userRepository.deactivate(user_id);
+    public boolean deactivateUser(Integer user_id) {
+        return userRepository.deactivate(user_id);
     }
 }
