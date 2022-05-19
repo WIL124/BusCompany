@@ -15,6 +15,7 @@ import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.request.AdminRegisterRequest;
+import thumbtack.buscompany.request.AdminUpdateRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.response.AdminRegisterResponse;
 import thumbtack.buscompany.response.ClientRegisterResponse;
@@ -99,25 +100,12 @@ public class IntegrationTest {
 
     @Test
     public void adminLogout() {
-        AdminRegisterRequest firstAdmin = createAdminRegReq();
-        ResponseEntity<AdminRegisterResponse> response1 = restTemplate
-                .postForEntity("/api/admins", firstAdmin, AdminRegisterResponse.class);
-        String session1 = getSessionId(response1);
-        AdminRegisterRequest secondAdmin = createAdminRegReq();
-        secondAdmin.setLogin("anotherLogin");
-        ResponseEntity<AdminRegisterResponse> response2 = restTemplate
-                .postForEntity("/api/admins", secondAdmin, AdminRegisterResponse.class);
-        String session2 = getSessionId(response2);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.COOKIE, session1);
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        String session1 = registerAdminAndGetSessionId("firstAdmin");
+        String session2 = registerAdminAndGetSessionId("secondAdmin");
+        HttpEntity<Object> entity = entityWithSessionId(null, session1);
         assertThat(restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity, Void.class)
                 .getStatusCode().value()).isEqualTo(200);
-
-        HttpHeaders headers2 = new HttpHeaders();
-        headers2.add(HttpHeaders.COOKIE, session2);
-        HttpEntity<String> entity2 = new HttpEntity<>(headers2);
+        HttpEntity<Object> entity2 = entityWithSessionId(null, session2);
         ResponseEntity<Errors> errorsResponseEntity = restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity2, Errors.class);
         assertThat(errorsResponseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         List<ApiErrors> errors = Objects.requireNonNull(errorsResponseEntity.getBody()).getErrors();
@@ -125,7 +113,64 @@ public class IntegrationTest {
         assertThat(errors.get(0)).isEqualTo(new ApiErrors("ONE_ACTIVE_ADMIN", "JAVASESSIONID", "At least one admin must be online"));
     }
 
+    @Test
+    public void deleteUserAccount() {
+        String session = registerClientAndGetSessionId("clientLogin");
+        HttpEntity<Object> entity = entityWithSessionId(null, session);
+        ResponseEntity<Errors> response = (restTemplate.exchange("/api/accounts", HttpMethod.DELETE, entity, Errors.class));
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+
+        //try to log in
+        ClientRegisterRequest request = createClientRegReq();
+        ResponseEntity<Errors> errors = restTemplate.postForEntity("/api/clients", request, Errors.class);
+        assertThat(errors.getStatusCode().value()).isEqualTo(400);
+        assertThat(errors.getBody().getErrors().get(0).getErrorCode()).isEqualTo("LOGIN_ALREADY_EXISTS");
+        //try to register again
+    }
+
+    @Test
+    public void updateAdmin() {
+        String session = registerAdminAndGetSessionId("goodAdmin");
+        String position = "НоваяДолжность";
+        String firstname = "НовоеИмя";
+        String lastname = "НоваяФамилия";
+        String patronymic = "НовоеОтчество";
+        String newPass = "НовыйПароль";
+        AdminUpdateRequest body = new AdminUpdateRequest(firstname, lastname,
+                patronymic, position, newPass, "goodPassword");
+        HttpEntity<Object> entity = entityWithSessionId(body, session);
+        ResponseEntity<AdminRegisterResponse> response =
+                restTemplate.exchange("/api/admins", HttpMethod.PUT, entity, AdminRegisterResponse.class);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        AdminRegisterResponse responseBody = response.getBody();
+        assertThat(responseBody.getPosition()).isEqualTo(position);
+        assertThat(responseBody.getFirstName()).isEqualTo(firstname);
+        assertThat(responseBody.getLastName()).isEqualTo(lastname);
+    }
+
     private String getSessionId(ResponseEntity<?> response) {
         return Objects.requireNonNull(response.getHeaders().get(HttpHeaders.SET_COOKIE)).get(0);
+    }
+
+    private String registerAdminAndGetSessionId(String login) {
+        AdminRegisterRequest adminRegReq = createAdminRegReq();
+        adminRegReq.setLogin(login);
+        ResponseEntity<AdminRegisterResponse> response = restTemplate
+                .postForEntity("/api/admins", adminRegReq, AdminRegisterResponse.class);
+        return getSessionId(response);
+    }
+
+    private String registerClientAndGetSessionId(String login) {
+        ClientRegisterRequest clientRegReq = createClientRegReq();
+        clientRegReq.setLogin(login);
+        ResponseEntity<ClientRegisterResponse> response = restTemplate
+                .postForEntity("/api/clients", clientRegReq, ClientRegisterResponse.class);
+        return getSessionId(response);
+    }
+
+    private HttpEntity<Object> entityWithSessionId(Object body, String sessionId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, sessionId);
+        return new HttpEntity<>(body, headers);
     }
 }

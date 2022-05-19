@@ -12,6 +12,7 @@ import thumbtack.buscompany.service.AdminService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class AdminController {
         return adminService.register(request, response);
     }
     @PutMapping
-    public ResponseEntity<UserResponse> update(@Valid @RequestBody AdminUpdateRequest request) {
-        return new ResponseEntity<>(adminService.update(request), HttpStatus.OK);
+    public ResponseEntity<UserResponse> update(@Valid @RequestBody AdminUpdateRequest request, @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+        return new ResponseEntity<>(adminService.update(request, sessionId), HttpStatus.OK);
     }
 }

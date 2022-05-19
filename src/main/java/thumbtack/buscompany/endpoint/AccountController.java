@@ -17,12 +17,12 @@ public class AccountController {
     AccountService accountService;
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@CookieValue(name = "JAVASESSIONID", value = "session_id") @NotNull String session_id) throws ServerException {
+    public ResponseEntity<Void> delete(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
         return accountService.delete(session_id);
     }
 
     @GetMapping
-    public ResponseEntity<UserResponse> get(@CookieValue(name = "JAVASESSIONID", value = "session_id") @NotNull String session_id) throws ServerException {
+    public ResponseEntity<UserResponse> get(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
         return new ResponseEntity<>(accountService.get(session_id), HttpStatus.OK);
     }
 }

@@ -36,11 +36,26 @@ public class AdminService {
         return sessionService.login(loginRequest(admin), response);
     }
 
-    public AdminRegisterResponse update(AdminUpdateRequest request) {
-        return null;
+    public AdminRegisterResponse update(AdminUpdateRequest request, String sessionId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (!request.getOldPassword().equals(user.getPassword())) {
+            throw new ServerException(ErrorCode.DIFFERENT_PASSWORDS, "oldPassword");
+        }
+        Admin admin = (Admin) user;
+        updateAdmin(admin, request);
+        userDao.updateAdmin(admin);
+        return userMapper.adminToAdminResponse(admin);
     }
 
     private LoginRequest loginRequest(User user) {
         return new LoginRequest(user.getLogin(), user.getPassword());
+    }
+
+    private void updateAdmin(Admin admin, AdminUpdateRequest request) {
+        admin.setFirstName(request.getFirstName());
+        admin.setLastName(request.getLastName());
+        admin.setPosition(request.getPosition());
+        admin.setPatronymic(request.getPatronymic());
+        admin.setPassword(request.getNewPassword());
     }
 }

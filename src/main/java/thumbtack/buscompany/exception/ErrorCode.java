@@ -12,6 +12,7 @@ public enum ErrorCode {
     ONE_ACTIVE_ADMIN("At least one admin must be online"),
     USER_NOT_FOUND("User not found"),
     DO_NOT_HAVE_PERMISSIONS("Don't have permissions"),
-    SESSION_NOT_FOUND("Session not found");
+    SESSION_NOT_FOUND("Session not found"),
+    DIFFERENT_PASSWORDS("passwords must match");
     private final String message;
 }

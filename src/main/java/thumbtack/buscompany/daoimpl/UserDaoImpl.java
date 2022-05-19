@@ -52,4 +52,15 @@ public class UserDaoImpl implements UserDao {
     public List<Client> getAllClients() {
         return userRepository.getAllClients();
     }
+
+    @Override
+    public void updateAdmin(Admin admin) {
+        userRepository.updateUserProperties(admin);
+        userRepository.updateAdminProperties(admin);
+    }
+
+//    @Override
+//    public void updateClient(User user) {
+//        userRepository.updateUserProperties(user);
+//    }
 }

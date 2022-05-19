@@ -40,4 +40,15 @@ public interface UserRepository {
 
     @Select("SELECT * FROM users INNER JOIN clients USING(id)")
     List<Client> getAllClients();
+
+    @Update("UPDATE admins SET position = #{admin.position} WHERE id = #{admin.id}")
+    void updateAdminProperties(@Param("admin") Admin admin);
+
+    @Update("UPDATE users SET firstname = #{user.firstName}, " +
+            "lastname = #{user.lastName}, " +
+            "patronymic = #{user.patronymic}, " +
+            "password = #{user.password} " +
+            "WHERE id = #{user.id}")
+    void updateUserProperties(@Param("user") User user);
+
 }

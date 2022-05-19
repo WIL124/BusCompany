@@ -21,4 +21,6 @@ public interface UserDao {
     Client getClientById(Integer id);
 
     List<Client> getAllClients();
+
+    void updateAdmin(Admin admin);
 }

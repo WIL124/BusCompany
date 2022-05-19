@@ -24,7 +24,7 @@ public class SessionService {
     SessionDao sessionDao;
     UserMapper userMapper;
 
-    static final long DISCONNECT_TIME = 10000;
+    static final long DISCONNECT_TIME = 30*60*100;   // MIN * 60 * 100
 
     public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin());
