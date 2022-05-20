@@ -2,6 +2,7 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
@@ -69,11 +70,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public boolean updateAdmin(Admin admin) {
         return (userRepository.updateUserProperties(admin) && userRepository.updateAdminProperties(admin));
     }
 
     @Override
+    @Transactional
     public boolean updateClient(Client client) {
         return (userRepository.updateUserProperties(client) && userRepository.updateClientProperties(client));
     }

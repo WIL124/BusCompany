@@ -52,6 +52,7 @@ public class ClientService {
         updateClientModel(client, request);
         client.phoneNumberFormat();
         userDao.updateClient(client);
+        sessionService.updateTime(sessionId);
         return userMapper.clientToClientResponse(client);
     }
 

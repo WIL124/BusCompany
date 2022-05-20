@@ -43,6 +43,7 @@ public class AdminService {
         Admin admin = (Admin) user;
         updateAdmin(admin, request);
         userDao.updateAdmin(admin);
+        sessionService.updateTime(sessionId);
         return userMapper.adminToAdminResponse(admin);
     }
 

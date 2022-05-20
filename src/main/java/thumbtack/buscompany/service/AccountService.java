@@ -28,9 +28,6 @@ public class AccountService {
 
     public UserResponse get(String session_id) throws ServerException {
         User user = sessionService.getUserBySessionId(session_id);
-        if (!user.isActive()) {
-            throw new ServerException(ErrorCode.DELETED_USER, "login");
-        }
         sessionService.updateTime(session_id);
         return user instanceof Client ?
                 userMapper.clientToClientResponse((Client) user) :
