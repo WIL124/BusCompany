@@ -17,8 +17,8 @@ import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
-import thumbtack.buscompany.response.AdminRegisterResponse;
-import thumbtack.buscompany.response.ClientRegisterResponse;
+import thumbtack.buscompany.response.AdminResponse;
+import thumbtack.buscompany.response.ClientResponse;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,10 +44,10 @@ public class IntegrationTest {
     @Test
     public void successAdminRegistrationAndLogin() {
         AdminRegisterRequest requestBody = createAdminRegReq();
-        ResponseEntity<AdminRegisterResponse> response = restTemplate
-                .postForEntity("/api/admins", requestBody, AdminRegisterResponse.class);
+        ResponseEntity<AdminResponse> response = restTemplate
+                .postForEntity("/api/admins", requestBody, AdminResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        AdminRegisterResponse body = response.getBody();
+        AdminResponse body = response.getBody();
         assert body != null;
         assertThat(body.getId()).isNotNull();
         assertThat(body.getFirstName()).isEqualTo(requestBody.getFirstName());
@@ -63,10 +63,10 @@ public class IntegrationTest {
     @Test
     public void successClientRegistrationAndLogin() {
         ClientRegisterRequest requestBody = createClientRegReq();
-        ResponseEntity<ClientRegisterResponse> response = restTemplate
-                .postForEntity("/api/clients", requestBody, ClientRegisterResponse.class);
+        ResponseEntity<ClientResponse> response = restTemplate
+                .postForEntity("/api/clients", requestBody, ClientResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        ClientRegisterResponse body = response.getBody();
+        ClientResponse body = response.getBody();
         assert body != null;
         assertThat(body.getId()).isNotNull();
         assertThat(body.getFirstName()).isEqualTo(requestBody.getFirstName());
@@ -83,8 +83,8 @@ public class IntegrationTest {
     @Test
     public void twiceRegisterShouldBeHandled() {
         AdminRegisterRequest requestBody = createAdminRegReq();
-        ResponseEntity<AdminRegisterResponse> goodResponse = restTemplate
-                .postForEntity("/api/admins", requestBody, AdminRegisterResponse.class);
+        ResponseEntity<AdminResponse> goodResponse = restTemplate
+                .postForEntity("/api/admins", requestBody, AdminResponse.class);
         assertThat(goodResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<Errors> badResponse = restTemplate
@@ -139,10 +139,10 @@ public class IntegrationTest {
         AdminUpdateRequest body = new AdminUpdateRequest(firstname, lastname,
                 patronymic, position, newPass, "goodPassword");
         HttpEntity<Object> entity = entityWithSessionId(body, session);
-        ResponseEntity<AdminRegisterResponse> response =
-                restTemplate.exchange("/api/admins", HttpMethod.PUT, entity, AdminRegisterResponse.class);
+        ResponseEntity<AdminResponse> response =
+                restTemplate.exchange("/api/admins", HttpMethod.PUT, entity, AdminResponse.class);
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        AdminRegisterResponse responseBody = response.getBody();
+        AdminResponse responseBody = response.getBody();
         assertThat(responseBody.getPosition()).isEqualTo(position);
         assertThat(responseBody.getFirstName()).isEqualTo(firstname);
         assertThat(responseBody.getLastName()).isEqualTo(lastname);
@@ -155,16 +155,16 @@ public class IntegrationTest {
     private String registerAdminAndGetSessionId(String login) {
         AdminRegisterRequest adminRegReq = createAdminRegReq();
         adminRegReq.setLogin(login);
-        ResponseEntity<AdminRegisterResponse> response = restTemplate
-                .postForEntity("/api/admins", adminRegReq, AdminRegisterResponse.class);
+        ResponseEntity<AdminResponse> response = restTemplate
+                .postForEntity("/api/admins", adminRegReq, AdminResponse.class);
         return getSessionId(response);
     }
 
     private String registerClientAndGetSessionId(String login) {
         ClientRegisterRequest clientRegReq = createClientRegReq();
         clientRegReq.setLogin(login);
-        ResponseEntity<ClientRegisterResponse> response = restTemplate
-                .postForEntity("/api/clients", clientRegReq, ClientRegisterResponse.class);
+        ResponseEntity<ClientResponse> response = restTemplate
+                .postForEntity("/api/clients", clientRegReq, ClientResponse.class);
         return getSessionId(response);
     }
 

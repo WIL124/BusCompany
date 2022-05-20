@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.response.UserResponse;
 import thumbtack.buscompany.service.AccountService;
+import thumbtack.buscompany.service.SessionService;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,14 +17,20 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/api/accounts")
 public class AccountController {
     AccountService accountService;
+    SessionService sessionService;
 
     @DeleteMapping
     public ResponseEntity<Void> delete(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
-        return accountService.delete(session_id);
+        User user = sessionService.getUserBySessionId(session_id);
+        accountService.delete(user);
+        sessionService.logout(session_id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<UserResponse> get(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
-        return new ResponseEntity<>(accountService.get(session_id), HttpStatus.OK);
+        User user = sessionService.getUserBySessionId(session_id);
+        sessionService.updateTime(session_id);
+        return new ResponseEntity<>(accountService.get(user), HttpStatus.OK);
     }
 }

@@ -8,9 +8,6 @@ public interface SessionRepository {
     @Insert("INSERT INTO sessions VALUES (#{session.userId},#{session.sessionId},#{session.lastActivityTime}, #{session.userType})")
     void insertSession(@Param("session") Session session);
 
-    @Select("SELECT * FROM sessions WHERE user_id = #{id}")
-    Session getByUserId(@Param("id") Integer id);
-
     @Delete("DELETE FROM sessions WHERE session_id = #{session_id}")
     boolean delete(@Param("session_id") String session_id);
 

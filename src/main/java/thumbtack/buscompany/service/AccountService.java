@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.AccountDao;
-import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.Admin;
@@ -16,19 +15,13 @@ import thumbtack.buscompany.response.UserResponse;
 @AllArgsConstructor
 public class AccountService {
     AccountDao accountDao;
-    SessionService sessionService;
     UserMapper userMapper;
 
-    public ResponseEntity<Void> delete(String session_id) throws ServerException {
-        User user = sessionService.getUserBySessionId(session_id);
-        accountDao.deactivateUser(user.getId());
-        sessionService.logout(session_id);
-        return null;
+    public boolean delete(User user) {
+        return accountDao.deactivateUser(user.getId());
     }
 
-    public UserResponse get(String session_id) throws ServerException {
-        User user = sessionService.getUserBySessionId(session_id);
-        sessionService.updateTime(session_id);
+    public UserResponse get(User user) {
         return user instanceof Client ?
                 userMapper.clientToClientResponse((Client) user) :
                 userMapper.adminToAdminResponse((Admin) user);

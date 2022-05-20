@@ -23,22 +23,17 @@ public class ClientService {
     UserDao userDao;
     UserMapper userMapper;
 
-    public UserResponse register(ClientRegisterRequest request, HttpServletResponse response) throws ServerException {
+    public Client register(ClientRegisterRequest request) throws ServerException {
         if (userDao.getUserByLogin(request.getLogin()).isPresent()) {
             throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
         }
         Client client = userMapper.clientFromRegisterRequest(request);
         client.phoneNumberFormat();
         userDao.insert(client);
-        return sessionService.login(userMapper.userToLoginRequest(client), response);
+        return client;
     }
 
-    public List<UserResponse> getAllClients(String sessionId) throws ServerException {
-        User user = sessionService.getUserBySessionId(sessionId);
-        if (user instanceof Client) {
-            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "userType");
-        }
-        sessionService.updateTime(sessionId);
+    public List<UserResponse> getAllClients() {
         return userDao.getAllClients().stream()
                 .map(client -> userMapper.clientToClientResponse(client)).collect(Collectors.toList());
     }

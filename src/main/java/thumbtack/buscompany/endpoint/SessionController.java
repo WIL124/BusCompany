@@ -17,16 +17,16 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @RequestMapping("/api/sessions")
 public class SessionController {
-    SessionService service;
+    private SessionService sessionService;
 
     @PostMapping
     public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) throws ServerException {
-        return new ResponseEntity<>(service.login(loginRequest, response), HttpStatus.OK);
+        return new ResponseEntity<>(sessionService.login(loginRequest, response), HttpStatus.OK);
     }
 
     @DeleteMapping
     public ResponseEntity<Void> logout(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
-        service.logout(sessionId);
+        sessionService.logout(sessionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
