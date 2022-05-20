@@ -26,6 +26,11 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
+    public boolean deleteByUserId(Integer user_id) {
+        return sessionRepository.deleteByUserId(user_id);
+    }
+
+    @Override
     public int adminCount() {
         return sessionRepository.adminCount();
     }

@@ -40,7 +40,8 @@ create table if not exists sessions
     last_activity_time long        NOT NULL,
     user_type           VARCHAR(10) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id),
-    UNIQUE KEY (session_id)
+    UNIQUE KEY (session_id),
+    PRIMARY KEY (user_id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 

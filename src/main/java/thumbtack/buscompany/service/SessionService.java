@@ -40,6 +40,7 @@ public class SessionService {
                 userDao.getClientById(user.getId());
 
         Session session = createSession(user);
+        sessionDao.deleteByUserId(user.getId());
         sessionDao.insert(session);
         Cookie cookie = new Cookie("JAVASESSIONID", session.getSessionId());
         response.addCookie(cookie);
