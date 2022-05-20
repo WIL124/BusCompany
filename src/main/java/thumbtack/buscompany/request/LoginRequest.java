@@ -12,11 +12,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class LoginRequest {
     @NotBlank(message = "null login")
-    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z\\d]+$")
-    @MaxSize
     String login;
     @NotBlank
-    @MaxSize
-    @MinPassLength
     String password;
 }

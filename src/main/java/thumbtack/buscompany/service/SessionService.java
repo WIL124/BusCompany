@@ -2,7 +2,6 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ServerErrorException;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
@@ -74,9 +73,6 @@ public class SessionService {
     protected Session getSession(String id) throws ServerException {
         return sessionDao.getBySessionId(id).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
     }
-//    protected User getUser(String id){
-//
-//    }
 
     private Session createSession(User user) {
         return new Session(user.getId(), UUID.randomUUID().toString(), new Date().getTime(), user.getUserType());

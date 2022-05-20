@@ -73,8 +73,8 @@ public class UserDaoImpl implements UserDao {
         return (userRepository.updateUserProperties(admin) && userRepository.updateAdminProperties(admin));
     }
 
-//    @Override
-//    public void updateClient(User user) {
-//        userRepository.updateUserProperties(user);
-//    }
+    @Override
+    public boolean updateClient(Client client) {
+        return (userRepository.updateUserProperties(client) && userRepository.updateClientProperties(client));
+    }
 }

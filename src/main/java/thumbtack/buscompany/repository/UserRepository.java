@@ -58,4 +58,7 @@ public interface UserRepository {
 
     @Select("SELECT * FROM users INNER JOIN admins USING(id) WHERE login = #{login}")
     Admin getAdminByLogin(@Param("login") String login);
+
+    @Update("UPDATE clients SET email = #{client.email}, phone = #{client.phone} WHERE id = #{client.id}")
+    boolean updateClientProperties(@Param("client") Client client);
 }

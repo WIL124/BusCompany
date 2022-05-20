@@ -31,7 +31,6 @@ public class AdminService {
             throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
         }
         Admin admin = userMapper.adminFromRegisterRequest(request);
-        admin.setUserType(UserType.ADMIN);
         userDao.insert(admin);
         return sessionService.login(loginRequest(admin), response);
     }

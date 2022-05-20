@@ -24,4 +24,6 @@ public interface UserDao {
     List<Client> getAllClients();
 
     boolean updateAdmin(Admin admin);
+
+    boolean updateClient(Client client);
 }

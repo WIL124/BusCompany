@@ -8,8 +8,8 @@ import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
-import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.request.ClientRegisterRequest;
+import thumbtack.buscompany.request.ClientUpdateRequest;
 import thumbtack.buscompany.response.UserResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +29,6 @@ public class ClientService {
         }
         Client client = userMapper.clientFromRegisterRequest(request);
         client.phoneNumberFormat();
-        client.setUserType(UserType.CLIENT);
         userDao.insert(client);
         return sessionService.login(userMapper.userToLoginRequest(client), response);
     }
@@ -43,4 +42,26 @@ public class ClientService {
         return userDao.getAllClients().stream()
                 .map(client -> userMapper.clientToClientResponse(client)).collect(Collectors.toList());
     }
+
+    public UserResponse updateClient(String sessionId, ClientUpdateRequest request) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (!request.getOldPassword().equals(user.getPassword())) {
+            throw new ServerException(ErrorCode.DIFFERENT_PASSWORDS, "oldPassword");
+        }
+        Client client = (Client) user;
+        updateClientModel(client, request);
+        client.phoneNumberFormat();
+        userDao.updateClient(client);
+        return userMapper.clientToClientResponse(client);
+    }
+
+    private void updateClientModel(Client client, ClientUpdateRequest request) {
+        client.setFirstName(request.getFirstName());
+        client.setLastName(request.getLastName());
+        client.setPatronymic(request.getPatronymic());
+        client.setEmail(request.getEmail());
+        client.setPhone(request.getPhone());
+        client.setPassword(request.getNewPassword());
+    }
+
 }

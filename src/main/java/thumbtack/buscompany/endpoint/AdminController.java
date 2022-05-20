@@ -27,6 +27,8 @@ public class AdminController {
     }
     @PutMapping
     public ResponseEntity<UserResponse> update(@Valid @RequestBody AdminUpdateRequest request, @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
-        return new ResponseEntity<>(adminService.update(request, sessionId), HttpStatus.OK);
+        UserResponse userResponse = adminService.update(request, sessionId);
+        userResponse.setId(null);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 }

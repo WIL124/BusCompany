@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.request.ClientRegisterRequest;
+import thumbtack.buscompany.request.ClientUpdateRequest;
 import thumbtack.buscompany.response.UserResponse;
 import thumbtack.buscompany.service.ClientService;
 
@@ -24,5 +25,11 @@ public class ClientController {
     @GetMapping
     public List<UserResponse> getAllClients(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
         return service.getAllClients(sessionId);
+    }
+    @PutMapping
+    public UserResponse update(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @RequestBody ClientUpdateRequest request) throws ServerException {
+        UserResponse response = service.updateClient(sessionId,request);
+        response.setId(null);
+        return response;
     }
 }
