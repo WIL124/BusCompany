@@ -2,8 +2,6 @@ package thumbtack.buscompany;
 
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
-import thumbtack.buscompany.model.User;
-import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
 

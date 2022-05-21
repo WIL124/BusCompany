@@ -17,6 +17,7 @@ import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
+import thumbtack.buscompany.request.LoginRequest;
 import thumbtack.buscompany.response.AdminResponse;
 import thumbtack.buscompany.response.ClientResponse;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 import static thumbtack.buscompany.TestUtils.createClientRegReq;
 
@@ -120,12 +122,53 @@ public class IntegrationTest {
         ResponseEntity<Errors> response = (restTemplate.exchange("/api/accounts", HttpMethod.DELETE, entity, Errors.class));
         assertThat(response.getStatusCode().value()).isEqualTo(200);
 
-        //try to log in
-        ClientRegisterRequest request = createClientRegReq();
-        ResponseEntity<Errors> errors = restTemplate.postForEntity("/api/clients", request, Errors.class);
-        assertThat(errors.getStatusCode().value()).isEqualTo(400);
-        assertThat(errors.getBody().getErrors().get(0).getErrorCode()).isEqualTo("LOGIN_ALREADY_EXISTS");
         //try to register again
+        ClientRegisterRequest request = createClientRegReq();
+        ResponseEntity<Errors> regErrors = restTemplate.postForEntity("/api/clients", request, Errors.class);
+        assertThat(regErrors.getStatusCode().value()).isEqualTo(400);
+        assertThat(regErrors.getBody().getErrors().get(0).getErrorCode()).isEqualTo("LOGIN_ALREADY_EXISTS");
+
+        //try to log in
+        LoginRequest loginRequest = new LoginRequest("clientLogin", "goodPassword");
+        ResponseEntity<Errors> loginErrors = restTemplate.postForEntity("/api/sessions", loginRequest, Errors.class);
+        assertThat(loginErrors.getStatusCodeValue()).isEqualTo(400);
+        assertThat(loginErrors.getBody().getErrors().get(0).getErrorCode()).isEqualTo("DELETED_USER");
+    }
+
+    @Test
+    public void getAccountInfoAdmin() {
+        AdminRegisterRequest adminRegReq = createAdminRegReq();
+        ResponseEntity<AdminResponse> regResponse = restTemplate
+                .postForEntity("/api/admins", adminRegReq, AdminResponse.class);
+        String session = getSessionId(regResponse);
+
+        HttpEntity<Object> entity = entityWithSessionId(null, session);
+        ResponseEntity<AdminResponse> accountInfoResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, AdminResponse.class));
+        assertThat(accountInfoResponse.getStatusCodeValue()).isEqualTo(200);
+        assertEquals(regResponse.getBody(), accountInfoResponse.getBody());
+    }
+
+    @Test
+    public void getAccountInfoClient() {
+        ClientRegisterRequest clientRegReq = createClientRegReq();
+        ResponseEntity<ClientResponse> regResponse = restTemplate
+                .postForEntity("/api/clients", clientRegReq, ClientResponse.class);
+        String session = getSessionId(regResponse);
+
+        HttpEntity<Object> entity = entityWithSessionId(null, session);
+        ResponseEntity<ClientResponse> accountInfoResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, ClientResponse.class));
+        assertThat(accountInfoResponse.getStatusCodeValue()).isEqualTo(200);
+        assertEquals(regResponse.getBody(), accountInfoResponse.getBody());
+    }
+
+    @Test
+    public void getAccountInfo_sessionNotFound() {
+        HttpEntity<Object> entity = entityWithSessionId(null, "JAVASESSIONID=nonExistentSession");
+        ResponseEntity<Errors> errorsResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, Errors.class));
+        assertThat(errorsResponse.getStatusCodeValue()).isEqualTo(400);
+        assertThat(errorsResponse.getBody().getErrors().size()).isEqualTo(1);
+        assertThat(errorsResponse.getBody().getErrors().get(0).getMessage()).isEqualTo(ErrorCode.SESSION_NOT_FOUND.getMessage());
+
     }
 
     @Test

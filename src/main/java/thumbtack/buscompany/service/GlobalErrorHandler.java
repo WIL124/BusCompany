@@ -21,11 +21,11 @@ public class GlobalErrorHandler {
                 errors.getErrors().add(new ApiErrors(exc.getClass().toString(), fieldError.getField(), fieldError.getDefaultMessage())));
         return errors;
     }
-    @ExceptionHandler(ServerException.class)
-    public Errors handleServerException(ServerException exc){
-        Errors errors = new Errors();
-        errors.getErrors().add(new ApiErrors(exc.getErrorCode().name(),exc.getField(), exc.getErrorCode().getMessage()));
-        return errors;
 
+    @ExceptionHandler(ServerException.class)
+    public Errors handleServerException(ServerException exc) {
+        Errors errors = new Errors();
+        errors.getErrors().add(new ApiErrors(exc.getErrorCode().name(), exc.getField(), exc.getErrorCode().getMessage()));
+        return errors;
     }
 }
