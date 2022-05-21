@@ -38,10 +38,17 @@ create table if not exists sessions
     user_id            INT         NOT NULL,
     session_id         VARCHAR(36) NOT NULL,
     last_activity_time long        NOT NULL,
-    user_type           VARCHAR(10) NOT NULL,
+    user_type          VARCHAR(10) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id),
     UNIQUE KEY (session_id),
     PRIMARY KEY (user_id)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8;
+create table if not exists buses
+(
+    busName            VARCHAR(50) NOT NULL,
+    placeCount         int         NOT NULL,
+    PRIMARY KEY (busName)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 

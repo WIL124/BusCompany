@@ -1,7 +1,1 @@
-INSERT INTO users
-VALUES (1, 'Владислав',
-        'Инютин',
-        'Игоревич',
-        'vlad123',
-        'goodPassword',
-        'ADMIN');
+INSERT INTO buses values ('Mercedes', 20), ('Volvo', 25), ('YAZ', 50)
