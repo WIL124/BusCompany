@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS buscompany;
 CREATE DATABASE buscompany;
 USE buscompany;
 
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE users
 (
     id         INT AUTO_INCREMENT,
     firstname  VARCHAR(50) NOT NULL,
