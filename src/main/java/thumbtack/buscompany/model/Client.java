@@ -10,16 +10,14 @@ public class Client extends User {
     private String phone;
     public Client(){
         this.setUserType(UserType.CLIENT);
-        this.setActive(true);
     }
 
     public Client(Integer id, String firstName, String lastName, String patronymic, String login, String password, String email, String phone) {
-        super(id, firstName, lastName, patronymic, login, password, UserType.CLIENT, true);
+        super(id, firstName, lastName, patronymic, login, password, UserType.CLIENT);
         this.email = email;
         this.phone = phone;
     }
-    // REVU canonizePhoneFormat
-    public void phoneNumberFormat(){
+    public void canonizePhoneFormat(){
         phone = phone.replaceAll("-", "");
     }
 }

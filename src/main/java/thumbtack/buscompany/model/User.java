@@ -16,6 +16,4 @@ public abstract class User {
     private String login;
     private String password;
     private UserType userType;
-    @JsonIgnore
-    private boolean active = true;
 }

@@ -7,7 +7,6 @@ import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
-import thumbtack.buscompany.model.UserType;
 import thumbtack.buscompany.repository.UserRepository;
 
 import java.util.List;
@@ -32,36 +31,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<UserType> getUserType(String login) {
-        return Optional.ofNullable(userRepository.getUserType(login));
-    }
-
-    @Override
     public Optional<? extends User> getUserByLogin(String login) {
-        UserType userType = getUserType(login).orElse(null);
-        if (userType == UserType.ADMIN) {
-            return getAdminByLogin(login);
-        } else if (userType == UserType.CLIENT) {
-            return getClientByLogin(login);
-        } else return Optional.empty();
-    }
-
-    @Override
-    public Admin getAdminById(Integer id) {
-        return userRepository.getAdminById(id);
-    }
-
-    @Override
-    public Client getClientById(Integer id) {
-        return userRepository.getClientById(id);
-    }
-
-    public Optional<Client> getClientByLogin(String login) {
-        return Optional.ofNullable(userRepository.getClientByLogin(login));
-    }
-
-    public Optional<Admin> getAdminByLogin(String login) {
-        return Optional.ofNullable(userRepository.getAdminByLogin(login));
+        return Optional.ofNullable(userRepository.getUserByLogin(login));
     }
 
     @Override
@@ -79,5 +50,10 @@ public class UserDaoImpl implements UserDao {
     @Transactional
     public boolean updateClient(Client client) {
         return (userRepository.updateUserProperties(client) && userRepository.updateClientProperties(client));
+    }
+
+    @Override
+    public User getUserById(int id) {
+        return userRepository.getUserById(id);
     }
 }

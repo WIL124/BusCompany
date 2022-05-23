@@ -13,17 +13,14 @@ public interface UserDao {
     void insert(Admin admin);
 
     void insert(Client client);
-    Optional<UserType> getUserType(String login);
 
     Optional<? extends User> getUserByLogin(String login) throws ServerException;
-
-    Admin getAdminById(Integer id);
-
-    Client getClientById(Integer id);
 
     List<Client> getAllClients();
 
     boolean updateAdmin(Admin admin);
 
     boolean updateClient(Client client);
+
+    User getUserById(int id);
 }

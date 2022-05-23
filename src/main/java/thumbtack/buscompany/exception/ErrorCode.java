@@ -8,7 +8,6 @@ import lombok.Getter;
 public enum ErrorCode {
     LOGIN_ALREADY_EXISTS("This login has already been registered"),
     WRONG_PASSWORD("Wrong password, try again"),
-    DELETED_USER("User deleted"),
     ONE_ACTIVE_ADMIN("At least one admin must be online"),
     USER_NOT_FOUND("User not found"),
     DO_NOT_HAVE_PERMISSIONS("Don't have permissions"),

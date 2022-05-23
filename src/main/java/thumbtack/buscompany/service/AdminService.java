@@ -19,12 +19,14 @@ public class AdminService {
 
     @Transactional
     public Admin register(AdminRegisterRequest request) throws ServerException {
-        // REVU см. REVU в ClientService
-        if (userDao.getUserByLogin(request.getLogin()).isPresent()) {
-            throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
-        }
         Admin admin = userMapper.adminFromRegisterRequest(request);
-        userDao.insert(admin);
+        try {
+            userDao.insert(admin);
+        } catch (RuntimeException ex) {
+            if (ex.getMessage().contains("Duplicate entry")) {
+                throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
+            }
+        }
         return admin;
     }
 

@@ -22,8 +22,8 @@ public class AccountController {
     @DeleteMapping
     public ResponseEntity<Void> delete(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
         User user = sessionService.getUserBySessionId(session_id);
-        accountService.delete(user);
         sessionService.logout(session_id);
+        accountService.delete(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

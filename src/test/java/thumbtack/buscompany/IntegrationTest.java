@@ -1,19 +1,14 @@
 package thumbtack.buscompany;
 
 import lombok.NoArgsConstructor;
-// REVU если Вы смешиваете в одном классе тестов junit4 и juni5, да еще и прицепляете assertJ, то ничего хорошего не будет
-// удалите 3 следующие строки, заменив их на те, что в junit5 (@BeforeEach
-// вместо RunWith - ExtendWith
-// https://baeldung-cn.com/junit-5-migration
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.test.context.junit4.SpringRunner;
-import thumbtack.buscompany.dao.DebugDao;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import thumbtack.buscompany.exception.ApiErrors;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
@@ -28,26 +23,20 @@ import thumbtack.buscompany.response.ClientResponse;
 import java.util.List;
 import java.util.Objects;
 
-// REVU и эту удалите
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 import static thumbtack.buscompany.TestUtils.createClientRegReq;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @NoArgsConstructor
 public class IntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
-    @Autowired
-            // REVU не очень красиво. В клиентском тесте Вы получаете доступ к внутреностям сервера
-            // у Вас же есть DebugController и clear в нем. Вызовите его с помощью restTemplate
-    DebugDao debugDao;
 
-    @Before
+    @BeforeEach
     public void clear() {
-        debugDao.clear();
+        restTemplate.postForLocation("/api/debug/clear", null);
     }
 
     @Test
@@ -55,18 +44,21 @@ public class IntegrationTest {
         AdminRegisterRequest requestBody = createAdminRegReq();
         ResponseEntity<AdminResponse> response = restTemplate
                 .postForEntity("/api/admins", requestBody, AdminResponse.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
         AdminResponse body = response.getBody();
         assert body != null;
-        assertThat(body.getId()).isNotNull();
-        assertThat(body.getFirstName()).isEqualTo(requestBody.getFirstName());
-        assertThat(body.getLastName()).isEqualTo(requestBody.getLastName());
-        assertThat(body.getPatronymic()).isEqualTo(requestBody.getPatronymic());
-        assertThat(body.getPosition()).isEqualTo(requestBody.getPosition());
-        assertThat(body.getUserType()).isEqualTo(UserType.ADMIN);
+        assertNotNull(body.getId());
+        assertAll("body",
+                () -> assertEquals(body.getFirstName(), requestBody.getFirstName()),
+                () -> assertEquals(body.getLastName(), requestBody.getLastName()),
+                () -> assertEquals(body.getPatronymic(), requestBody.getPatronymic()),
+                () -> assertEquals(body.getPosition(), requestBody.getPosition()),
+                () -> assertEquals(body.getUserType(), UserType.ADMIN)
+        );
         HttpHeaders headers = response.getHeaders();
         String set_cookie = headers.getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(set_cookie).contains("JAVASESSIONID=");
+        assert set_cookie != null;
+        assertTrue(set_cookie.contains("JAVASESSIONID="));
     }
 
     @Test
@@ -74,19 +66,22 @@ public class IntegrationTest {
         ClientRegisterRequest requestBody = createClientRegReq();
         ResponseEntity<ClientResponse> response = restTemplate
                 .postForEntity("/api/clients", requestBody, ClientResponse.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
         ClientResponse body = response.getBody();
         assert body != null;
-        assertThat(body.getId()).isNotNull();
-        assertThat(body.getFirstName()).isEqualTo(requestBody.getFirstName());
-        assertThat(body.getLastName()).isEqualTo(requestBody.getLastName());
-        assertThat(body.getPatronymic()).isEqualTo(requestBody.getPatronymic());
-        assertThat(body.getEmail()).isEqualTo(requestBody.getEmail());
-        assertThat(body.getPhone()).isEqualTo(requestBody.getPhone().replaceAll("-", ""));
-        assertThat(body.getUserType()).isEqualTo(UserType.CLIENT);
+        assertNotNull(body.getId());
+        assertAll("body",
+                () -> assertEquals(body.getFirstName(), requestBody.getFirstName()),
+                () -> assertEquals(body.getLastName(), requestBody.getLastName()),
+                () -> assertEquals(body.getPatronymic(), requestBody.getPatronymic()),
+                () -> assertEquals(body.getEmail(), requestBody.getEmail()),
+                () -> assertEquals(body.getPhone(), requestBody.getPhone().replaceAll("-", "")),
+                () -> assertEquals(body.getUserType(), UserType.CLIENT)
+        );
         HttpHeaders headers = response.getHeaders();
         String set_cookie = headers.getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(set_cookie).contains("JAVASESSIONID=");
+        assert set_cookie != null;
+        assertTrue(set_cookie.contains("JAVASESSIONID="));
     }
 
     @Test
@@ -94,17 +89,16 @@ public class IntegrationTest {
         AdminRegisterRequest requestBody = createAdminRegReq();
         ResponseEntity<AdminResponse> goodResponse = restTemplate
                 .postForEntity("/api/admins", requestBody, AdminResponse.class);
-        assertThat(goodResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
+        assertEquals(goodResponse.getStatusCode(), HttpStatus.OK);
         ResponseEntity<Errors> badResponse = restTemplate
                 .postForEntity("/api/admins", requestBody, Errors.class);
-        assertThat(badResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertEquals(badResponse.getStatusCode(), HttpStatus.BAD_REQUEST);
         Errors errors = badResponse.getBody();
         assert errors != null;
-        assertThat(errors.getErrors().size()).isOne();
+        assertEquals(errors.getErrors().size(), 1);
         ApiErrors apiErrors = errors.getErrors().get(0);
-        assertThat(apiErrors.getErrorCode()).isEqualTo(ErrorCode.LOGIN_ALREADY_EXISTS.toString());
-        assertThat(apiErrors.getField()).isEqualTo("login");
+        assertEquals(apiErrors.getErrorCode(), ErrorCode.LOGIN_ALREADY_EXISTS.toString());
+        assertEquals(apiErrors.getField(), "login");
     }
 
     @Test
@@ -112,14 +106,14 @@ public class IntegrationTest {
         String session1 = registerAdminAndGetSessionId("firstAdmin");
         String session2 = registerAdminAndGetSessionId("secondAdmin");
         HttpEntity<Object> entity = entityWithSessionId(null, session1);
-        assertThat(restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity, Void.class)
-                .getStatusCode().value()).isEqualTo(200);
+        assertEquals(restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity, Void.class)
+                .getStatusCodeValue(), 200);
         HttpEntity<Object> entity2 = entityWithSessionId(null, session2);
         ResponseEntity<Errors> errorsResponseEntity = restTemplate.exchange("/api/sessions", HttpMethod.DELETE, entity2, Errors.class);
-        assertThat(errorsResponseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertEquals(errorsResponseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
         List<ApiErrors> errors = Objects.requireNonNull(errorsResponseEntity.getBody()).getErrors();
-        assertThat(errors.size()).isEqualTo(1);
-        assertThat(errors.get(0)).isEqualTo(new ApiErrors("ONE_ACTIVE_ADMIN", "JAVASESSIONID", "At least one admin must be online"));
+        assertEquals(errors.size(), 1);
+        assertEquals(errors.get(0), new ApiErrors("ONE_ACTIVE_ADMIN", "JAVASESSIONID", "At least one admin must be online"));
     }
 
     @Test
@@ -127,19 +121,19 @@ public class IntegrationTest {
         String session = registerClientAndGetSessionId("clientLogin");
         HttpEntity<Object> entity = entityWithSessionId(null, session);
         ResponseEntity<Errors> response = (restTemplate.exchange("/api/accounts", HttpMethod.DELETE, entity, Errors.class));
-        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertEquals(response.getStatusCodeValue(), 200);
 
         //try to register again
         ClientRegisterRequest request = createClientRegReq();
         ResponseEntity<Errors> regErrors = restTemplate.postForEntity("/api/clients", request, Errors.class);
-        assertThat(regErrors.getStatusCode().value()).isEqualTo(400);
-        assertThat(regErrors.getBody().getErrors().get(0).getErrorCode()).isEqualTo("LOGIN_ALREADY_EXISTS");
+        assertEquals(regErrors.getStatusCode().value(), 400);
+        assertEquals(Objects.requireNonNull(regErrors.getBody()).getErrors().get(0).getErrorCode(), "LOGIN_ALREADY_EXISTS");
 
         //try to log in
         LoginRequest loginRequest = new LoginRequest("clientLogin", "goodPassword");
         ResponseEntity<Errors> loginErrors = restTemplate.postForEntity("/api/sessions", loginRequest, Errors.class);
-        assertThat(loginErrors.getStatusCodeValue()).isEqualTo(400);
-        assertThat(loginErrors.getBody().getErrors().get(0).getErrorCode()).isEqualTo("DELETED_USER");
+        assertEquals(loginErrors.getStatusCodeValue(), 400);
+        assertEquals(Objects.requireNonNull(loginErrors.getBody()).getErrors().get(0).getErrorCode(), "USER_NOT_FOUND");
     }
 
     @Test
@@ -151,7 +145,7 @@ public class IntegrationTest {
 
         HttpEntity<Object> entity = entityWithSessionId(null, session);
         ResponseEntity<AdminResponse> accountInfoResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, AdminResponse.class));
-        assertThat(accountInfoResponse.getStatusCodeValue()).isEqualTo(200);
+        assertEquals(accountInfoResponse.getStatusCodeValue(), 200);
         assertEquals(regResponse.getBody(), accountInfoResponse.getBody());
     }
 
@@ -164,7 +158,7 @@ public class IntegrationTest {
 
         HttpEntity<Object> entity = entityWithSessionId(null, session);
         ResponseEntity<ClientResponse> accountInfoResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, ClientResponse.class));
-        assertThat(accountInfoResponse.getStatusCodeValue()).isEqualTo(200);
+        assertEquals(accountInfoResponse.getStatusCodeValue(), 200);
         assertEquals(regResponse.getBody(), accountInfoResponse.getBody());
     }
 
@@ -172,10 +166,9 @@ public class IntegrationTest {
     public void getAccountInfo_sessionNotFound() {
         HttpEntity<Object> entity = entityWithSessionId(null, "JAVASESSIONID=nonExistentSession");
         ResponseEntity<Errors> errorsResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, Errors.class));
-        assertThat(errorsResponse.getStatusCodeValue()).isEqualTo(400);
-        assertThat(errorsResponse.getBody().getErrors().size()).isEqualTo(1);
-        assertThat(errorsResponse.getBody().getErrors().get(0).getMessage()).isEqualTo(ErrorCode.SESSION_NOT_FOUND.getMessage());
-
+        assertEquals(errorsResponse.getStatusCodeValue(), 400);
+        assertEquals(Objects.requireNonNull(errorsResponse.getBody()).getErrors().size(), 1);
+        assertEquals(errorsResponse.getBody().getErrors().get(0).getMessage(), ErrorCode.SESSION_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -191,11 +184,12 @@ public class IntegrationTest {
         HttpEntity<Object> entity = entityWithSessionId(body, session);
         ResponseEntity<AdminResponse> response =
                 restTemplate.exchange("/api/admins", HttpMethod.PUT, entity, AdminResponse.class);
-        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertEquals(response.getStatusCodeValue(), 200);
         AdminResponse responseBody = response.getBody();
-        assertThat(responseBody.getPosition()).isEqualTo(position);
-        assertThat(responseBody.getFirstName()).isEqualTo(firstname);
-        assertThat(responseBody.getLastName()).isEqualTo(lastname);
+        assert responseBody != null;
+        assertEquals(responseBody.getPosition(), position);
+        assertEquals(responseBody.getFirstName(), firstname);
+        assertEquals(responseBody.getLastName(), lastname);
     }
 
     private String getSessionId(ResponseEntity<?> response) {

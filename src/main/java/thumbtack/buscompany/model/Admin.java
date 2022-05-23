@@ -11,10 +11,9 @@ public class Admin extends User {
 
     public Admin(){
         this.setUserType(UserType.ADMIN);
-        this.setActive(true);
     }
 public Admin(Integer id, String firstName, String lastName, String patronymic, String login, String password, String position) {
-        super(id, firstName, lastName, patronymic, login, password, UserType.ADMIN, true);
+        super(id, firstName, lastName, patronymic, login, password, UserType.ADMIN);
         this.position = position;
     }
 }

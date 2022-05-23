@@ -2,7 +2,6 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
@@ -15,7 +14,6 @@ import thumbtack.buscompany.response.UserResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -29,27 +27,10 @@ public class SessionService {
 
     public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin()).orElseThrow(() -> new ServerException(ErrorCode.USER_NOT_FOUND, "login"));
-        // REVU а не проще ли было в SQL WHERE добавить active AND active
-        // и тогда будет просто null
-        // неактивные нам в Java не нужны
-        // кстати, проверки на null я не вижу. А если такого логина нет ?
-        if (!user.isActive()) {
-            throw new ServerException(ErrorCode.DELETED_USER, "login");
-        }
         if (!user.getPassword().equals(request.getPassword())) {
             throw new ServerException(ErrorCode.WRONG_PASSWORD, "password");
         }
-        // REVU а зачем ? Есть же уже user, а какого он типа - для операции "логин" решительно все равно
-        user = user.getUserType() == UserType.ADMIN ?
-                userDao.getAdminById(user.getId()) :
-                userDao.getClientById(user.getId());
-        Session session = createSession(user);
-        // REVU если так делать, то нужно
-        // @Transactional
-        // иначе не будет трансакции
-        // а вообше лучше сделать немного иначе здесь, в одно действие
-        // https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html
-        sessionDao.deleteByUserId(user.getId());
+        Session session = new Session(user);
         sessionDao.insert(session);
         Cookie cookie = new Cookie("JAVASESSIONID", session.getSessionId());
         response.addCookie(cookie);
@@ -58,7 +39,7 @@ public class SessionService {
 
     public boolean logout(String sessionId) throws ServerException {
         Session session = getSession(sessionId);
-        return session.getUserType() == UserType.CLIENT ?
+        return session.getUser().getUserType() == UserType.CLIENT ?
                 sessionDao.delete(sessionId) :
                 adminLogout(sessionId);
     }
@@ -69,22 +50,15 @@ public class SessionService {
             sessionDao.delete(sessionId);
             throw new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID");
         }
-        return session.getUserType() == UserType.ADMIN ?
-                userDao.getAdminById(session.getUserId()) :
-                userDao.getClientById(session.getUserId());
+        return session.getUser();
     }
 
-    // REVU camelCase всегда, то есть sessionId
-    public void updateTime(String session_id) {
-        sessionDao.updateTime(session_id);
+    public void updateTime(String sessionId) {
+        sessionDao.updateTime(sessionId);
     }
 
-    protected Session getSession(String id) throws ServerException {
-        return sessionDao.getBySessionId(id).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
-    }
-
-    private Session createSession(User user) {
-        return new Session(user.getId(), UUID.randomUUID().toString(), new Date().getTime(), user.getUserType());
+    protected Session getSession(String sessionId) throws ServerException {
+        return sessionDao.getBySessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
     }
 
     private UserResponse userToResponse(User user) {

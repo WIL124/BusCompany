@@ -29,7 +29,6 @@ public class AdminController {
     private SessionService sessionService;
     private UserMapper mapper;
 
-
     @PostMapping
     public UserResponse register(@Valid @RequestBody AdminRegisterRequest request, HttpServletResponse response) throws ServerException {
         Admin admin = adminService.register(request);

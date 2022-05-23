@@ -25,8 +25,43 @@ public interface UserRepository {
             "VALUES (#{client.id}, #{client.email}, #{client.phone})")
     void insertClientProperties(@Param("client") Client client);
 
-    @Select("SELECT * FROM users WHERE login = #{login} COLLATE utf8mb4_0900_ai_ci")
+    @Select("SELECT U.id AS id, firstname, lastname, patronymic, login, password, " +
+            "userType, position, email, phone " +
+            "FROM users U " +
+            "LEFT JOIN admins A on U.id = A.id " +
+            "LEFT JOIN clients C on U.id = C.id " +
+            "WHERE login = #{login} AND active")
+    @TypeDiscriminator(column = "userType",
+            cases = {
+                    @Case(value = "ADMIN", type = Admin.class,
+                            results = {
+                                    @Result(property = "position", column = "position")}),
+                    @Case(value = "CLIENT", type = Client.class,
+                            results = {
+                                    @Result(property = "phone", column = "phone"),
+                                    @Result(property = "email", column = "email"),
+                            })
+            })
     User getUserByLogin(@Param("login") String login);
+
+    @Select("SELECT U.id AS id, firstname, lastname, patronymic, login, password, " +
+            "userType, position, email, phone " +
+            "FROM users U " +
+            "LEFT JOIN admins A on U.id = A.id " +
+            "LEFT JOIN clients C on U.id = C.id " +
+            "WHERE U.id = #{id} AND active")
+    @TypeDiscriminator(column = "userType",
+            cases = {
+                    @Case(value = "ADMIN", type = Admin.class,
+                            results = {
+                                    @Result(property = "position", column = "position")}),
+                    @Case(value = "CLIENT", type = Client.class,
+                            results = {
+                                    @Result(property = "phone", column = "phone"),
+                                    @Result(property = "email", column = "email"),
+                            })
+            })
+    User getUserById(@Param("id") Integer id);
 
     @Select("SELECT * FROM users INNER JOIN admins USING(id) WHERE id = #{id}")
     Admin getAdminById(@Param("id") Integer id);
@@ -49,15 +84,6 @@ public interface UserRepository {
             "password = #{user.password} " +
             "WHERE id = #{user.id}")
     boolean updateUserProperties(@Param("user") User user);
-
-    @Select("SELECT userType FROM users WHERE login = #{login}")
-    UserType getUserType(@Param("login") String login);
-
-    @Select("SELECT * FROM users INNER JOIN clients USING(id) WHERE login = #{login}")
-    Client getClientByLogin(@Param("login") String login);
-
-    @Select("SELECT * FROM users INNER JOIN admins USING(id) WHERE login = #{login}")
-    Admin getAdminByLogin(@Param("login") String login);
 
     @Update("UPDATE clients SET email = #{client.email}, phone = #{client.phone} WHERE id = #{client.id}")
     boolean updateClientProperties(@Param("client") Client client);
