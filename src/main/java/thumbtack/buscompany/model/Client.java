@@ -18,6 +18,7 @@ public class Client extends User {
         this.email = email;
         this.phone = phone;
     }
+    // REVU canonizePhoneFormat
     public void phoneNumberFormat(){
         phone = phone.replaceAll("-", "");
     }

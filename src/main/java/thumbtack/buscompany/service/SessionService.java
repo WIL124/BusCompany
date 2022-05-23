@@ -2,6 +2,7 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
@@ -28,16 +29,26 @@ public class SessionService {
 
     public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin()).orElseThrow(() -> new ServerException(ErrorCode.USER_NOT_FOUND, "login"));
+        // REVU а не проще ли было в SQL WHERE добавить active AND active
+        // и тогда будет просто null
+        // неактивные нам в Java не нужны
+        // кстати, проверки на null я не вижу. А если такого логина нет ?
         if (!user.isActive()) {
             throw new ServerException(ErrorCode.DELETED_USER, "login");
         }
         if (!user.getPassword().equals(request.getPassword())) {
             throw new ServerException(ErrorCode.WRONG_PASSWORD, "password");
         }
+        // REVU а зачем ? Есть же уже user, а какого он типа - для операции "логин" решительно все равно
         user = user.getUserType() == UserType.ADMIN ?
                 userDao.getAdminById(user.getId()) :
                 userDao.getClientById(user.getId());
         Session session = createSession(user);
+        // REVU если так делать, то нужно
+        // @Transactional
+        // иначе не будет трансакции
+        // а вообше лучше сделать немного иначе здесь, в одно действие
+        // https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html
         sessionDao.deleteByUserId(user.getId());
         sessionDao.insert(session);
         Cookie cookie = new Cookie("JAVASESSIONID", session.getSessionId());
@@ -63,6 +74,7 @@ public class SessionService {
                 userDao.getClientById(session.getUserId());
     }
 
+    // REVU camelCase всегда, то есть sessionId
     public void updateTime(String session_id) {
         sessionDao.updateTime(session_id);
     }

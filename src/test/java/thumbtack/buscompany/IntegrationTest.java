@@ -1,6 +1,10 @@
 package thumbtack.buscompany;
 
 import lombok.NoArgsConstructor;
+// REVU если Вы смешиваете в одном классе тестов junit4 и juni5, да еще и прицепляете assertJ, то ничего хорошего не будет
+// удалите 3 следующие строки, заменив их на те, что в junit5 (@BeforeEach
+// вместо RunWith - ExtendWith
+// https://baeldung-cn.com/junit-5-migration
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +28,7 @@ import thumbtack.buscompany.response.ClientResponse;
 import java.util.List;
 import java.util.Objects;
 
+// REVU и эту удалите
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static thumbtack.buscompany.TestUtils.createAdminRegReq;
@@ -36,6 +41,8 @@ public class IntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
     @Autowired
+            // REVU не очень красиво. В клиентском тесте Вы получаете доступ к внутреностям сервера
+            // у Вас же есть DebugController и clear в нем. Вызовите его с помощью restTemplate
     DebugDao debugDao;
 
     @Before

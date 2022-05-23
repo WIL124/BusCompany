@@ -19,11 +19,19 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ClientService {
+    // REVU private все
     SessionService sessionService;
     UserDao userDao;
     UserMapper userMapper;
 
     public Client register(ClientRegisterRequest request) throws ServerException {
+        // REVU при таком подходе может быть, что в момент userDao.getUserByLogin
+        // такого логина нет, а при userDao.insert уже есть
+        // мы же в многопользовательской среде
+        // не надо проверять. Надо просто userDao.insert и ловить
+        // исключение. Если оно будет иметь в качестве cause
+        // MySQLIntegrityConstraintViolationException: Duplicate entry
+        // значит, этот логин уже используется
         if (userDao.getUserByLogin(request.getLogin()).isPresent()) {
             throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
         }

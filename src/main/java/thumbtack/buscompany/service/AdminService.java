@@ -19,6 +19,7 @@ public class AdminService {
 
     @Transactional
     public Admin register(AdminRegisterRequest request) throws ServerException {
+        // REVU см. REVU в ClientService
         if (userDao.getUserByLogin(request.getLogin()).isPresent()) {
             throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
         }
