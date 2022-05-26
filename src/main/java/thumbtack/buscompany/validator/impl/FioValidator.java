@@ -1,5 +1,7 @@
-package thumbtack.buscompany.validators;
+package thumbtack.buscompany.validator.impl;
 
+
+import thumbtack.buscompany.validator.annototion.Fio;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

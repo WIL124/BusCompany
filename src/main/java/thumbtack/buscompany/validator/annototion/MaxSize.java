@@ -1,16 +1,18 @@
-package thumbtack.buscompany.validators;
+package thumbtack.buscompany.validator.annototion;
+
+import thumbtack.buscompany.validator.impl.MaxSizeValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = PhoneValidator.class)
+@Constraint(validatedBy = MaxSizeValidator.class)
 @Target( { ElementType. METHOD, ElementType. FIELD })
 @Retention(RetentionPolicy. RUNTIME)
-public @interface Phone {
-    String pattern() default "^((\\+7|8)+([0-9]){10})$";
-    String message() default "incorrect phone number format";
+public @interface MaxSize {
+    int maxLength() default 50;
+    String message() default "{maxLength} is max size";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

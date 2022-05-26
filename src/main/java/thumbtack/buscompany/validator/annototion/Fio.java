@@ -1,4 +1,6 @@
-package thumbtack.buscompany.validators;
+package thumbtack.buscompany.validator.annototion;
+
+import thumbtack.buscompany.validator.impl.FioValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
