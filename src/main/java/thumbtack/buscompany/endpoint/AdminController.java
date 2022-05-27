@@ -45,7 +45,7 @@ public class AdminController {
             throw new ServerException(ErrorCode.NOT_AN_ADMIN, "JAVASESSIONID");
         }
         Admin admin = (Admin) user;
-        AdminResponse response = mapper.adminToAdminResponse(admin);
+        AdminResponse response = mapper.adminToResponse(admin);
         response.setId(null);
         sessionService.updateTime(sessionId);
         return new ResponseEntity<>(response, HttpStatus.OK);

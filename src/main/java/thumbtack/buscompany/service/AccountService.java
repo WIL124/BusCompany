@@ -23,7 +23,7 @@ public class AccountService {
 
     public UserResponse get(User user) {
         return user instanceof Client ?
-                userMapper.clientToClientResponse((Client) user) :
-                userMapper.adminToAdminResponse((Admin) user);
+                userMapper.clientToResponse((Client) user) :
+                userMapper.adminToResponse((Admin) user);
     }
 }

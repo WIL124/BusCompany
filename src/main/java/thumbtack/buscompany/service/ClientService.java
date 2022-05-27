@@ -23,7 +23,7 @@ public class ClientService {
     private UserMapper userMapper;
 
     public Client register(ClientRegisterRequest request) throws ServerException {
-        Client client = userMapper.clientFromRegisterRequest(request);
+        Client client = userMapper.clientFromRequest(request);
         client.canonizePhoneFormat();
         try {
             userDao.insert(client);
@@ -37,7 +37,7 @@ public class ClientService {
 
     public List<UserResponse> getAllClients() {
         return userDao.getAllClients().stream()
-                .map(client -> userMapper.clientToClientResponse(client)).collect(Collectors.toList());
+                .map(client -> userMapper.clientToResponse(client)).collect(Collectors.toList());
     }
 
     public UserResponse updateClient(String sessionId, ClientUpdateRequest request) throws ServerException {
@@ -46,20 +46,10 @@ public class ClientService {
             throw new ServerException(ErrorCode.DIFFERENT_PASSWORDS, "oldPassword");
         }
         Client client = (Client) user;
-        updateClientModel(client, request);
+        userMapper.updateClientFromRequest(request, client);
         client.canonizePhoneFormat();
         userDao.updateClient(client);
         sessionService.updateTime(sessionId);
-        return userMapper.clientToClientResponse(client);
+        return userMapper.clientToResponse(client);
     }
-
-    private void updateClientModel(Client client, ClientUpdateRequest request) {
-        client.setFirstName(request.getFirstName());
-        client.setLastName(request.getLastName());
-        client.setPatronymic(request.getPatronymic());
-        client.setEmail(request.getEmail());
-        client.setPhone(request.getPhone());
-        client.setPassword(request.getNewPassword());
-    }
-
 }

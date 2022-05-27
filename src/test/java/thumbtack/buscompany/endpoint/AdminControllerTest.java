@@ -39,7 +39,7 @@ public class AdminControllerTest extends RestControllerTest {
         MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
         assertEquals(result.getResponse().getStatus(), 400);
-        assertTrue(result.getResponse().getContentAsString().contains("message\":\"null login\""));
+        assertTrue(result.getResponse().getContentAsString().contains("message\":\"must not be blank\""));
         assertTrue(result.getResponse().getContentAsString().contains("field\":\"login\""));
         assertEquals(1, mapFromJson(result.getResponse().getContentAsString(), Errors.class)
                 .getErrors().size());

@@ -14,6 +14,7 @@ public enum ErrorCode {
     NOT_AN_ADMIN("The request can only be executed by an administrator"),
     NOT_A_CLIENT("The request can only be executed by an administrator"),
     SESSION_NOT_FOUND("Session not found"),
-    DIFFERENT_PASSWORDS("passwords must match");
+    DIFFERENT_PASSWORDS("passwords must match"),
+    NOT_FOUND("not found");
     private final String message;
 }

@@ -63,8 +63,8 @@ public class SessionService {
 
     private UserResponse userToResponse(User user) {
         return (user.getUserType() == UserType.ADMIN) ?
-                userMapper.adminToAdminResponse((Admin) user) :
-                userMapper.clientToClientResponse((Client) user);
+                userMapper.adminToResponse((Admin) user) :
+                userMapper.clientToResponse((Client) user);
     }
 
     private boolean adminLogout(String sessionId) throws ServerException {

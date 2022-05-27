@@ -17,7 +17,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = DayPeriodValidator.class)
 public @interface DayPeriod {
 
-    String message() default "{javax.validation.constraints.Future.message}";
+    String message() default "Неверно задано расписание";
 
     Class<?>[] groups() default {};
 

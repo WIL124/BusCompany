@@ -19,7 +19,7 @@ public class AdminService {
 
     @Transactional
     public Admin register(AdminRegisterRequest request) throws ServerException {
-        Admin admin = userMapper.adminFromRegisterRequest(request);
+        Admin admin = userMapper.adminFromRequest(request);
         try {
             userDao.insert(admin);
         } catch (RuntimeException ex) {
@@ -34,16 +34,8 @@ public class AdminService {
         if (!request.getOldPassword().equals(admin.getPassword())) {
             throw new ServerException(ErrorCode.DIFFERENT_PASSWORDS, "oldPassword");
         }
-        updateAdmin(admin, request);
+        userMapper.updateAdminFromRequest(request, admin);
         userDao.updateAdmin(admin);
         return admin;
-    }
-
-    private void updateAdmin(Admin admin, AdminUpdateRequest request) {
-        admin.setFirstName(request.getFirstName());
-        admin.setLastName(request.getLastName());
-        admin.setPosition(request.getPosition());
-        admin.setPatronymic(request.getPatronymic());
-        admin.setPassword(request.getNewPassword());
     }
 }
