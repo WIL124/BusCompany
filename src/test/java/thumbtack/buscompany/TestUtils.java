@@ -2,8 +2,9 @@ package thumbtack.buscompany;
 
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
-import thumbtack.buscompany.request.AdminRegisterRequest;
-import thumbtack.buscompany.request.ClientRegisterRequest;
+import thumbtack.buscompany.request.*;
+
+import java.util.List;
 
 public class TestUtils {
 
@@ -18,12 +19,26 @@ public class TestUtils {
                 "adminLogin", "goodPassword",
                 "leader");
     }
-    public static AdminRegisterRequest createAdminRegReq(){
+
+    public static AdminRegisterRequest createAdminRegReq() {
         return new AdminRegisterRequest("Владислав", "Инютин",
                 null, "admin", "adminLogin", "goodPassword");
     }
-    public static ClientRegisterRequest createClientRegReq(){
+
+    public static ClientRegisterRequest createClientRegReq() {
         return new ClientRegisterRequest("Клиент", "Фамилия",
                 null, "client@mail.ru", "8-908-796-12-44", "clientLogin", "goodPassword");
+    }
+
+    public static AdminUpdateRequest createAdminUpdateReq() {
+        return new AdminUpdateRequest("Владислав", "Инютин", "Игоревич", "admin", "goodNewPass", "goodOldPass");
+    }
+
+    public static TripRequest createTripRequest() {
+        return new TripRequest("Volvo", "Omsk", "Moscow", "04:30", "12:00", 100L, createScheduleDto(), null);
+    }
+
+    public static ScheduleDto createScheduleDto() {
+        return new ScheduleDto("2020.12.01", "2020.12.30", "daily");
     }
 }

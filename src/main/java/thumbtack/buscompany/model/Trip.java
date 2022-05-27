@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+troimport java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,5 +21,5 @@ public class Trip {
     private Bus bus;
     private boolean approved;
     private Schedule schedule;
-    private LocalDate[] dates;
+    private List<LocalDate> dates;
 }

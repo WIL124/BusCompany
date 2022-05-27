@@ -1,18 +1,18 @@
 package thumbtack.buscompany.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import thumbtack.buscompany.BuscompanyApplication;
+import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.AdminUpdateRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
@@ -23,9 +23,7 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = BuscompanyApplication.class)
-@WebAppConfiguration
+@ExtendWith(SpringExtension.class)
 public abstract class RestControllerTest {
     protected MockMvc mockMvc;
     @Autowired
@@ -34,9 +32,11 @@ public abstract class RestControllerTest {
     private ObjectMapper mapper;
     @MockBean
     SessionService sessionService;
+    @MockBean
+    UserMapper userMapper;
 
-
-    protected void setUp() {
+    @BeforeEach
+    protected void setUp() throws ServerException {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
@@ -46,18 +46,6 @@ public abstract class RestControllerTest {
 
     protected <T> T mapFromJson(String json, Class<T> clazz) throws IOException {
         return mapper.readValue(json, clazz);
-    }
-
-    protected static AdminRegisterRequest getAdminRegisterRequest() {
-        return new AdminRegisterRequest("Владислав", "Инютин", "Игоревич", "admin", "goodLogin", "goodPassword");
-    }
-
-    protected static AdminUpdateRequest getAdminUpdateRequest() {
-        return new AdminUpdateRequest("Владислав", "Инютин", "Игоревич", "admin", "goodNewPass", "goodOldPass");
-    }
-
-    protected static ClientRegisterRequest getClientRegisterRequest() {
-        return new ClientRegisterRequest("Яна", "Никифорова", "Михайловна", "enka@gmail.com", "+79087961203", "yanayana1", "goodPassword");
     }
 
     protected ResultActions postRequestWithBody(String URL, Object obj) throws Exception {

@@ -1,20 +1,28 @@
 package thumbtack.buscompany.model;
 
-public enum Weekday {
-    Sun("Sun"),
-    Mon("Mon"),
-    Tue("Tue"),
-    Wed("Wed"),
-    Thu("Thu"),
-    Fri("Fri"),
-    Sat("Sat");
-    private final String value;
+import java.time.DayOfWeek;
 
-    Weekday(String value) {
+public enum Weekday {
+    Sun("Sun", DayOfWeek.SUNDAY),
+    Mon("Mon", DayOfWeek.MONDAY),
+    Tue("Tue", DayOfWeek.TUESDAY),
+    Wed("Wed", DayOfWeek.WEDNESDAY),
+    Thu("Thu", DayOfWeek.THURSDAY),
+    Fri("Fri", DayOfWeek.FRIDAY),
+    Sat("Sat", DayOfWeek.SATURDAY);
+    private final String value;
+    private final DayOfWeek dayOfWeek;
+
+    Weekday(String value, DayOfWeek dayOfWeek) {
         this.value = value;
+        this.dayOfWeek = dayOfWeek;
     }
 
     public String getValue() {
         return value;
+    }
+
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
     }
 }

@@ -15,6 +15,7 @@ public enum ErrorCode {
     NOT_A_CLIENT("The request can only be executed by an administrator"),
     SESSION_NOT_FOUND("Session not found"),
     DIFFERENT_PASSWORDS("passwords must match"),
-    NOT_FOUND("not found");
+    NOT_FOUND("not found"),
+    WRONG_DATE_INTERVAL("the specified interval does not contain a single day");
     private final String message;
 }

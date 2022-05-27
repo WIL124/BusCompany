@@ -1,11 +1,10 @@
 package thumbtack.buscompany.endpoint;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
 import thumbtack.buscompany.exception.Errors;
@@ -16,26 +15,21 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static thumbtack.buscompany.TestUtils.createClientRegReq;
 
+@WebMvcTest(controllers = ClientController.class)
 public class ClientControllerTest extends RestControllerTest {
     private static final String URL = "/api/clients";
     @MockBean
     ClientService clientService;
 
-    @Before
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-    }
-
     @Test
     public void clientRegister_ShouldCallClientService() throws Exception {
-        ClientRegisterRequest clientRegisterRequest = getClientRegisterRequest();
+        ClientRegisterRequest clientRegisterRequest = createClientRegReq();
         postRequestWithBody(URL, clientRegisterRequest).andExpect(status().isOk());
     }
+
     public static Stream<Arguments> invalidPhoneNumbers() {
         return Stream.of(
                 Arguments.arguments("12345678901"),
@@ -53,10 +47,11 @@ public class ClientControllerTest extends RestControllerTest {
                 Arguments.arguments("+7(908)7961203")
         );
     }
+
     @ParameterizedTest
     @MethodSource("invalidPhoneNumbers")
     public void registerClient_invalidPhone_shouldReturn400AndMessage(String phoneNumber) throws Exception { //Testing Phone annotation
-        ClientRegisterRequest clientRegisterRequest = getClientRegisterRequest();
+        ClientRegisterRequest clientRegisterRequest = createClientRegReq();
         clientRegisterRequest.setPhone(phoneNumber);
         MvcResult result = postRequestWithBody(URL, clientRegisterRequest)
                 .andReturn();
@@ -67,6 +62,7 @@ public class ClientControllerTest extends RestControllerTest {
         assertEquals("incorrect phone number format", mapFromJson(result.getResponse().getContentAsString(), Errors.class)
                 .getErrors().stream().findFirst().get().getMessage());
     }
+
     public static Stream<Arguments> validPhoneNumbers() {
         return Stream.of(
                 Arguments.arguments("89087961203"),
@@ -76,10 +72,11 @@ public class ClientControllerTest extends RestControllerTest {
                 Arguments.arguments("+79087961203")
         );
     }
+
     @ParameterizedTest
     @MethodSource("validPhoneNumbers")
     public void registerClient_validPhone_shouldCallService(String phoneNumber) throws Exception { //Testing Phone annotation
-        ClientRegisterRequest clientRegisterRequest = getClientRegisterRequest();
+        ClientRegisterRequest clientRegisterRequest = createClientRegReq();
         clientRegisterRequest.setPhone(phoneNumber);
         MvcResult result = postRequestWithBody(URL, clientRegisterRequest).andReturn();
     }

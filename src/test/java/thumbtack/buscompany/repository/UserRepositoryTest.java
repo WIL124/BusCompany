@@ -1,11 +1,12 @@
 package thumbtack.buscompany.repository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import lombok.NoArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import thumbtack.buscompany.dao.DebugDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
@@ -16,8 +17,9 @@ import static thumbtack.buscompany.TestUtils.createAdmin;
 import static thumbtack.buscompany.TestUtils.createClient;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@NoArgsConstructor
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
@@ -26,7 +28,7 @@ public class UserRepositoryTest {
     @Autowired
     DebugDao debugDao;
 
-    @Before
+    @BeforeEach
     public void clear() {
         debugDao.clear();
     }

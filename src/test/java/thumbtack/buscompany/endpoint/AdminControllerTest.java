@@ -1,40 +1,31 @@
 package thumbtack.buscompany.endpoint;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
 import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.request.AdminRegisterRequest;
-import thumbtack.buscompany.request.AdminUpdateRequest;
 import thumbtack.buscompany.service.AdminService;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 
+@WebMvcTest(controllers = AdminController.class)
 public class AdminControllerTest extends RestControllerTest {
 
     private static final String URL = "/api/admins";
     @MockBean
     private AdminService adminService;
 
-    @Before
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-    }
-
     @Test
     public void registerAdmin_NullLogin_shouldReturn400AndMessage() throws Exception {
-        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        AdminRegisterRequest adminRegisterRequest = createAdminRegReq();
         adminRegisterRequest.setLogin(null);
         MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
@@ -62,7 +53,7 @@ public class AdminControllerTest extends RestControllerTest {
     @ParameterizedTest
     @MethodSource("parametersForFioValidation")
     public void registerAdmin_invalidFirstname_shouldReturn400AndMessage(String name) throws Exception { //Testing Fio annotation
-        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        AdminRegisterRequest adminRegisterRequest = createAdminRegReq();
         adminRegisterRequest.setFirstName(name);
         MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
@@ -74,7 +65,7 @@ public class AdminControllerTest extends RestControllerTest {
 
     @Test
     public void registerAdmin_invalidLogin_shouldReturn400_andMaxLengthMessage() throws Exception {  //Testing MaxSize annotation
-        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        AdminRegisterRequest adminRegisterRequest = createAdminRegReq();
         adminRegisterRequest.setLogin("veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeryLongLogin");
         MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();
@@ -88,7 +79,7 @@ public class AdminControllerTest extends RestControllerTest {
 
     @Test
     public void registerAdmin_invalidPassword_shouldReturn400_andMinPasswordLengthMessage() throws Exception {  //Testing MinPasswordSize annotation
-        AdminRegisterRequest adminRegisterRequest = getAdminRegisterRequest();
+        AdminRegisterRequest adminRegisterRequest = createAdminRegReq();
         adminRegisterRequest.setPassword("pass");
         MvcResult result = postRequestWithBody(URL, adminRegisterRequest)
                 .andReturn();

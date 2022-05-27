@@ -10,7 +10,7 @@ import java.time.format.DateTimeParseException;
 public class OnlyScheduleOrDatesValidator implements ConstraintValidator<OnlyScheduleOrDates, TripRequest> {
     @Override
     public boolean isValid(TripRequest request, ConstraintValidatorContext context) {
-        if ((request.getDates() == null) == (request.getSchedule() == null)) {
+        if ((request.getDates() == null) == (request.getScheduleDto() == null)) {
             return false;
         }
         try {

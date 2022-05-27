@@ -3,7 +3,6 @@ package thumbtack.buscompany.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import thumbtack.buscompany.model.Schedule;
 import thumbtack.buscompany.validator.annototion.Dates;
 import thumbtack.buscompany.validator.annototion.OnlyScheduleOrDates;
 
@@ -11,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -30,7 +30,7 @@ public class TripRequest {
     @Min(value = 1)
     private Long price;
     @Valid
-    private Schedule schedule;
+    private ScheduleDto scheduleDto;
     @Dates
-    private String[] dates;
+    private List<String> dates;
 }
