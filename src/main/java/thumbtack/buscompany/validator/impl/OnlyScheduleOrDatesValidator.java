@@ -5,7 +5,6 @@ import thumbtack.buscompany.validator.annototion.OnlyScheduleOrDates;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.format.DateTimeParseException;
 
 public class OnlyScheduleOrDatesValidator implements ConstraintValidator<OnlyScheduleOrDates, TripRequest> {
     @Override
@@ -13,11 +12,9 @@ public class OnlyScheduleOrDatesValidator implements ConstraintValidator<OnlySch
         if ((request.getDates() == null) == (request.getScheduleDto() == null)) {
             return false;
         }
-        try {
-        } catch (DateTimeParseException ex) {
-            return false;
+        if (request.getDates() != null){
+            return !request.getDates().isEmpty();
         }
-
         return true;
     }
 }

@@ -61,7 +61,7 @@ public class TripService {
             case ("daily"):
                 return localDate -> true;
         }
-        List<String> stringList = Arrays.stream(period.trim().split(",")).toList();
+        List<String> stringList = Arrays.asList(period.trim().split(","));
         if (NumberUtils.isParsable(stringList.get(0))) {
             return localDate -> stringList.parallelStream()
                     .map(Integer::parseInt)

@@ -34,11 +34,18 @@ public class TestUtils {
         return new AdminUpdateRequest("Владислав", "Инютин", "Игоревич", "admin", "goodNewPass", "goodOldPass");
     }
 
-    public static TripRequest createTripRequest() {
+    public static TripRequest createTripRequestWithSchedule() {
         return new TripRequest("Volvo", "Omsk", "Moscow", "04:30", "12:00", 100L, createScheduleDto(), null);
+    }
+    public static TripRequest createTripRequestWithDates() {
+        return new TripRequest("Volvo", "Omsk", "Moscow", "04:30", "12:00", 100L, null, createDates());
     }
 
     public static ScheduleDto createScheduleDto() {
         return new ScheduleDto("2020.12.01", "2020.12.30", "daily");
+    }
+
+    public static List<String> createDates() {
+        return List.of("2020.12.01", "2021.01.05", "2022.05.04", "2022.05.05");
     }
 }

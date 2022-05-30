@@ -9,6 +9,7 @@ import thumbtack.buscompany.validator.annototion.OnlyScheduleOrDates;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
@@ -24,13 +25,15 @@ public class TripRequest {
     @NotEmpty
     private String toStation;
     @Pattern(regexp = "^(0\\d|1\\d|2[0-3]):[0-5]\\d$")
+    @NotNull
     private String start;
+    @NotNull
     @Pattern(regexp = "^(0\\d|1\\d|2[0-3]):[0-5]\\d$")
     private String duration;
     @Min(value = 1)
+    @NotNull
     private Long price;
     @Valid
     private ScheduleDto scheduleDto;
-    @Dates
-    private List<String> dates;
+    private List<@Dates String> dates;
 }
