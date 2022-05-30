@@ -63,11 +63,12 @@ CREATE TABLE trips
     PRIMARY KEY (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
-##TODO dates or schedule in table
+
 CREATE TABLE trips_dates
 (
     trip_id     INT,
     date        DATE,
     place_count INT,
     FOREIGN KEY (trip_id) REFERENCES trips (id)
-)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8;

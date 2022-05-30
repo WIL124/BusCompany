@@ -18,7 +18,7 @@ import static thumbtack.buscompany.TestUtils.createClient;
 
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @NoArgsConstructor
 public class UserRepositoryTest {
     @Autowired

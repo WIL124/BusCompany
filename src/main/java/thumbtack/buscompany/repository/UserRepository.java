@@ -4,13 +4,11 @@ import org.apache.ibatis.annotations.*;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
-import thumbtack.buscompany.model.UserType;
 
 import java.util.List;
 
 @Mapper
 public interface UserRepository {
-
     @Insert("INSERT INTO USERS (firstname, lastname, patronymic, login, password, userType)" +
             "values(#{user.firstName}, #{user.lastName}, #{user.patronymic}," +
             " #{user.login}, #{user.password}, #{user.userType})")

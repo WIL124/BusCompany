@@ -5,17 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
-import thumbtack.buscompany.request.AdminRegisterRequest;
-import thumbtack.buscompany.request.AdminUpdateRequest;
-import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.service.SessionService;
 
 import java.io.IOException;
@@ -36,7 +33,7 @@ public abstract class RestControllerTest {
     UserMapper userMapper;
 
     @BeforeEach
-    protected void setUp() throws ServerException {
+    protected void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
@@ -52,6 +49,13 @@ public abstract class RestControllerTest {
         return mockMvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapToJson(obj)));
+    }
+
+    protected ResultActions postRequestWithBodyAndCookie(String URL, Object obj) throws Exception {
+        return mockMvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(obj))
+                .header(HttpHeaders.COOKIE, "JAVASESSIONID=23"));
     }
 
     protected ResultActions putRequestWithBody(String URL, Object obj) throws Exception {
