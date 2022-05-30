@@ -9,8 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface BusRepository {
-    @Select("SELECT * FROM buses")
+    @Select("SELECT busName, placeCount FROM buses")
     List<Bus> getAll();
-    @Select("SELECT * FROM buses WHERE busName = #{name}")
+
+    @Select("SELECT busName, placeCount FROM buses WHERE busName = #{name}")
     Bus get(@Param("name") String name);
 }

@@ -52,7 +52,7 @@ CREATE TABLE buses
   DEFAULT CHARSET = utf8;
 CREATE TABLE trips
 (
-    id          INT AUTO_INCREMENT,
+    tripId      INT AUTO_INCREMENT,
     busName     VARCHAR(50) NOT NULL,
     fromStation VARCHAR(50) NOT NULL,
     toStation   VARCHAR(50) NOT NULL,
@@ -60,15 +60,16 @@ CREATE TABLE trips
     duration    TIME        NOT NULL,
     price       DECIMAL(10, 2) UNSIGNED,
     FOREIGN KEY (busName) REFERENCES buses (busName),
-    PRIMARY KEY (id)
+    PRIMARY KEY (tripId)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE trips_dates
 (
-    trip_id     INT,
+    tripId      INT,
     date        DATE,
     place_count INT,
-    FOREIGN KEY (trip_id) REFERENCES trips (id)
+    FOREIGN KEY (tripId) REFERENCES trips (tripId),
+    UNIQUE (tripId, date)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;

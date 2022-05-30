@@ -76,4 +76,18 @@ public class TripService {
                 .map(str -> Weekday.valueOf(str).getDayOfWeek())
                 .anyMatch(dayOfWeek -> dayOfWeek == localDate.getDayOfWeek());
     }
+
+    public Trip update(int tripId, TripRequest body) throws ServerException {
+        Trip updatedTrip = tripMapper.tripFromRequest(body);
+        if (updatedTrip.getSchedule() != null) {
+            List<LocalDate> dates = createDatesFromSchedule(updatedTrip.getSchedule());
+            updatedTrip.setDates(dates);
+        }
+        try {
+            tripDao.update(tripId, updatedTrip);
+        } catch (RuntimeException e) {
+            throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
+        }
+        return updatedTrip;
+    }
 }

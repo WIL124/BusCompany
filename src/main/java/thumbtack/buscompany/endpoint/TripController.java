@@ -26,7 +26,17 @@ public class TripController {
                            @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
+            sessionService.updateTime(sessionId);
             return tripService.create(body);
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+    }
+    @PutMapping("/{tripId}")
+    public Trip updateTrip(@Valid @RequestBody TripRequest body,
+                           @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Admin) {
+            sessionService.updateTime(sessionId);
+            return tripService.update(tripId, body);
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
     }
 }
