@@ -44,4 +44,7 @@ public interface TripRepository {
 
     @Delete("DELETE * FROM trips WHERE tripId = #{tripId}")
     boolean deleteTrip(@Param("tripId") int tripId);
+
+    @Update("UPDATE trips SET approved = true WHERE tripId = #{tripId}")
+    boolean approve(int tripId);
 }

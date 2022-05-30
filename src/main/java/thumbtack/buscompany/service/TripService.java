@@ -93,4 +93,14 @@ public class TripService {
     public boolean deleteTrip(int tripId) {
         return tripDao.deleteTrip(tripId);
     }
+
+    public Trip getTrip(int tripId) throws ServerException {
+        return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "tripId"));
+    }
+
+    public Trip approve(int tripId) throws ServerException {
+        if (tripDao.approve(tripId)) {
+            return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "tripId"));
+        } else throw new ServerException(ErrorCode.NOT_FOUND, "tripId"); //TODO fix exceptions
+    }
 }

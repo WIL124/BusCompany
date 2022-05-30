@@ -40,4 +40,9 @@ public class TripDaoImpl implements TripDao {
     public boolean deleteTrip(int tripId) {
         return tripRepository.deleteTrip(tripId);
     }
+
+    @Override
+    public boolean approve(int tripId) {
+        return tripRepository.approve(tripId);
+    }
 }

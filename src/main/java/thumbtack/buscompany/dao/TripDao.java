@@ -12,4 +12,6 @@ public interface TripDao {
     boolean update(int tripId, Trip body);
 
     boolean deleteTrip(int tripId);
+
+    boolean approve(int tripId);
 }

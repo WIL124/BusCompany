@@ -58,6 +58,7 @@ CREATE TABLE trips
     toStation   VARCHAR(50) NOT NULL,
     start       TIME        NOT NULL,
     duration    TIME        NOT NULL,
+    approved    boolean default false,
     price       DECIMAL(10, 2) UNSIGNED,
     FOREIGN KEY (busName) REFERENCES buses (busName),
     PRIMARY KEY (tripId)

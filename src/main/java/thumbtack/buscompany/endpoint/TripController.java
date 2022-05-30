@@ -54,4 +54,22 @@ public class TripController {
 
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
     }
+
+    @GetMapping("/{tripId}")
+    public Trip get(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Admin) {
+            sessionService.updateTime(sessionId);
+            return tripService.getTrip(tripId);
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+    }
+
+    @PutMapping("/{tripId}/approve")
+    public Trip approve(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Admin) {
+            sessionService.updateTime(sessionId);
+            return tripService.approve(tripId);
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+    }
 }
