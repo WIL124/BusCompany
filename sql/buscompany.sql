@@ -38,7 +38,7 @@ CREATE TABLE sessions
     user_id            INT         NOT NULL,
     session_id         VARCHAR(36) NOT NULL,
     last_activity_time long        NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     UNIQUE KEY (session_id),
     PRIMARY KEY (user_id)
 ) ENGINE = INNODB
@@ -69,7 +69,7 @@ CREATE TABLE trips_dates
     tripId      INT,
     date        DATE,
     place_count INT,
-    FOREIGN KEY (tripId) REFERENCES trips (tripId),
+    FOREIGN KEY (tripId) REFERENCES trips (tripId) ON DELETE CASCADE,
     UNIQUE (tripId, date)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;

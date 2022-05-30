@@ -37,7 +37,6 @@ public class TripService {
     }
 
     private List<LocalDate> createDatesFromSchedule(Schedule schedule) throws ServerException {
-        //TODO
         List<LocalDate> totalDates = new ArrayList<>();
         LocalDate start = schedule.getFromDate();
         LocalDate end = schedule.getToDate();
@@ -89,5 +88,9 @@ public class TripService {
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
         return updatedTrip;
+    }
+
+    public boolean deleteTrip(int tripId) {
+        return tripDao.deleteTrip(tripId);
     }
 }

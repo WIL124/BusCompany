@@ -10,4 +10,6 @@ public interface TripDao {
     Optional<Trip> getTrip(int tripId);
 
     boolean update(int tripId, Trip body);
+
+    boolean deleteTrip(int tripId);
 }

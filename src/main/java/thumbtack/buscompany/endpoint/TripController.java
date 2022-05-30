@@ -1,6 +1,8 @@
 package thumbtack.buscompany.endpoint;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -30,6 +32,7 @@ public class TripController {
             return tripService.create(body);
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
     }
+
     @PutMapping("/{tripId}")
     public Trip updateTrip(@Valid @RequestBody TripRequest body,
                            @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
@@ -37,6 +40,18 @@ public class TripController {
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             return tripService.update(tripId, body);
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+    }
+
+    @DeleteMapping("/{tripId}")
+    public ResponseEntity<Void> deleteTrip(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Admin) {
+            sessionService.updateTime(sessionId);
+            if (tripService.deleteTrip(tripId)) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else throw new ServerException(ErrorCode.NOT_FOUND, "JAVASESSIONID");
+
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
     }
 }

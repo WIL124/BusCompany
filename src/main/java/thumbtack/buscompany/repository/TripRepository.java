@@ -38,6 +38,10 @@ public interface TripRepository {
             "price = #{trip.price}" +
             "WHERE tripId = #{tripId}")
     boolean updateTripProperties(@Param("tripId") int tripId, @Param("trip") Trip trip);
+
     @Delete("DELETE * FROM trips_dates WHERE tripId = #{tripId}")
     boolean deleteAllTripDates(@Param("tripId") int tripId);
+
+    @Delete("DELETE * FROM trips WHERE tripId = #{tripId}")
+    boolean deleteTrip(@Param("tripId") int tripId);
 }

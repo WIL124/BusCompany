@@ -35,4 +35,9 @@ public class TripDaoImpl implements TripDao {
         body.getDates().forEach(date -> tripRepository.insertTripDate(body, date));
         return first && second;
     }
+
+    @Override
+    public boolean deleteTrip(int tripId) {
+        return tripRepository.deleteTrip(tripId);
+    }
 }
