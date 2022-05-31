@@ -8,11 +8,12 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = MinPassLengthValidator.class)
-@Target( { ElementType. METHOD, ElementType. FIELD })
-@Retention(RetentionPolicy. RUNTIME)
+@Target({ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MinPassLength {
-    int minLength() default 8;
-    String message() default "{minLength} is min password length";
+    String message() default "8 is min password length";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

@@ -1,23 +1,24 @@
 package thumbtack.buscompany.validator.impl;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import thumbtack.buscompany.validator.annototion.MaxSize;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+@Component
 public class MaxSizeValidator implements ConstraintValidator<MaxSize, String> {
-    private int max_name_length;
+    private final int maxNameLength;
 
-    @Override
-    public void initialize(MaxSize constraintAnnotation) {
-        this.max_name_length = constraintAnnotation.maxLength();
+    MaxSizeValidator(@Value("${property.max_name_length}") int maxNameLength) {
+        this.maxNameLength = maxNameLength;
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        if (s !=null) {
-            return s.length() <= max_name_length;
-        }
-        else return true;
+        if (s != null) {
+            return s.length() <= maxNameLength;
+        } else return true;
     }
 }

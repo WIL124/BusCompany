@@ -2,7 +2,10 @@ package thumbtack.buscompany.mapper;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.mapstruct.*;
+import org.mapstruct.IterableMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Schedule;

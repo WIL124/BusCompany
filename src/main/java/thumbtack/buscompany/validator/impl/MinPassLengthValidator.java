@@ -1,22 +1,22 @@
 package thumbtack.buscompany.validator.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import thumbtack.buscompany.validator.annototion.MinPassLength;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class MinPassLengthValidator implements ConstraintValidator<MinPassLength, String> {
-    private int min_password_length;
+    private final int minPasswordLength;
 
-    @Override
-    public void initialize(MinPassLength constraintAnnotation) {
-        this.min_password_length = constraintAnnotation.minLength();
+    MinPassLengthValidator(@Value("${property.min_password_length}") int minPasswordLength) {
+        this.minPasswordLength = minPasswordLength;
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         if (s != null) {
-            return s.length() >= min_password_length;
+            return s.length() >= minPasswordLength;
         } else return true;
     }
 }

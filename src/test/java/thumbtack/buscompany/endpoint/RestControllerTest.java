@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(SpringExtension.class)
 public abstract class RestControllerTest {
     protected MockMvc mockMvc;
+
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
