@@ -15,7 +15,7 @@ public class ScheduleValidator implements ConstraintValidator<Schedule, Schedule
     public boolean isValid(ScheduleDto value, ConstraintValidatorContext context) {
         try {
             if (value == null) return true;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.d");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
             LocalDate from = LocalDate.parse(value.getFromDate(), formatter);
             LocalDate to = LocalDate.parse(value.getToDate(), formatter);
             if (from.isAfter(to)) {

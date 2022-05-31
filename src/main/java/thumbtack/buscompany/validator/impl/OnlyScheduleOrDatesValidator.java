@@ -12,7 +12,7 @@ public class OnlyScheduleOrDatesValidator implements ConstraintValidator<OnlySch
         if ((request.getDates() == null) == (request.getScheduleDto() == null)) {
             return false;
         }
-        if (request.getDates() != null){
+        if (request.getDates() != null) {
             return !request.getDates().isEmpty();
         }
         return true;

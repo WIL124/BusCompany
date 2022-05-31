@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Trip;
+import thumbtack.buscompany.model.TripParams;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.service.SessionService;
@@ -15,12 +17,14 @@ import thumbtack.buscompany.service.TripService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/trips")
 public class TripController {
     TripService tripService;
+    TripMapper tripMapper;
     SessionService sessionService;
 
     @PostMapping
@@ -71,5 +75,18 @@ public class TripController {
             sessionService.updateTime(sessionId);
             return tripService.approve(tripId);
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+    }
+
+    @GetMapping
+    public List<Trip> getAllWithFilter(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId,
+                                       @RequestParam(value = "fromStation", required = false) String fromStation,
+                                       @RequestParam(value = "toStation", required = false) String toStation,
+                                       @RequestParam(value = "busName", required = false) String busName,
+                                       @RequestParam(value = "fromDate", required = false) String fromDate,
+                                       @RequestParam(value = "toDate", required = false) String toDate) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        sessionService.updateTime(sessionId);
+        TripParams params = tripMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation);
+        return tripService.getTripsWithParams(user, params);
     }
 }

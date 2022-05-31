@@ -60,6 +60,8 @@ CREATE TABLE trips
     duration    TIME        NOT NULL,
     approved    boolean default false,
     price       DECIMAL(10, 2) UNSIGNED,
+    fromDate    date        not null,
+    toDate      date        not null,
     FOREIGN KEY (busName) REFERENCES buses (busName),
     PRIMARY KEY (tripId)
 ) ENGINE = INNODB

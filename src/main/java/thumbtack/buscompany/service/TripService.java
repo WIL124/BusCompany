@@ -7,9 +7,7 @@ import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.TripMapper;
-import thumbtack.buscompany.model.Schedule;
-import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.model.Weekday;
+import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.TripRequest;
 
 import java.time.LocalDate;
@@ -102,5 +100,13 @@ public class TripService {
         if (tripDao.approve(tripId)) {
             return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "tripId"));
         } else throw new ServerException(ErrorCode.NOT_FOUND, "tripId"); //TODO fix exceptions
+    }
+
+    public List<Trip> getTripsWithParams(User user, TripParams paramsFromRequest) {
+        List<Trip> tripList = tripDao.getTripsWithParams(user, paramsFromRequest);
+        if (user instanceof Client) {
+            tripList.forEach(e -> e.setApproved(null));
+        }
+        return tripList;
     }
 }

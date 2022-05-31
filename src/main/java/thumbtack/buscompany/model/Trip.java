@@ -20,7 +20,7 @@ public class Trip {
     private LocalTime duration;
     private Long price;
     private Bus bus;
-    private boolean approved;
+    private Boolean approved;
     private Schedule schedule;
     private List<LocalDate> dates;
 }

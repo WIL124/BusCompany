@@ -12,7 +12,7 @@ public class DatesValidator implements ConstraintValidator<Dates, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         try {
-            LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy.MM.d"));
+            LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         } catch (DateTimeParseException e) {
             return false;
         }

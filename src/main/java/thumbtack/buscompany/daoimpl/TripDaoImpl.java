@@ -5,8 +5,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.model.Trip;
+import thumbtack.buscompany.model.TripParams;
+import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.repository.TripRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -44,5 +47,10 @@ public class TripDaoImpl implements TripDao {
     @Override
     public boolean approve(int tripId) {
         return tripRepository.approve(tripId);
+    }
+
+    @Override
+    public List<Trip> getTripsWithParams(User user, TripParams params) {
+        return tripRepository.getTripsWithParams(user, params);
     }
 }
