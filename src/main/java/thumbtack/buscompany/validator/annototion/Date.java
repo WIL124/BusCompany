@@ -1,6 +1,6 @@
 package thumbtack.buscompany.validator.annototion;
 
-import thumbtack.buscompany.validator.impl.DatesValidator;
+import thumbtack.buscompany.validator.impl.DateValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 
 @Documented
-@Constraint(validatedBy = DatesValidator.class)
+@Constraint(validatedBy = DateValidator.class)
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Dates {
+public @interface Date {
 
     String message() default "Неверный формат дат";
 

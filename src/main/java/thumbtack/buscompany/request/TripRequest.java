@@ -3,7 +3,7 @@ package thumbtack.buscompany.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import thumbtack.buscompany.validator.annototion.Dates;
+import thumbtack.buscompany.validator.annototion.Date;
 import thumbtack.buscompany.validator.annototion.OnlyScheduleOrDates;
 
 import javax.validation.Valid;
@@ -35,5 +35,5 @@ public class TripRequest {
     private Long price;
     @Valid
     private ScheduleDto scheduleDto;
-    private List<@Dates String> dates;
+    private List<@Date String> dates;
 }
