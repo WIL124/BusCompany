@@ -2,7 +2,6 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.TripParams;
@@ -18,7 +17,6 @@ public class TripDaoImpl implements TripDao {
     TripRepository tripRepository;
 
     @Override
-    @Transactional
     public void insert(Trip trip) {
         tripRepository.insertTrip(trip);
         trip.getDates().forEach(date -> tripRepository.insertTripDate(trip, date));
@@ -30,7 +28,6 @@ public class TripDaoImpl implements TripDao {
     }
 
     @Override
-    @Transactional
     public boolean update(int tripId, Trip body) {
         boolean first = tripRepository.updateTripProperties(tripId, body);
         boolean second = tripRepository.deleteAllTripDates(tripId);

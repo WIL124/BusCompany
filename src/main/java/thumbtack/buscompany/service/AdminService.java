@@ -2,7 +2,6 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -17,7 +16,6 @@ public class AdminService {
     private UserDao userDao;
     private UserMapper userMapper;
 
-    @Transactional
     public Admin register(AdminRegisterRequest request) throws ServerException {
         Admin admin = userMapper.adminFromRequest(request);
         try {
