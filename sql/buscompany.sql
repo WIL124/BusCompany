@@ -92,6 +92,6 @@ CREATE TABLE passengers
     firstName VARCHAR(50) NOT NULL,
     lastName  VARCHAR(50) NOT NULL,
     passport  INT         NOT NULL,
-    FOREIGN KEY (orderId) REFERENCES orders (orderId)
+    FOREIGN KEY (orderId) REFERENCES orders (orderId) ON DELETE CASCADE
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;

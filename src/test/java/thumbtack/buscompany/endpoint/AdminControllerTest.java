@@ -18,8 +18,8 @@ import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 
 @WebMvcTest(controllers = AdminController.class)
 public class AdminControllerTest extends RestControllerTest {
-
     private static final String URL = "/api/admins";
+
     @MockBean
     private AdminService adminService;
 

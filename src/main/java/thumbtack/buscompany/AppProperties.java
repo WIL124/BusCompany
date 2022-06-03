@@ -1,14 +1,19 @@
 package thumbtack.buscompany;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
+@ConfigurationProperties(prefix = "property")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AppProperties {
-    public static int PORT;
-
-    @Value("${server.port}")
-    public void setPort(int port) {
-        PORT = port;
-    }
+    private int port;
+    private int maxNameLength;
+    private int minPasswordLength;
+    private int userIdleTimeout;
 }

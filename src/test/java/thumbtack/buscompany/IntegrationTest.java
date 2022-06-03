@@ -1,15 +1,12 @@
 package thumbtack.buscompany;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import thumbtack.buscompany.exception.ApiErrors;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
@@ -28,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 import static thumbtack.buscompany.TestUtils.createClientRegReq;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @NoArgsConstructor
 public class IntegrationTest {
