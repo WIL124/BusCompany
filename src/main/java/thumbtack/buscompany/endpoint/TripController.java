@@ -6,10 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.mapper.ParamsMapper;
 import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.model.TripParams;
+import thumbtack.buscompany.model.RequestParams;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.service.SessionService;
@@ -26,6 +27,7 @@ public class TripController {
     TripService tripService;
     TripMapper tripMapper;
     SessionService sessionService;
+    ParamsMapper paramsMapper;
 
     @PostMapping
     public Trip createTrip(@Valid @RequestBody TripRequest body,
@@ -86,7 +88,7 @@ public class TripController {
                                        @RequestParam(value = "toDate", required = false) String toDate) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         sessionService.updateTime(sessionId);
-        TripParams params = tripMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation);
+        RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, null);
         return tripService.getTripsWithParams(user, params);
     }
 }

@@ -2,12 +2,14 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.repository.UserRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +20,14 @@ public class UserDaoImpl implements UserDao {
     UserRepository userRepository;
 
     @Override
+    @Transactional(rollbackFor = SQLException.class)
     public void insert(Admin admin) {
         userRepository.insertUserProperties(admin);
         userRepository.insertAdminProperties(admin);
     }
 
     @Override
+    @Transactional(rollbackFor = SQLException.class)
     public void insert(Client client) {
         userRepository.insertUserProperties(client);
         userRepository.insertClientProperties(client);
@@ -40,11 +44,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    @Transactional(rollbackFor = SQLException.class)
     public boolean updateAdmin(Admin admin) {
         return (userRepository.updateUserProperties(admin) && userRepository.updateAdminProperties(admin));
     }
 
     @Override
+    @Transactional(rollbackFor = SQLException.class)
     public boolean updateClient(Client client) {
         return (userRepository.updateUserProperties(client) && userRepository.updateClientProperties(client));
     }

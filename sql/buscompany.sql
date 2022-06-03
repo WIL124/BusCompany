@@ -78,11 +78,13 @@ CREATE TABLE trips_dates
 
 CREATE TABLE orders
 (
-    orderId INT AUTO_INCREMENT,
-    tripId  INT  NOT NULL,
-    date    DATE NOT NULL,
+    orderId  INT AUTO_INCREMENT,
+    tripId   INT  NOT NULL,
+    date     DATE NOT NULL,
+    clientId INT  NOT NULL,
     PRIMARY KEY (orderId),
-    FOREIGN KEY (tripId) REFERENCES trips (tripId)
+    FOREIGN KEY (tripId) REFERENCES trips (tripId),
+    FOREIGN KEY (clientId) REFERENCES clients (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 

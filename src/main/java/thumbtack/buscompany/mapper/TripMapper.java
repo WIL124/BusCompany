@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Schedule;
 import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.model.TripParams;
+import thumbtack.buscompany.model.RequestParams;
 import thumbtack.buscompany.request.ScheduleDto;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.service.BusService;
@@ -37,9 +37,4 @@ public abstract class TripMapper {
     @Mapping(target = "fromDate", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "toDate", dateFormat = "yyyy.MM.dd")
     public abstract Schedule scheduleFromDto(ScheduleDto scheduleDto);
-
-    @Mapping(target = "fromDate", dateFormat = "yyyy.MM.dd")
-    @Mapping(target = "toDate", dateFormat = "yyyy.MM.dd")
-    public abstract TripParams paramsFromRequest(String fromDate, String toDate, String busName,
-                                                 String fromStation, String toStation);
 }

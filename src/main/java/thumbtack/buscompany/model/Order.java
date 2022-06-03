@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Order {
     private Integer orderId;
+    private Client client;
     private LocalDate date;
     private Trip trip;
     private List<Passenger> passengers;

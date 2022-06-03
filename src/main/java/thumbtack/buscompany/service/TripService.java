@@ -102,7 +102,7 @@ public class TripService {
         } else throw new ServerException(ErrorCode.NOT_FOUND, "tripId"); //TODO fix exceptions
     }
 
-    public List<Trip> getTripsWithParams(User user, TripParams paramsFromRequest) {
+    public List<Trip> getTripsWithParams(User user, RequestParams paramsFromRequest) {
         List<Trip> tripList = tripDao.getTripsWithParams(user, paramsFromRequest);
         if (user instanceof Client) {
             tripList.forEach(e -> e.setApproved(null));

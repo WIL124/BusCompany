@@ -52,17 +52,19 @@ public interface TripRepository {
 
     @SelectProvider(type = SqlProvider.class, method = "getTripsWithParams")
     @ResultMap("trip")
-    List<Trip> getTripsWithParams(@Param("user") User user, @Param("params") TripParams params);
+    List<Trip> getTripsWithParams(@Param("user") User user, @Param("params") RequestParams params);
 
     class SqlProvider {
-        public static String getTripsWithParams(User user, TripParams params) {
+        public static String getTripsWithParams(User user, RequestParams params) {
             String sql = new SQL() {
                 {
-                    SELECT("tripId", "busName", "duration", "fromStation", "toStation", "start", "price");
+                    SELECT("trips.tripId AS tripId", "busName", "duration", "fromStation", "toStation",
+                            "start", "price", "MAX(date) AS maxDate", "MIN(date) AS minDate");
                     if (user instanceof Admin) {
                         SELECT("approved");
                     }
                     FROM("trips");
+                    LEFT_OUTER_JOIN("trips_dates ON trips.tripId = trips_dates.tripId");
                     if (user instanceof Client) {
                         WHERE("approved = TRUE");
                     }
@@ -71,10 +73,10 @@ public interface TripRepository {
                             WHERE("busName like #{params.busName}");
                         }
                         if (params.getFromDate() != null) {
-                            WHERE("fromDate > #{params.fromDate}");
+                            WHERE("minDate > #{params.fromDate}");
                         }
                         if (params.getToDate() != null) {
-                            WHERE("toDate < #{params.toDate}");
+                            WHERE("maxDate < #{params.toDate}");
                         }
                         if (params.getToStation() != null) {
                             WHERE("toStation = #{params.toStation}");

@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.request.OrderRequest;
 import thumbtack.buscompany.response.OrderResponse;
@@ -27,5 +28,5 @@ public abstract class OrderMapper {
     public abstract OrderResponse orderToResponse(Order order) ;
     @Mapping(target = "date", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "trip", expression = "java(tripService.getTrip(request.getTripId()))")
-    public abstract Order orderFromRequest(OrderRequest request) throws ServerException;
+    public abstract Order orderFromRequest(OrderRequest request, Client client) throws ServerException;
 }
