@@ -38,13 +38,14 @@ public interface TripRepository {
     @Update("UPDATE trips SET busName = #{trip.busName}, fromStation = #{trip.fromStation}, " +
             "toStation = #{trip.toStation}, start = #{trip.start}, duration = #{trip.duration}, " +
             "price = #{trip.price}" +
-            "WHERE tripId = #{tripId}")
+            "WHERE tripId = #{tripId}" +
+            "AND approved = false")
     boolean updateTripProperties(@Param("tripId") int tripId, @Param("trip") Trip trip);
 
     @Delete("DELETE * FROM trips_dates WHERE tripId = #{tripId}")
     boolean deleteAllTripDates(@Param("tripId") int tripId);
 
-    @Delete("DELETE * FROM trips WHERE tripId = #{tripId}")
+    @Delete("DELETE * FROM trips WHERE tripId = #{tripId} AND approved = false")
     boolean deleteTrip(@Param("tripId") int tripId);
 
     @Update("UPDATE trips SET approved = true WHERE tripId = #{tripId}")

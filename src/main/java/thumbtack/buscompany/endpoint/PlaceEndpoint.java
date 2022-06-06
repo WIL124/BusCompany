@@ -7,6 +7,7 @@ import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Order;
+import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.ChoosingPlaceRequest;
 import thumbtack.buscompany.response.ChoosingPlaceResponse;
@@ -39,8 +40,14 @@ public class PlaceEndpoint {
     public ChoosingPlaceResponse choicePlace(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId,
                                              @RequestBody ChoosingPlaceRequest request) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
+        Order order = orderService.getOrderById(request.getOrderId());
+        Passenger passenger = order.getPassengers().stream()
+                .filter(p -> p.getFirstName().equals(request.getFirstName()))
+                .filter(p -> p.getLastName().equals(request.getLastName()))
+                .filter(p -> p.getPassport().equals(request.getPassport()))
+                .findFirst().orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "passenger"));
         if (user instanceof Client) {
-            return placeService.choicePlace(request);
+            return placeService.choicePlace(request.getPlace(), order, passenger);
         } else throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
     }
 }

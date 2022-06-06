@@ -28,4 +28,7 @@ public interface OrderRepository {
     @Select("SELECT orderId, tripId, date, clientId FROM orders WHERE orderId = #{orderId}")
     @ResultMap("order")
     Order getById(Integer orderId);
+
+    @Select("SELECT id FROM passengers WHERE passport = #{passport}")
+    Integer getPassengerIdByPassport(@Param("passport") Integer passport);
 }

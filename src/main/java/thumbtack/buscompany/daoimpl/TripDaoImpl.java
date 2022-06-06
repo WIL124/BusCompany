@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDao;
-import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.RequestParams;
+import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.repository.TripRepository;
 
@@ -34,10 +34,13 @@ public class TripDaoImpl implements TripDao {
     @Transactional(rollbackFor = SQLException.class)
     public boolean update(int tripId, Trip body) {
         boolean first = tripRepository.updateTripProperties(tripId, body);
+        if (!first) {
+            return false;
+        }
         boolean second = tripRepository.deleteAllTripDates(tripId);
         //TODO may be do it Async?
         body.getDates().forEach(date -> tripRepository.insertTripDate(body, date));
-        return first && second;
+        return second;
     }
 
     @Override

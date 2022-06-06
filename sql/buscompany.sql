@@ -78,24 +78,32 @@ CREATE TABLE trips_dates
 
 CREATE TABLE orders
 (
-    orderId  INT AUTO_INCREMENT,
-    tripId   INT  NOT NULL,
-    date     DATE NOT NULL,
-    clientId INT  NOT NULL,
+    orderId        INT AUTO_INCREMENT,
+    trips_dates_id INT NOT NULL,
+    clientId       INT NOT NULL,
     PRIMARY KEY (orderId),
-    FOREIGN KEY (tripId) REFERENCES trips (tripId),
+    FOREIGN KEY (trips_dates_id) REFERENCES trips_dates (id),
     FOREIGN KEY (clientId) REFERENCES clients (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE passengers
 (
+    id        INT         NOT NULL AUTO_INCREMENT,
     orderId   INT         NOT NULL,
     firstName VARCHAR(50) NOT NULL,
     lastName  VARCHAR(50) NOT NULL,
     passport  INT         NOT NULL,
-    place     INT,
     FOREIGN KEY (orderId) REFERENCES orders (orderId) ON DELETE CASCADE,
-    UNIQUE (orderId, place)
+    PRIMARY KEY (id)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8;
+CREATE TABLE booked_places
+(
+    trips_dates_id INT NOT NULL,
+    passengerId    INT NOT NULL,
+    place          INT,
+    FOREIGN KEY (trips_dates_id) REFERENCES trips_dates (id) ON DELETE CASCADE,
+    FOREIGN KEY (passengerId) REFERENCES passengers (id) ON DELETE CASCADE
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
