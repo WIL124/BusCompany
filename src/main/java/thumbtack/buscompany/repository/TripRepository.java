@@ -18,11 +18,12 @@ public interface TripRepository {
     @Options(useGeneratedKeys = true, keyProperty = "trip.tripId")
     void insertTrip(@Param("trip") Trip trip);
 
-    @Insert("INSERT INTO trips_dates (trip_id, date, place_count)" +
-            "VALUES(#{trip.tripId}, #{date}, #{trip.bus.placeCount})")
+    @Insert("INSERT INTO trips_dates (tripId, date)" +
+            "VALUE(#{trip.tripId}, #{date})")
     void insertTripDate(@Param("trip") Trip trip, @Param("date") LocalDate date);
 
-    @Select("SELECT tripId, fromStation, busName, toStation, start, duration, price, approved FROM trips WHERE tripId = #{tripId}")
+    @Select("SELECT tripId, fromStation, busName, toStation, start, duration, price, approved " +
+            "FROM trips WHERE tripId = #{tripId}")
     @Results(id = "trip", value = {
             @Result(property = "tripId", column = "tripId"),
             @Result(property = "bus", javaType = Bus.class, column = "busName",

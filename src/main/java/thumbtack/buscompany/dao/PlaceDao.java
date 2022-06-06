@@ -10,5 +10,5 @@ import java.util.List;
 public interface PlaceDao {
     List<Integer> getBookedPlaces(Trip trip, LocalDate date);
 
-    boolean updatePlace(Integer place, Order order, Passenger passenger);
+    boolean choicePlace(Integer place, Order order, Passenger passenger);
 }

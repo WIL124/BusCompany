@@ -15,5 +15,9 @@ public class DebugDaoImpl implements DebugDao {
         repository.clearAdmins();
         repository.clearClients();
         repository.clearUsers();
+        repository.clearTripsDates();
+        repository.clearTrips();
+        repository.clearBuses();
+
     }
 }

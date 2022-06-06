@@ -2,9 +2,7 @@ package thumbtack.buscompany.repository;
 
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
-import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.request.ChoosingPlaceRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,6 +19,7 @@ public interface PlaceRepository {
 
 
     @Insert("INSERT INTO booked_places (passengerId, trip_date_id, place) VALUE " +
-            "(#{passengerId}, #{}, #{place})")
-    boolean updatePlace(@Param("request") Integer place, @Param("order") Order order, @Param("passengerId") Integer passengerId);
+            "(#{passengerId}, #{tripDateID}, #{place}) " +
+            "ON DUPLICATE KEY UPDATE place = #{place}")
+    boolean choicePlace(@Param("place") Integer place, @Param("tripDateId") Integer tripDateId, @Param("passengerId") Integer passengerId);
 }

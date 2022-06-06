@@ -29,7 +29,4 @@ public interface SessionRepository {
 
     @Update("UPDATE sessions SET last_activity_time = #{time} WHERE session_id = #{session_id}")
     boolean updateTime(@Param("session_id") String session_id, @Param("time") long time);
-
-    @Delete("DELETE FROM sessions WHERE user_id = #{user_id}")
-    boolean deleteByUserId(@Param("user_id") Integer user_id);
 }

@@ -21,7 +21,8 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     @Transactional(rollbackFor = SQLException.class)
     public void insert(Order order) {
-        orderRepository.insert(order);
+        Integer tripDateId = orderRepository.getTripDateIdByOrder(order);
+        orderRepository.insert(tripDateId, order.getClient().getId());
         passengersRepository.insertPassengers(order);
     }
 

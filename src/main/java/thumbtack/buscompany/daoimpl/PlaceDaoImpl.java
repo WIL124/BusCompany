@@ -8,7 +8,6 @@ import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.repository.OrderRepository;
 import thumbtack.buscompany.repository.PlaceRepository;
-import thumbtack.buscompany.request.ChoosingPlaceRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,9 +23,9 @@ public class PlaceDaoImpl implements PlaceDao {
     }
 
     @Override
-    public boolean updatePlace(Integer place, Order order, Passenger passenger) {
-        int passengerId = orderRepository.getPassengerIdByPassport(passenger.getPassport());
-//        int tripDateId = orderRepository.get
-        return placeRepository.updatePlace(place, order, passengerId);
+    public boolean choicePlace(Integer place, Order order, Passenger passenger) {
+        Integer passengerId = orderRepository.getPassengerIdByPassport(passenger.getPassport());
+        Integer tripDateId = orderRepository.getTripDateIdByOrder(order);
+        return placeRepository.choicePlace(place, tripDateId, passengerId);
     }
 }
