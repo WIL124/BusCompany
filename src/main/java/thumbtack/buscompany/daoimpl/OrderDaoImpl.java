@@ -10,6 +10,7 @@ import thumbtack.buscompany.repository.PassengersRepository;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -27,5 +28,10 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getAllByClientId(Integer clientId) {
         return orderRepository.getAllByClientId(clientId);
+    }
+
+    @Override
+    public Optional<Order> getById(Integer orderId) {
+        return Optional.ofNullable(orderRepository.getById(orderId));
     }
 }

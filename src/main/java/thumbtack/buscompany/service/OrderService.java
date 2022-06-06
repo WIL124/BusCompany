@@ -3,6 +3,7 @@ package thumbtack.buscompany.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.OrderDao;
+import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.OrderMapper;
 import thumbtack.buscompany.model.Client;
@@ -29,7 +30,7 @@ public class OrderService {
         return order;
     }
 
-    public List<Order> getOrderWithParams(RequestParams params) {
+    public List<Order> getOrdersWithParams(RequestParams params) {
         List<Order> dirtyOrders = orderDao.getAllByClientId(params.getClientId());
         return dirtyOrders.stream().parallel()
                 .filter(
@@ -39,6 +40,10 @@ public class OrderService {
                                 .and(fromDateFilter(params.getFromDate()))
                                 .and(toDateFilter(params.getToDate())))
                 .collect(Collectors.toList());
+    }
+
+    public Order getOrderById(Integer orderId) throws ServerException {
+        return orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "orderId"));
     }
 
     private Predicate<Order> busNameFilter(String busName) {

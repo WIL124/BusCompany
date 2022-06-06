@@ -52,7 +52,7 @@ public class OrderController {
         if (user instanceof Client){
             params.setClientId(null);
         }
-        List<Order> orderList = orderService.getOrderWithParams(params);
+        List<Order> orderList = orderService.getOrdersWithParams(params);
         sessionService.updateTime(sessionId);
         return orderList.stream().parallel()
                 .map(order -> orderMapper.orderToResponse(order))
