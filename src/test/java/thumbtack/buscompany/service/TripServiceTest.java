@@ -3,8 +3,8 @@ package thumbtack.buscompany.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import thumbtack.buscompany.BuscompanyApplicationTests;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Bus;
@@ -21,8 +21,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static thumbtack.buscompany.TestUtils.createTripRequestWithSchedule;
 
-@SpringBootTest
-public class TripServiceTest {
+public class TripServiceTest extends BuscompanyApplicationTests {
     @Autowired
     TripService tripService;
     @MockBean
@@ -73,7 +72,7 @@ public class TripServiceTest {
     }
 
     @Test
-    public void busServiceGenerateDatesFromScheduleWithDayNubmersPeriod() throws ServerException {
+    public void busServiceGenerateDatesFromScheduleWithDayNumbersPeriod() throws ServerException {
         TripRequest request = createTripRequestWithSchedule();
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");

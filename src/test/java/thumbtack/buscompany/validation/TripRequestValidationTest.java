@@ -27,6 +27,7 @@ public class TripRequestValidationTest {
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+        factory.close();
     }
 
     public static Stream<Arguments> validRequest() {

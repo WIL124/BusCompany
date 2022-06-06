@@ -1,12 +1,9 @@
 package thumbtack.buscompany.repository;
 
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import thumbtack.buscompany.BuscompanyApplicationTests;
 import thumbtack.buscompany.dao.DebugDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
@@ -16,11 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static thumbtack.buscompany.TestUtils.createAdmin;
 import static thumbtack.buscompany.TestUtils.createClient;
 
-
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@NoArgsConstructor
-public class UserRepositoryTest {
+public class UserRepositoryTest extends BuscompanyApplicationTests {
     @Autowired
     UserRepository userRepository;
     @Autowired

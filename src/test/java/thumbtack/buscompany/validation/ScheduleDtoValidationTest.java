@@ -25,16 +25,17 @@ public class ScheduleDtoValidationTest {
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+        factory.close();
     }
 
     public static Stream<Arguments> validDto() {
         return Stream.of(
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "daily")),
-                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15","daily")),
+                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "daily")),
                 Arguments.arguments(new ScheduleDto("2005.07.12", "2006.03.15", "odd")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "even")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "EvEn")),
-                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15","Sun, Tue, Sat")),
+                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "Sun, Tue, Sat")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "Wed, Fri")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "1,2,5,15")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "4,8,12,29,30"))
@@ -53,7 +54,7 @@ public class ScheduleDtoValidationTest {
                 Arguments.arguments(new ScheduleDto("2000.03.16", "2000.03.15", "daily")),
                 Arguments.arguments(new ScheduleDto("2000.03.120", "2000.03.150", "daily")),
                 Arguments.arguments(new ScheduleDto("12/03/2000", "15/03/2000", "daily")),
-                Arguments.arguments(new ScheduleDto("2000/03/12", "2000/03/15","daily")),
+                Arguments.arguments(new ScheduleDto("2000/03/12", "2000/03/15", "daily")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "daiily")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "WED")),
                 Arguments.arguments(new ScheduleDto("12.13.2000", "15.13.2000", "Wednesday")),
@@ -71,6 +72,7 @@ public class ScheduleDtoValidationTest {
         Set<ConstraintViolation<ScheduleDto>> violations = validator.validate(scheduleDto);
         assertFalse(violations.isEmpty());
     }
+
     @Test
     public void testInvalidScheduleDto() {
         ScheduleDto scheduleDto = new ScheduleDto("2000.03.120", "2000.03.150", "daily");
