@@ -60,8 +60,6 @@ CREATE TABLE trips
     duration    TIME        NOT NULL,
     approved    boolean default false,
     price       DECIMAL(10, 2) UNSIGNED,
-    fromDate    date        not null,
-    toDate      date        not null,
     FOREIGN KEY (busName) REFERENCES buses (busName),
     PRIMARY KEY (tripId)
 ) ENGINE = INNODB
@@ -69,8 +67,10 @@ CREATE TABLE trips
 
 CREATE TABLE trips_dates
 (
+    id     INT NOT NULL AUTO_INCREMENT,
     tripId INT,
     date   DATE,
+    PRIMARY KEY (id),
     FOREIGN KEY (tripId) REFERENCES trips (tripId) ON DELETE CASCADE,
     UNIQUE (tripId, date)
 ) ENGINE = INNODB
@@ -94,6 +94,8 @@ CREATE TABLE passengers
     firstName VARCHAR(50) NOT NULL,
     lastName  VARCHAR(50) NOT NULL,
     passport  INT         NOT NULL,
-    FOREIGN KEY (orderId) REFERENCES orders (orderId) ON DELETE CASCADE
+    place     INT,
+    FOREIGN KEY (orderId) REFERENCES orders (orderId) ON DELETE CASCADE,
+    UNIQUE (orderId, place)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;

@@ -54,9 +54,4 @@ public class UserDaoImpl implements UserDao {
     public boolean updateClient(Client client) {
         return (userRepository.updateUserProperties(client) && userRepository.updateClientProperties(client));
     }
-
-    @Override
-    public User getUserById(int id) {
-        return userRepository.getUserById(id);
-    }
 }

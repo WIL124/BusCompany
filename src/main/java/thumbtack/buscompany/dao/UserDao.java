@@ -19,6 +19,4 @@ public interface UserDao {
     boolean updateAdmin(Admin admin);
 
     boolean updateClient(Client client);
-
-    User getUserById(int id);
 }

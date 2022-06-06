@@ -5,23 +5,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import thumbtack.buscompany.AppProperties;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.service.SessionService;
 
 import java.io.IOException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @ExtendWith(SpringExtension.class)
 @Import(TestConfig.class)
@@ -56,11 +55,33 @@ public abstract class RestControllerTest {
                 .content(mapToJson(obj)));
     }
 
-    protected ResultActions postRequestWithBodyAndCookie(String URL, Object obj) throws Exception {
+    protected ResultActions postRequestWithBodyAndCookie(String URL, Object obj, String cookie) throws Exception {
         return mockMvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapToJson(obj))
-                .header(HttpHeaders.COOKIE, "JAVASESSIONID=23"));
+                .header(HttpHeaders.COOKIE, cookie));
+    }
+
+    protected ResultActions deleteRequestWithBodyAndCookie(String URL, Object obj, String cookie) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("JAVASESSIONID", cookie);
+        return mockMvc.perform(MockMvcRequestBuilders.request(HttpMethod.DELETE, URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(obj))
+                .headers(headers));
+    }
+
+    protected ResultActions deleteRequestWithBody(String URL, Object obj) throws Exception {
+        return mockMvc.perform(delete(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(obj)));
+    }
+
+    protected ResultActions getRequestWithBodyAndCookie(String URL, Object obj, String cookie) throws Exception {
+        return mockMvc.perform(get(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(obj))
+                .header(HttpHeaders.COOKIE, cookie));
     }
 
     protected ResultActions putRequestWithBody(String URL, Object obj) throws Exception {

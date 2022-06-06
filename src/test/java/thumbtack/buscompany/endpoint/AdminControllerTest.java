@@ -89,12 +89,4 @@ public class AdminControllerTest extends RestControllerTest {
         assertEquals(1, mapFromJson(result.getResponse().getContentAsString(), Errors.class)
                 .getErrors().size());
     }
-
-//    @Test
-//    public void updateAdmin_ShouldCallAdminService() throws Exception {
-//        AdminUpdateRequest adminUpdateRequest = getAdminUpdateRequest();
-//        MvcResult result = putRequestWithBody(URL, adminUpdateRequest).andReturn();
-//        assertEquals(200, result.getResponse().getStatus());
-//        verify(adminService).update(adminUpdateRequest, anyString());
-//    }
 }
