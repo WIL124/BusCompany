@@ -2,15 +2,14 @@ package thumbtack.buscompany.endpoint;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.User;
+import thumbtack.buscompany.request.ChoosingPlaceRequest;
+import thumbtack.buscompany.response.ChoosingPlaceResponse;
 import thumbtack.buscompany.service.OrderService;
 import thumbtack.buscompany.service.PlaceService;
 import thumbtack.buscompany.service.SessionService;
@@ -32,7 +31,16 @@ public class PlaceEndpoint {
         User user = sessionService.getUserBySessionId(sessionId);
         Order order = orderService.getOrderById(orderId);
         if (user instanceof Client) {
-            return placeService.getFreePlaces(order);
+            return placeService.getFreePlaces(order.getTrip(), order.getDate());
+        } else throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+    }
+
+    @PostMapping
+    public ChoosingPlaceResponse choicePlace(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId,
+                                             @RequestBody ChoosingPlaceRequest request) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Client) {
+            return placeService.choicePlace(request);
         } else throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
     }
 }

@@ -3,8 +3,11 @@ package thumbtack.buscompany.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.PlaceDao;
-import thumbtack.buscompany.model.Order;
+import thumbtack.buscompany.model.Trip;
+import thumbtack.buscompany.request.ChoosingPlaceRequest;
+import thumbtack.buscompany.response.ChoosingPlaceResponse;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +16,18 @@ import java.util.List;
 public class PlaceService {
     PlaceDao placeDao;
 
-    public List<Integer> getFreePlaces(Order order) {
-        int totalPlaces = order.getTrip().getBus().getPlaceCount();
+    public List<Integer> getFreePlaces(Trip trip, LocalDate date) {
+        int totalPlaces = trip.getBus().getPlaceCount();
         List<Integer> places = new ArrayList<>();
         for (int i = 1; i <= totalPlaces; i++) {
             places.add(i);
         }
-        places.removeAll(placeDao.getBookedPlaces(order.getTrip(), order.getDate()));
+        places.removeAll(placeDao.getBookedPlaces(trip, date));
         return places;
+    }
+
+    public ChoosingPlaceResponse choicePlace(ChoosingPlaceRequest request) {
+        placeDao.updatePlace(request);
+        return null;
     }
 }
