@@ -16,11 +16,12 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @RequestMapping("/api/accounts")
 public class AccountController {
+    private static final String JAVASESSIONID = "JAVASESSIONID";
     AccountService accountService;
     SessionService sessionService;
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
+    public ResponseEntity<Void> delete(@CookieValue(value = JAVASESSIONID) @NotNull String session_id) throws ServerException {
         User user = sessionService.getUserBySessionId(session_id);
         sessionService.logout(session_id);
         accountService.delete(user);
@@ -28,7 +29,7 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<UserResponse> get(@CookieValue(value = "JAVASESSIONID") @NotNull String session_id) throws ServerException {
+    public ResponseEntity<UserResponse> get(@CookieValue(value = JAVASESSIONID) @NotNull String session_id) throws ServerException {
         User user = sessionService.getUserBySessionId(session_id);
         sessionService.updateTime(session_id);
         return new ResponseEntity<>(accountService.get(user), HttpStatus.OK);

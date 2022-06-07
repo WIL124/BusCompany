@@ -35,7 +35,7 @@ public class TripServiceTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void busServiceGenerateDatesFromScheduleWithDailyPeriod() throws ServerException {
+    public void tripServiceGenerateDatesFromScheduleWithDailyPeriod() throws ServerException {
         TripRequest request = createTripRequestWithSchedule();
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");
@@ -46,7 +46,7 @@ public class TripServiceTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void busServiceGenerateDatesFromScheduleWithEvenPeriod() throws ServerException {
+    public void tripServiceGenerateDatesFromScheduleWithEvenPeriod() throws ServerException {
         TripRequest request = createTripRequestWithSchedule();
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");
@@ -59,7 +59,7 @@ public class TripServiceTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void busServiceGenerateDatesFromScheduleWithOddPeriod() throws ServerException {
+    public void tripServiceGenerateDatesFromScheduleWithOddPeriod() throws ServerException {
         TripRequest request = createTripRequestWithSchedule();
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");
@@ -72,7 +72,7 @@ public class TripServiceTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void busServiceGenerateDatesFromScheduleWithDayNumbersPeriod() throws ServerException {
+    public void tripServiceGenerateDatesFromScheduleWithDayNumbersPeriod() throws ServerException {
         TripRequest request = createTripRequestWithSchedule();
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");

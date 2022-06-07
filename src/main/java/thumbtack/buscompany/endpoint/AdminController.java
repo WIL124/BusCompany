@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @RequestMapping("/api/admins")
 public class AdminController {
+    private static final String JAVASESSIONID = "JAVASESSIONID";
     private AdminService adminService;
     private SessionService sessionService;
     private UserMapper mapper;
@@ -42,7 +43,7 @@ public class AdminController {
         if (user instanceof Admin) {
             adminService.update(request, (Admin) user);
         } else {
-            throw new ServerException(ErrorCode.NOT_AN_ADMIN, "JAVASESSIONID");
+            throw new ServerException(ErrorCode.NOT_AN_ADMIN, JAVASESSIONID);
         }
         Admin admin = (Admin) user;
         AdminResponse response = mapper.adminToResponse(admin);

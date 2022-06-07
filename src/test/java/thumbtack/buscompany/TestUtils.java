@@ -35,10 +35,10 @@ public class TestUtils {
     }
 
     public static TripRequest createTripRequestWithSchedule() {
-        return new TripRequest("Volvo", "Omsk", "Moscow", "04:30", "12:00", 100L, createScheduleDto(), null);
+        return new TripRequest("VOLVO", "Omsk", "Moscow", "04:30", "12:00", 100L, createScheduleDto(), null);
     }
     public static TripRequest createTripRequestWithDates() {
-        return new TripRequest("Volvo", "Omsk", "Moscow", "04:30", "12:00", 100L, null, createDates());
+        return new TripRequest("VOLVO", "Omsk", "Moscow", "04:30", "12:00", 100L, null, createDates());
     }
 
     public static ScheduleDto createScheduleDto() {
@@ -46,6 +46,6 @@ public class TestUtils {
     }
 
     public static List<String> createDates() {
-        return List.of("2020.12.01", "2021.01.05", "2022.05.04", "2022.05.05");
+        return List.of("2022.12.01", "2021.01.05", "2022.05.04", "2022.05.05");
     }
 }

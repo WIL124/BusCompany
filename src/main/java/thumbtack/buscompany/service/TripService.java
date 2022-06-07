@@ -36,12 +36,13 @@ public class TripService {
 
     public Trip update(int tripId, TripRequest body) throws ServerException {
         Trip updatedTrip = tripMapper.tripFromRequest(body);
+        updatedTrip.setTripId(tripId);
         if (updatedTrip.getSchedule() != null) {
             List<LocalDate> dates = createDatesFromSchedule(updatedTrip.getSchedule());
             updatedTrip.setDates(dates);
         }
         try {
-            tripDao.update(tripId, updatedTrip);
+            tripDao.update(updatedTrip);
         } catch (RuntimeException e) {
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
@@ -53,7 +54,7 @@ public class TripService {
     }
 
     public Trip getTrip(int tripId) throws ServerException {
-        return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "tripId"));
+        return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
     }
 
     public Trip approve(int tripId) throws ServerException {
@@ -62,10 +63,14 @@ public class TripService {
         } else throw new ServerException(ErrorCode.NOT_FOUND, "tripId"); //TODO fix exceptions
     }
 
-    public List<Trip> getTripsWithParams(User user, RequestParams paramsFromRequest) {
-        List<Trip> tripList = tripDao.getTripsWithParams(user, paramsFromRequest);
+    public List<Trip> getTripsWithParams(User user, RequestParams params) {
+        List<Trip> tripList = tripDao.getTripsWithParams(user, params);
+        for (Trip trip : tripList) {
+            trip.setDates(trip.getDates().parallelStream()
+                    .filter(localDate -> localDate.isBefore(params.getFromDate()))
+                    .filter(localDate -> localDate.isAfter(params.getToDate())).collect(Collectors.toList()));
+        }
         if (user instanceof Client) {
-            tripList.removeIf(trip -> !trip.getApproved());
             tripList.forEach(e -> e.setApproved(null));
         }
         return tripList;

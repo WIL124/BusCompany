@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface TripRepository {
     @Insert("INSERT INTO trips (busName, fromStation, toStation, start, duration, price)" +
-            " VALUES(#{trip.busName}, #{trip.fromStation}, #{trip.toStation}, #{trip.start}," +
+            " VALUES(#{trip.bus.busName}, #{trip.fromStation}, #{trip.toStation}, #{trip.start}," +
             " #{trip.duration}, #{trip.price})")
     @Options(useGeneratedKeys = true, keyProperty = "trip.tripId")
     void insertTrip(@Param("trip") Trip trip);
@@ -36,17 +36,17 @@ public interface TripRepository {
     @Select("SELECT date FROM trips_dates WHERE tripId = #{tripId}")
     List<LocalDate> getTripDates(@Param("tripId") int tripId);
 
-    @Update("UPDATE trips SET busName = #{trip.busName}, fromStation = #{trip.fromStation}, " +
+    @Update("UPDATE trips SET busName = #{trip.bus.busName}, fromStation = #{trip.fromStation}, " +
             "toStation = #{trip.toStation}, start = #{trip.start}, duration = #{trip.duration}, " +
-            "price = #{trip.price}" +
-            "WHERE tripId = #{tripId}" +
+            "price = #{trip.price} " +
+            "WHERE tripId = #{trip.tripId} " +
             "AND approved = false")
-    boolean updateTripProperties(@Param("tripId") int tripId, @Param("trip") Trip trip);
+    boolean updateTripProperties(@Param("trip") Trip trip);
 
-    @Delete("DELETE * FROM trips_dates WHERE tripId = #{tripId}")
+    @Delete("DELETE FROM trips_dates WHERE tripId = #{tripId}")
     boolean deleteAllTripDates(@Param("tripId") int tripId);
 
-    @Delete("DELETE * FROM trips WHERE tripId = #{tripId} AND approved = false")
+    @Delete("DELETE FROM trips WHERE tripId = #{tripId} AND approved = false")
     boolean deleteTrip(@Param("tripId") int tripId);
 
     @Update("UPDATE trips SET approved = true WHERE tripId = #{tripId}")
@@ -58,27 +58,20 @@ public interface TripRepository {
 
     class SqlProvider {
         public static String getTripsWithParams(User user, RequestParams params) {
-            String sql = new SQL() {
+            return new SQL() {
                 {
                     SELECT("trips.tripId AS tripId", "busName", "duration", "fromStation", "toStation",
-                            "start", "price", "MAX(date) AS maxDate", "MIN(date) AS minDate");
+                            "start", "price");
                     if (user instanceof Admin) {
                         SELECT("approved");
                     }
                     FROM("trips");
-                    LEFT_OUTER_JOIN("trips_dates ON trips.tripId = trips_dates.tripId");
                     if (user instanceof Client) {
                         WHERE("approved = TRUE");
                     }
                     if (params != null) {
                         if (params.getBusName() != null) {
                             WHERE("busName like #{params.busName}");
-                        }
-                        if (params.getFromDate() != null) {
-                            WHERE("minDate > #{params.fromDate}");
-                        }
-                        if (params.getToDate() != null) {
-                            WHERE("maxDate < #{params.toDate}");
                         }
                         if (params.getToStation() != null) {
                             WHERE("toStation = #{params.toStation}");
@@ -89,8 +82,6 @@ public interface TripRepository {
                     }
                 }
             }.toString();
-            System.out.println(sql);
-            return sql;
         }
     }
 }

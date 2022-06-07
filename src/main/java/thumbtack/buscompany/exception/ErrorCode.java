@@ -17,6 +17,7 @@ public enum ErrorCode {
     DIFFERENT_PASSWORDS("passwords must match"),
     NOT_FOUND("not found"),
     INVALID_PLACE("Please, choice any free place"),
-    WRONG_DATE_INTERVAL("the specified interval and period does not contain a single day");
+    WRONG_DATE_INTERVAL("the specified interval and period does not contain a single day"),
+    TRIP_NOT_FOUND("trip not found");
     private final String message;
 }

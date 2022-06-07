@@ -23,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/clients")
 public class ClientController {
+    private static final String JAVASESSIONID = "JAVASESSIONID";
     private ClientService clientService;
     private SessionService sessionService;
     private UserMapper userMapper;
@@ -34,18 +35,18 @@ public class ClientController {
     }
 
     @GetMapping
-    public List<UserResponse> getAllClients(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+    public List<UserResponse> getAllClients(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             return clientService.getAllClients();
         } else {
-            throw new ServerException(ErrorCode.NOT_AN_ADMIN, "JAVASESSIONID");
+            throw new ServerException(ErrorCode.NOT_AN_ADMIN, JAVASESSIONID);
         }
     }
 
     @PutMapping
-    public UserResponse update(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @RequestBody ClientUpdateRequest request) throws ServerException {
+    public UserResponse update(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId, @RequestBody ClientUpdateRequest request) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Client) {
             UserResponse response = clientService.updateClient(sessionId, request);
@@ -53,7 +54,7 @@ public class ClientController {
             sessionService.updateTime(sessionId);
             return response;
         } else {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+            throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
         }
     }
 }

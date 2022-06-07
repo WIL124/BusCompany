@@ -22,22 +22,23 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/places")
 public class PlaceEndpoint {
+    private static final String JAVASESSIONID = "JAVASESSIONID";
     SessionService sessionService;
     PlaceService placeService;
     OrderService orderService;
 
     @GetMapping("/{orderId}")
     public List<Integer> freePlaces(@PathVariable("orderId") Integer orderId,
-                                    @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+                                    @CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         Order order = orderService.getOrderById(orderId);
         if (user instanceof Client) {
             return placeService.getFreePlaces(order.getTrip(), order.getDate());
-        } else throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
     }
 
     @PostMapping
-    public ChoosingPlaceResponse choicePlace(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId,
+    public ChoosingPlaceResponse choicePlace(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId,
                                              @RequestBody ChoosingPlaceRequest request) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         Order order = orderService.getOrderById(request.getOrderId());
@@ -48,6 +49,6 @@ public class PlaceEndpoint {
                 .findFirst().orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "passenger"));
         if (user instanceof Client) {
             return placeService.choicePlace(request.getPlace(), order, passenger);
-        } else throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
     }
 }

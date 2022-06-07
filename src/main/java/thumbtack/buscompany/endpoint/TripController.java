@@ -24,6 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/trips")
 public class TripController {
+    private static final String JAVASESSIONID = "JAVASESSIONID";
     TripService tripService;
     TripMapper tripMapper;
     SessionService sessionService;
@@ -31,56 +32,56 @@ public class TripController {
 
     @PostMapping
     public Trip createTrip(@Valid @RequestBody TripRequest body,
-                           @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+                           @CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             return tripService.create(body);
-        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
     @PutMapping("/{tripId}")
     public Trip updateTrip(@Valid @RequestBody TripRequest body,
-                           @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+                           @CookieValue(value = JAVASESSIONID) @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             return tripService.update(tripId, body);
-        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
     @DeleteMapping("/{tripId}")
-    public ResponseEntity<Void> deleteTrip(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+    public ResponseEntity<Void> deleteTrip(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             if (tripService.deleteTrip(tripId)) {
                 return new ResponseEntity<>(HttpStatus.OK);
-            } else throw new ServerException(ErrorCode.NOT_FOUND, "JAVASESSIONID");
+            } else throw new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId");
 
-        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
     @GetMapping("/{tripId}")
-    public Trip get(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+    public Trip get(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             return tripService.getTrip(tripId);
-        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
     @PutMapping("/{tripId}/approve")
-    public Trip approve(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
+    public Trip approve(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId, @PathVariable("tripId") int tripId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
             return tripService.approve(tripId);
-        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+        } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
     @GetMapping
-    public List<Trip> getAllWithFilter(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId,
+    public List<Trip> getAllWithFilter(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId,
                                        @RequestParam(value = "fromStation", required = false) String fromStation,
                                        @RequestParam(value = "toStation", required = false) String toStation,
                                        @RequestParam(value = "busName", required = false) String busName,

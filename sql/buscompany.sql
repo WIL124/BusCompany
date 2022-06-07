@@ -22,7 +22,7 @@ CREATE TABLE clients
     id    INT         NOT NULL,
     email VARCHAR(50) NOT NULL,
     phone VARCHAR(12) NOT NULL,
-    FOREIGN KEY (id) REFERENCES users (id)
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 
@@ -30,7 +30,7 @@ create table if not exists admins
 (
     id       INT         NOT NULL,
     position VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id) REFERENCES users (id)
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 CREATE TABLE sessions
@@ -104,7 +104,11 @@ CREATE TABLE booked_places
     passengerId    INT NOT NULL,
     place          INT,
     FOREIGN KEY (trips_dates_id) REFERENCES trips_dates (id) ON DELETE CASCADE,
-    FOREIGN KEY (passengerId) REFERENCES passengers (id) ON DELETE CASCADE,
+    FOREIGN KEY (passengerId) REFERENCES passengers (id),
     PRIMARY KEY (passengerId)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
+INSERT INTO buses
+values ('VOLVO', 20),
+       ('PAZ', 25),
+       ('YAZ', 50);

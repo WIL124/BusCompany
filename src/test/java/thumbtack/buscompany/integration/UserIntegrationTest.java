@@ -1,12 +1,11 @@
-package thumbtack.buscompany;
+package thumbtack.buscompany.integration;
 
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import thumbtack.buscompany.BuscompanyApplicationTests;
 import thumbtack.buscompany.exception.ApiErrors;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
@@ -25,11 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static thumbtack.buscompany.TestUtils.createAdminRegReq;
 import static thumbtack.buscompany.TestUtils.createClientRegReq;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@NoArgsConstructor
-public class IntegrationTest {
+public class UserIntegrationTest extends BuscompanyApplicationTests {
     @Autowired
     private TestRestTemplate restTemplate;
+    private static final String JAVASESSIONID = "JAVASESSIONID";
 
     @BeforeEach
     public void clear() {
@@ -55,7 +53,7 @@ public class IntegrationTest {
         HttpHeaders headers = response.getHeaders();
         String set_cookie = headers.getFirst(HttpHeaders.SET_COOKIE);
         assert set_cookie != null;
-        assertTrue(set_cookie.contains("JAVASESSIONID="));
+        assertTrue(set_cookie.contains(JAVASESSIONID));
     }
 
     @Test
@@ -78,7 +76,7 @@ public class IntegrationTest {
         HttpHeaders headers = response.getHeaders();
         String set_cookie = headers.getFirst(HttpHeaders.SET_COOKIE);
         assert set_cookie != null;
-        assertTrue(set_cookie.contains("JAVASESSIONID="));
+        assertTrue(set_cookie.contains(JAVASESSIONID));
     }
 
     @Test
@@ -110,7 +108,7 @@ public class IntegrationTest {
         assertEquals(errorsResponseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
         List<ApiErrors> errors = Objects.requireNonNull(errorsResponseEntity.getBody()).getErrors();
         assertEquals(errors.size(), 1);
-        assertEquals(errors.get(0), new ApiErrors("ONE_ACTIVE_ADMIN", "JAVASESSIONID", "At least one admin must be online"));
+        assertEquals(errors.get(0), new ApiErrors("ONE_ACTIVE_ADMIN", JAVASESSIONID, "At least one admin must be online"));
     }
 
     @Test
@@ -161,7 +159,7 @@ public class IntegrationTest {
 
     @Test
     public void getAccountInfo_sessionNotFound() {
-        HttpEntity<Object> entity = entityWithSessionId(null, "JAVASESSIONID=nonExistentSession");
+        HttpEntity<Object> entity = entityWithSessionId(null, JAVASESSIONID+ "=nonExistentSession");
         ResponseEntity<Errors> errorsResponse = (restTemplate.exchange("/api/accounts", HttpMethod.GET, entity, Errors.class));
         assertEquals(errorsResponse.getStatusCodeValue(), 400);
         assertEquals(Objects.requireNonNull(errorsResponse.getBody()).getErrors().size(), 1);

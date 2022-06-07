@@ -11,13 +11,14 @@ public class DebugDaoImpl implements DebugDao {
     DebugRepository repository;
     @Override
     public void clear() {
+        repository.clearBookedPlaces();
+        repository.clearOrders();
+        repository.clearPassengers();
+        repository.clearTripsDates();
+        repository.clearTrips();
         repository.clearSessions();
         repository.clearAdmins();
         repository.clearClients();
         repository.clearUsers();
-        repository.clearTripsDates();
-        repository.clearTrips();
-        repository.clearBuses();
-
     }
 }

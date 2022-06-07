@@ -32,14 +32,14 @@ public class TripDaoImpl implements TripDao {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public boolean update(int tripId, Trip body) {
-        boolean first = tripRepository.updateTripProperties(tripId, body);
+    public boolean update(Trip trip) {
+        boolean first = tripRepository.updateTripProperties(trip);
         if (!first) {
             return false;
         }
-        boolean second = tripRepository.deleteAllTripDates(tripId);
+        boolean second = tripRepository.deleteAllTripDates(trip.getTripId());
         //TODO may be do it Async?
-        body.getDates().forEach(date -> tripRepository.insertTripDate(body, date));
+        trip.getDates().forEach(date -> tripRepository.insertTripDate(trip, date));
         return second;
     }
 

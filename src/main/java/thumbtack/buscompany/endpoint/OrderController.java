@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @RequestMapping("api/orders")
 public class OrderController {
+    private static final String JAVASESSIONID = "JAVASESSIONID";
     SessionService sessionService;
     OrderService orderService;
     OrderMapper orderMapper;
@@ -28,10 +29,10 @@ public class OrderController {
     ParamsMapper paramsMapper;
 
     @PostMapping
-    public OrderResponse createOrder(@RequestBody OrderRequest orderRequest, @CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
+    public OrderResponse createOrder(@RequestBody OrderRequest orderRequest, @CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+            throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
         } else {
             Trip trip = tripService.getTrip(orderRequest.getTripId());
             Order order = orderService.createOrder((Client) user, orderRequest, trip);
@@ -40,7 +41,7 @@ public class OrderController {
         }
     }
     @GetMapping
-    public List<OrderResponse> getOrdersWithParams(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId,
+    public List<OrderResponse> getOrdersWithParams(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId,
                                                    @RequestParam(value = "fromStation", required = false) String fromStation,
                                                    @RequestParam(value = "toStation", required = false) String toStation,
                                                    @RequestParam(value = "busName", required = false) String busName,

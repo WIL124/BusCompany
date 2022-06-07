@@ -1,6 +1,7 @@
 package thumbtack.buscompany.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import thumbtack.buscompany.validator.annototion.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @OnlyScheduleOrDates
+@Builder
 public class TripRequest {
     @NotEmpty
     private String busName;
