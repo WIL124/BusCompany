@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.apache.commons.collections4.CollectionUtils.isEqualCollection;
 import static org.junit.jupiter.api.Assertions.*;
 import static thumbtack.buscompany.TestUtils.*;
 import static thumbtack.buscompany.exception.ErrorCode.TRIP_NOT_FOUND;
@@ -66,7 +67,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 HttpMethod.GET, entityWithSessionId(null, session), Trip.class);
         assertAll(
                 () -> assertEquals(200, getTripResponseEntity.getStatusCodeValue()),
-                () -> assertEquals(tripFromResponse, getTripResponseEntity.getBody())
+                () -> assertTrue(isEqualCollection(tripFromResponse.getDates(), getTripResponseEntity.getBody().getDates()))
         );
     }
 
@@ -117,16 +118,22 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
     @Test
     public void getTripsWithoutParams() {
         List<Trip> trips = createListOfTrips();
+        trips.forEach(trip -> trip.setSchedule(null));
         ResponseEntity<List<Trip>> responseEntity =
                 restTemplate.exchange(TRIP_URL, HttpMethod.GET, entityWithSessionId(null, adminSessionId),
                         new ParameterizedTypeReference<>() {
                         });
         assert responseEntity.getBody() != null;
+        List<Trip> tripFromResponse = responseEntity.getBody();
         assertAll(
                 () -> assertEquals(200, responseEntity.getStatusCodeValue()),
-                () -> assertEquals(6, responseEntity.getBody().size()),
-                () -> assertEquals(trips, responseEntity.getBody())
+                () -> assertEquals(6, tripFromResponse.size())
         );
+        for (int i = 0; i < 6; i++) {
+            assertTrue(isEqualCollection(trips.get(i).getDates(),
+                    tripFromResponse.get(i).getDates()));
+        }
+
     }
 
     @Test
@@ -145,7 +152,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 "&fromDate=" + fromDate.format(formatter) +
                 "&toDate=" + toDate.format(formatter);
         ResponseEntity<List<Trip>> responseEntity =
-                restTemplate.exchange(url, HttpMethod.GET, entityWithSessionId(null, adminSessionId), new ParameterizedTypeReference<>() {
+                restTemplate.exchange(url, HttpMethod.GET, entityWithSessionId(null, adminSessionId), new ParameterizedTypeReference<List<Trip>>() {
                 });
 
         assert responseEntity.getBody() != null;

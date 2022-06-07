@@ -57,10 +57,10 @@ public interface TripRepository {
     List<Trip> getTripsWithParams(@Param("user") User user, @Param("params") RequestParams params);
 
     class SqlProvider {
-        public static String getTripsWithParams(User user, RequestParams params) {
-            return new SQL() {
+        public static String getTripsWithParams(@Param("user") User user, @Param("params") RequestParams params) {
+            String sql = new SQL() {
                 {
-                    SELECT("trips.tripId AS tripId", "busName", "duration", "fromStation", "toStation",
+                    SELECT("tripId", "busName", "duration", "fromStation", "toStation",
                             "start", "price");
                     if (user instanceof Admin) {
                         SELECT("approved");
@@ -71,7 +71,7 @@ public interface TripRepository {
                     }
                     if (params != null) {
                         if (params.getBusName() != null) {
-                            WHERE("busName like #{params.busName}");
+                            WHERE("busName = #{params.busName}");
                         }
                         if (params.getToStation() != null) {
                             WHERE("toStation = #{params.toStation}");
@@ -82,6 +82,7 @@ public interface TripRepository {
                     }
                 }
             }.toString();
+            return sql;
         }
     }
 }

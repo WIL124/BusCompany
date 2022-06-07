@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -65,10 +66,15 @@ public class TripService {
 
     public List<Trip> getTripsWithParams(User user, RequestParams params) {
         List<Trip> tripList = tripDao.getTripsWithParams(user, params);
-        for (Trip trip : tripList) {
-            trip.setDates(trip.getDates().parallelStream()
-                    .filter(localDate -> localDate.isBefore(params.getFromDate()))
-                    .filter(localDate -> localDate.isAfter(params.getToDate())).collect(Collectors.toList()));
+        if (params != null) {
+            for (Trip trip : tripList) {
+                if (params.getFromDate() != null) {
+                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isBefore(params.getFromDate())).collect(Collectors.toList()));
+                }
+                if (params.getToDate() != null) {
+                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isAfter(params.getToDate())).collect(Collectors.toList()));
+                }
+            }
         }
         if (user instanceof Client) {
             tripList.forEach(e -> e.setApproved(null));

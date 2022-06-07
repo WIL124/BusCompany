@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Schedule;
 import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.model.RequestParams;
 import thumbtack.buscompany.request.ScheduleDto;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.service.BusService;
