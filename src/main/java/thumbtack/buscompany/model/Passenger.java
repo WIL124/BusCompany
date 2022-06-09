@@ -1,19 +1,27 @@
 package thumbtack.buscompany.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Passenger {
+    @JsonIgnore
+    private Integer id;
     @NotEmpty
     private String firstName;
     @NotEmpty
     private String lastName;
     @NotEmpty
     private Integer passport;
+
+    public Passenger(String firstName, String lastName, Integer passport) {
+        this.id = null;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.passport = passport;
+    }
 }

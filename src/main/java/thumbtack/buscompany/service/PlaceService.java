@@ -33,7 +33,7 @@ public class PlaceService {
         if (order.getTrip().getBus().getPlaceCount() < place) {
             throw new ServerException(ErrorCode.INVALID_PLACE, "place");
         }
-        placeDao.choicePlace(place, order, passenger);
+        placeDao.choicePlace(passenger, place);
         return null;
     }
 }

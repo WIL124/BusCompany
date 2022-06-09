@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.beans.factory.annotation.Autowired;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Order;
@@ -16,6 +17,7 @@ import thumbtack.buscompany.service.TripService;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class OrderMapper {
+    @Autowired
     TripService tripService;
     @Mapping(target = "tripId", source = "order.trip.tripId")
     @Mapping(target = "fromStation", source = "order.trip.fromStation")

@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -69,10 +68,10 @@ public class TripService {
         if (params != null) {
             for (Trip trip : tripList) {
                 if (params.getFromDate() != null) {
-                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isBefore(params.getFromDate())).collect(Collectors.toList()));
+                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isAfter(params.getFromDate())).collect(Collectors.toList()));
                 }
                 if (params.getToDate() != null) {
-                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isAfter(params.getToDate())).collect(Collectors.toList()));
+                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isBefore(params.getToDate())).collect(Collectors.toList()));
                 }
             }
         }

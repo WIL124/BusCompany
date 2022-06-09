@@ -2,8 +2,12 @@ package thumbtack.buscompany;
 
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
+import thumbtack.buscompany.model.Passenger;
+import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.request.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TestUtils {
@@ -37,6 +41,7 @@ public class TestUtils {
     public static TripRequest createTripRequestWithSchedule() {
         return new TripRequest("VOLVO", "Omsk", "Moscow", "04:30", "12:00", 100L, createScheduleDto(), null);
     }
+
     public static TripRequest createTripRequestWithDates() {
         return new TripRequest("VOLVO", "Omsk", "Moscow", "04:30", "12:00", 100L, null, createDates());
     }
@@ -47,5 +52,15 @@ public class TestUtils {
 
     public static List<String> createDates() {
         return List.of("2022.12.01", "2021.01.05", "2022.05.04", "2022.05.05");
+    }
+
+    public static OrderRequest createOrderRequest(Trip trip, LocalDate date) {
+        return new OrderRequest(trip.getTripId(), date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), createPassengersList());
+    }
+
+    public static List<Passenger> createPassengersList() {
+        return List.of(new Passenger("Vlad", "Inyutin", 123),
+                new Passenger("Misha", "Popov", 321),
+                new Passenger("Denis", "Den", 231));
     }
 }

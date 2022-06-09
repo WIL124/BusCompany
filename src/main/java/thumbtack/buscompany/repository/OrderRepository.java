@@ -12,7 +12,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository {
 
-    @Select("SELECT orderId, tripId, date, clientId FROM orders o join trips_dates td on td.id = o.trips_dates_id " +
+    @Select("SELECT orderId, tripId, date, clientId " +
+            "FROM orders o " +
+            "JOIN trips_dates td on td.id = o.trips_dates_id " +
             "WHERE clientId = #{id}")
     @Results(id = "order", value = {
             @Result(property = "trip", column = "tripId", javaType = Trip.class,
@@ -22,19 +24,17 @@ public interface OrderRepository {
     )
     List<Order> getAllByClientId(@Param("id") Integer id);
 
-    @Select("SELECT orderId, tripId, date, clientId FROM orders o join trips_dates td on td.id = o.trips_dates_id" +
-            " WHERE orderId = #{orderId}")
+    @Select("SELECT orderId, tripId, date, clientId " +
+            "FROM orders o " +
+            "JOIN trips_dates td on td.id = o.trips_dates_id " +
+            "WHERE orderId = #{orderId}")
     @ResultMap("order")
     Order getById(Integer orderId);
 
-    @Select("SELECT id FROM passengers WHERE passport = #{passport}")
-    Integer getPassengerIdByPassport(@Param("passport") Integer passport);
-
-    @Select("SELECT id FROM trips_dates WHERE tripId=#{order.trip.tripId} AND date = #{order.date}")
-    Integer getTripDateIdByOrder(@Param("") Order order);
-
-    @Insert("INSERT INTO orders (tripDateId, clientId) " +
-            "VALUE (#{tripDateId}, #{clientId})")
+    @Insert("INSERT INTO orders (trips_dates_id, clientId) " +
+            "SELECT id, #{order.client.id} " +
+            "FROM trips_dates " +
+            "WHERE tripId=#{order.trip.tripId} AND date = #{order.date}")
     @Options(useGeneratedKeys = true, keyProperty = "order.orderId")
-    void insert(@Param("tripDateId") Integer tripDateId, @Param("clientId") Integer clientId);
+    void insert(@Param("order") Order order);
 }

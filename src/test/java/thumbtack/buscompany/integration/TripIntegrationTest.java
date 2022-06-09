@@ -17,9 +17,11 @@ import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.request.AdminRegisterRequest;
 import thumbtack.buscompany.request.ClientRegisterRequest;
+import thumbtack.buscompany.request.OrderRequest;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.response.AdminResponse;
 import thumbtack.buscompany.response.ClientResponse;
+import thumbtack.buscompany.response.OrderResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +40,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
     @Autowired
     private TripMapper tripMapper;
     private static final String TRIP_URL = "/api/trips";
+    private static final String ORDER_URL = "/api/orders";
     private String adminSessionId = null;
     private String clientSessionId = null;
 
@@ -137,8 +140,8 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void getTripsWithAllParams() {
-        List<Trip> trips = createListOfTrips();
+    public void getTripsWithAllParamsByAdminAndEmptyBodyForClient() {
+        createListOfTrips();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         String fromStation = "Omsk";
         String toStation = "Moscow";
@@ -152,7 +155,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 "&fromDate=" + fromDate.format(formatter) +
                 "&toDate=" + toDate.format(formatter);
         ResponseEntity<List<Trip>> responseEntity =
-                restTemplate.exchange(url, HttpMethod.GET, entityWithSessionId(null, adminSessionId), new ParameterizedTypeReference<List<Trip>>() {
+                restTemplate.exchange(url, HttpMethod.GET, entityWithSessionId(null, adminSessionId), new ParameterizedTypeReference<>() {
                 });
 
         assert responseEntity.getBody() != null;
@@ -161,9 +164,74 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getBus().getBusName().equals(busName))),
                 () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getFromStation().equals(fromStation))),
                 () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getToStation().equals(toStation))),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getApproved().equals(false))),
                 () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getDates().stream().allMatch(date -> date.isAfter(fromDate)))),
                 () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getDates().stream().allMatch(date -> date.isBefore(toDate))))
         );
+
+        registerClientAndGetSessionId("clientLogin");
+        ResponseEntity<List<Trip>> emptyEntity =
+                restTemplate.exchange(url, HttpMethod.GET, entityWithSessionId(null, clientSessionId), new ParameterizedTypeReference<>() {
+                });
+        assertAll(
+                () -> assertEquals(200, emptyEntity.getStatusCodeValue()),
+                () -> assertEquals(0, emptyEntity.getBody().size())
+        );
+    }
+
+    @Test
+    public void getApprovedTripsWithParamsByClient() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        String fromStation = "Omsk";
+        String toStation = "Moscow";
+        String busName = "VOLVO";
+        LocalDate fromDate = LocalDate.of(2021, 1, 1);
+        LocalDate toDate = LocalDate.of(2022, 1, 1);
+        String url = TRIP_URL +
+                "?fromStation=" + fromStation +
+                "&toStation=" + toStation +
+                "&busName=" + busName +
+                "&fromDate=" + fromDate.format(formatter) +
+                "&toDate=" + toDate.format(formatter);
+        registerClientAndGetSessionId("clientLogin");
+        Trip trip = insertTrip(createTripRequestWithDates()).getBody();
+        approveTrip(trip);
+        ResponseEntity<List<Trip>> responseEntity =
+                restTemplate.exchange(url, HttpMethod.GET, entityWithSessionId(null, clientSessionId), new ParameterizedTypeReference<>() {
+                });
+        assert responseEntity.getBody() != null;
+        assertAll(
+                () -> assertEquals(200, responseEntity.getStatusCodeValue()),
+                () -> assertEquals(1, responseEntity.getBody().size()),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getDates().size() == 1)),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getBus().getBusName().equals(busName))),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getFromStation().equals(fromStation))),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getToStation().equals(toStation))),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getApproved() == null)),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getDates().stream().allMatch(date -> date.isAfter(fromDate)))),
+                () -> assertTrue(responseEntity.getBody().stream().allMatch(e -> e.getDates().stream().allMatch(date -> date.isBefore(toDate))))
+        );
+    }
+
+    @Test
+    public void bookingTickets() {
+        Trip trip = insertTrip(createTripRequestWithDates()).getBody();
+        assert trip != null;
+        approveTrip(trip);
+        registerClientAndGetSessionId("clientLogin");
+        OrderRequest orderRequest = createOrderRequest(trip, trip.getDates().get(2));
+        ResponseEntity<OrderResponse> response = restTemplate.exchange(ORDER_URL, HttpMethod.POST, entityWithSessionId(orderRequest, clientSessionId), OrderResponse.class);
+        assertEquals(200, response.getStatusCodeValue());
+        OrderResponse orderResponse = response.getBody();
+        assertAll(
+                () -> assertNotNull(orderResponse.getOrderId()),
+                () -> assertEquals(trip.getTripId(),orderResponse.getTripId()),
+                () -> assertEquals(trip.getFromStation(),orderResponse.getFromStation()),
+                () -> assertEquals(trip.getDuration(),orderResponse.getDuration()),
+                () -> assertEquals(trip.getPrice(),orderResponse.getPrice()),
+                () -> assertEquals(trip.getPrice() * orderRequest.getPassengers().size(),orderResponse.getTotalPrice())
+                );
+
     }
 
     private List<Trip> createListOfTrips() {
@@ -182,8 +250,12 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         return result;
     }
 
+    private void approveTrip(Trip trip) {
+        restTemplate.exchange(TRIP_URL + "/" + trip.getTripId() + "/approve", HttpMethod.PUT, entityWithSessionId(null, adminSessionId), Trip.class);
+    }
+
     private ResponseEntity<Trip> insertTrip(TripRequest tripRequest) {
-        String session = registerAdminAndGetSessionId("testAdmin");
+        String session = registerAdminAndGetSessionId("testedAdmin");
         HttpEntity<Object> entity = entityWithSessionId(tripRequest, session);
         return restTemplate.exchange(TRIP_URL, HttpMethod.POST, entity, Trip.class);
     }

@@ -1,7 +1,7 @@
 package thumbtack.buscompany.service;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import thumbtack.buscompany.AppProperties;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
@@ -16,14 +16,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Service
-@AllArgsConstructor
 public class SessionService {
+    public SessionService(UserDao userDao, SessionDao sessionDao, UserMapper userMapper, AppProperties properties) {
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
+        this.userMapper = userMapper;
+        this.properties = properties;
+        DISCONNECT_TIME = properties.getUserIdleTimeout() * 100L;
+    }
 
     UserDao userDao;
     SessionDao sessionDao;
     UserMapper userMapper;
+    AppProperties properties;
 
-    static final long DISCONNECT_TIME = 30 * 60 * 100;   // MIN * 60 * 100
+    static long DISCONNECT_TIME;
 
     public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin()).orElseThrow(() -> new ServerException(ErrorCode.USER_NOT_FOUND, "login"));
