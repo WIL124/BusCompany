@@ -104,7 +104,7 @@ CREATE TABLE booked_places
     passengerId    INT NOT NULL,
     place          INT,
     FOREIGN KEY (trips_dates_id) REFERENCES trips_dates (id) ON DELETE CASCADE,
-    FOREIGN KEY (passengerId) REFERENCES passengers (id),
+    FOREIGN KEY (passengerId) REFERENCES passengers (id) ON DELETE CASCADE,
     PRIMARY KEY (passengerId)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;

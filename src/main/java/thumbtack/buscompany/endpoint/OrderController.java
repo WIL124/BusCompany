@@ -1,6 +1,8 @@
 package thumbtack.buscompany.endpoint;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -40,6 +42,7 @@ public class OrderController {
             return orderMapper.orderToResponse(order);
         }
     }
+
     @GetMapping
     public List<OrderResponse> getOrdersWithParams(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId,
                                                    @RequestParam(value = "fromStation", required = false) String fromStation,
@@ -49,8 +52,8 @@ public class OrderController {
                                                    @RequestParam(value = "toDate", required = false) String toDate,
                                                    @RequestParam(value = "clientId", required = false) Integer clientId) throws ServerException {
         User user = sessionService.getUserBySessionId(sessionId);
-        RequestParams params = paramsMapper.paramsFromRequest(fromDate,toDate,busName, fromStation,toStation, clientId);
-        if (user instanceof Client){
+        RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, clientId);
+        if (user instanceof Client) {
             params.setClientId(null);
         }
         List<Order> orderList = orderService.getOrdersWithParams(params);
@@ -58,5 +61,20 @@ public class OrderController {
         return orderList.stream().parallel()
                 .map(order -> orderMapper.orderToResponse(order))
                 .collect(Collectors.toList());
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") Integer orderId,
+                                            @CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
+        User user = sessionService.getUserBySessionId(sessionId);
+        if (user instanceof Admin) {
+            throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
+        }
+        Client client = (Client) user;
+        Order order = orderService.getOrderById(orderId);
+        if (order.getClient().equals(client)) {
+            orderService.deleteOrder(order);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else throw new ServerException(ErrorCode.ORDER_NOT_FOUND, orderId.toString());
     }
 }

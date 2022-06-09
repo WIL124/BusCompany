@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.mapper.PlaceMapper;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.Passenger;
@@ -26,6 +27,7 @@ public class PlaceEndpoint {
     SessionService sessionService;
     PlaceService placeService;
     OrderService orderService;
+    PlaceMapper placeMapper;
 
     @GetMapping("/{orderId}")
     public List<Integer> freePlaces(@PathVariable("orderId") Integer orderId,
@@ -48,7 +50,8 @@ public class PlaceEndpoint {
                 .filter(p -> p.getPassport().equals(request.getPassport()))
                 .findFirst().orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "passenger"));
         if (user instanceof Client) {
-            return placeService.choicePlace(request.getPlace(), order, passenger);
+            String ticket = placeService.choicePlace(request.getPlace(), order, passenger);
+            return placeMapper.responseFromRequestAndTicket(request, ticket);
         } else throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
     }
 }

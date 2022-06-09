@@ -23,7 +23,7 @@ public class PlaceDaoImpl implements PlaceDao {
     }
 
     @Override
-    public boolean choicePlace(Passenger passenger, Integer place) {
-        return placeRepository.choicePlace(passenger, place);
+    public void choicePlace(Passenger passenger, Integer place) {
+        placeRepository.choicePlace(passenger, place);
     }
 }

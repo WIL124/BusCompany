@@ -46,6 +46,10 @@ public class OrderService {
         return orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "orderId"));
     }
 
+    public void deleteOrder(Order order) {
+        orderDao.delete(order);
+    }
+
     private Predicate<Order> busNameFilter(String busName) {
         return order -> order.getTrip().getBus().getBusName().equals(busName);
     }

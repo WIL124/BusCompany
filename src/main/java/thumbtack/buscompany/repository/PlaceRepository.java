@@ -28,5 +28,5 @@ public interface PlaceRepository {
             "JOIN orders o on o.orderId = passengers.orderId " +
             "JOIN trips_dates td on td.id = o.trips_dates_id " +
             "ON DUPLICATE KEY UPDATE place = #{place}")
-    boolean choicePlace(@Param("passenger") Passenger passenger, @Param("place") Integer place);
+    void choicePlace(@Param("passenger") Passenger passenger, @Param("place") Integer place);
 }

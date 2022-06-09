@@ -37,4 +37,7 @@ public interface OrderRepository {
             "WHERE tripId=#{order.trip.tripId} AND date = #{order.date}")
     @Options(useGeneratedKeys = true, keyProperty = "order.orderId")
     void insert(@Param("order") Order order);
+
+    @Delete("DELETE FROM orders WHERE orderId=#{order.orderId}")
+    boolean deleteOrder(@Param("order") Order order);
 }

@@ -8,7 +8,6 @@ import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.response.ChoosingPlaceResponse;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,11 +28,11 @@ public class PlaceService {
         return places;
     }
 
-    public ChoosingPlaceResponse choicePlace(Integer place, Order order, Passenger passenger) throws ServerException {
+    public String choicePlace(Integer place, Order order, Passenger passenger) throws ServerException {
         if (order.getTrip().getBus().getPlaceCount() < place) {
             throw new ServerException(ErrorCode.INVALID_PLACE, "place");
         }
         placeDao.choicePlace(passenger, place);
-        return null;
+        return "Билет " + "номер рейса" + "_" + place;
     }
 }

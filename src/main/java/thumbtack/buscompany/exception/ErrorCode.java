@@ -18,6 +18,7 @@ public enum ErrorCode {
     NOT_FOUND("not found"),
     INVALID_PLACE("Please, choice any free place"),
     WRONG_DATE_INTERVAL("the specified interval and period does not contain a single day"),
-    TRIP_NOT_FOUND("trip not found");
+    TRIP_NOT_FOUND("trip not found"),
+    ORDER_NOT_FOUND("order not found");
     private final String message;
 }

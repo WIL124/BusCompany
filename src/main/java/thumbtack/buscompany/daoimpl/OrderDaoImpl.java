@@ -34,4 +34,9 @@ public class OrderDaoImpl implements OrderDao {
     public Optional<Order> getById(Integer orderId) {
         return Optional.ofNullable(orderRepository.getById(orderId));
     }
+
+    @Override
+    public void delete(Order order) {
+        orderRepository.deleteOrder(order);
+    }
 }
