@@ -11,17 +11,17 @@ import java.util.List;
 @Mapper
 @Repository
 public interface UserRepository {
-    @Insert("INSERT INTO USERS (firstname, lastname, patronymic, login, password, userType)" +
+    @Insert("INSERT INTO users (firstname, lastname, patronymic, login, password, userType)" +
             "values(#{user.firstName}, #{user.lastName}, #{user.patronymic}," +
             " #{user.login}, #{user.password}, #{user.userType})")
     @Options(useGeneratedKeys = true, keyProperty = "user.id")
     void insertUserProperties(@Param("user") User user);
 
-    @Insert("INSERT INTO ADMINS (id, position)" +
+    @Insert("INSERT INTO admins (id, position)" +
             "VALUES (#{admin.id}, #{admin.position})")
     void insertAdminProperties(@Param("admin") Admin admin);
 
-    @Insert("INSERT INTO CLIENTS (id, email, phone)" +
+    @Insert("INSERT INTO clients (id, email, phone)" +
             "VALUES (#{client.id}, #{client.email}, #{client.phone})")
     void insertClientProperties(@Param("client") Client client);
 

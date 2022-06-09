@@ -20,17 +20,17 @@ public interface DebugRepository {
     boolean clearUsers();
 
     @Delete("DELETE FROM trips")
-    void clearTrips();
+    boolean clearTrips();
 
     @Delete("DELETE FROM trips_dates")
-    void clearTripsDates();
+    boolean clearTripsDates();
 
     @Delete("DELETE FROM booked_places")
-    void clearBookedPlaces();
+    boolean clearBookedPlaces();
 
     @Delete("DELETE FROM orders")
-    void clearOrders();
+    boolean clearOrders();
 
     @Delete("DELETE FROM passengers")
-    void clearPassengers();
+    boolean clearPassengers();
 }
