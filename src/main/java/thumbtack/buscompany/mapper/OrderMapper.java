@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Client;
@@ -16,6 +15,7 @@ import thumbtack.buscompany.service.TripDayService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = TripDayService.class)
 @AllArgsConstructor
@@ -33,6 +33,8 @@ public abstract class OrderMapper {
     @Mapping(target = "price", source = "order.tripDay.trip.price")
     @Mapping(target = "totalPrice", expression = "java(order.getTripDay().getTrip().getPrice()*order.getPassengers().size())")
     public abstract OrderResponse orderToResponse(Order order);
+
+    public abstract List<OrderResponse> ordersToResponses(List<Order> orders);
 
     @Mapping(target = "tripDay", resultType = TripDay.class,
             expression = "java(tripDayService.getTripDayByTripIdAndDate(request.getTripId(), dateFromString(request.getDate())))")

@@ -2,10 +2,14 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.mapper.ParamsMapper;
 import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.TripRequest;
@@ -23,16 +27,20 @@ import java.util.stream.Collectors;
 public class TripService {
     private TripMapper tripMapper;
     private TripDao tripDao;
+    private SessionDao sessionDao;
+    private ParamsMapper paramsMapper;
 
-    public TripResponse create(TripRequest tripRequest) throws ServerException {
+    public TripResponse create(TripRequest tripRequest, String sessionId) throws ServerException {
+        checkIsAdminOrThrow(sessionId);
         Trip trip = tripMapper.tripFromRequest(tripRequest);
         createAndSetTripDays(trip, tripRequest);
         tripDao.insert(trip);
         return tripMapper.tripToResponse(trip);
     }
 
-    public TripResponse update(int tripId, TripRequest tripRequest) throws ServerException {
-        Trip trip = tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
+    public TripResponse update(int tripId, TripRequest tripRequest, String sessionId) throws ServerException {
+        checkIsAdminOrThrow(sessionId);
+        Trip trip = getTripOrThrow(tripId);
         tripMapper.updateTrip(trip, tripRequest);
         createAndSetTripDays(trip, tripRequest);
         try {
@@ -40,30 +48,57 @@ public class TripService {
         } catch (RuntimeException e) { //TODO fix
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
+        sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
     }
 
-    public boolean deleteTrip(int tripId) {
-        return tripDao.deleteTrip(tripId);
+    public ResponseEntity<Void> deleteTrip(int tripId, String sessionId) throws ServerException {
+        checkIsAdminOrThrow(sessionId);
+        Trip trip = getTripOrThrow(tripId);
+        sessionDao.updateTime(sessionId);
+        if (tripDao.deleteTrip(tripId)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else throw new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId");
     }
 
-    public Trip getTrip(int tripId) throws ServerException {
-        return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
+    public TripResponse getTrip(int tripId, String sessionId) throws ServerException {
+        checkIsAdminOrThrow(sessionId);
+        Trip trip = getTripOrThrow(tripId);
+        sessionDao.updateTime(sessionId);
+        return tripMapper.tripToResponse(trip);
     }
 
-    public Trip approve(int tripId) throws ServerException {
-        if (tripDao.approve(tripId)) {
-            return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "tripId"));
-        } else throw new ServerException(ErrorCode.NOT_FOUND, "tripId"); //TODO fix exceptions
+
+    public TripResponse approve(int tripId, String sessionId) throws ServerException {
+        checkIsAdminOrThrow(sessionId);
+        Trip trip = getTripOrThrow(tripId);
+        tripDao.approve(trip);
+        trip.setApproved(true);
+        sessionDao.updateTime(sessionId);
+        return tripMapper.tripToResponse(trip);
     }
 
-    public List<Trip> getTripsWithParams(User user, RequestParams params) {
+    public List<TripResponse> getTripsWithParams(String fromStation, String toStation, String busName, String fromDate, String toDate, String sessionId) throws ServerException {
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, user.getId());
         List<Trip> tripList = tripDao.getTripsWithParams(user, params);
         filterTripDays(tripList, params);
         if (user instanceof Client) {
             tripList.forEach(e -> e.setApproved(null));
         }
-        return tripList;
+        sessionDao.updateTime(sessionId);
+        return tripMapper.tripResponseListFromTrips(tripList);
+    }
+
+    private void checkIsAdminOrThrow(String sessionId) throws ServerException {
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        if (user instanceof Client) {
+            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+        }
+    }
+
+    private Trip getTripOrThrow(Integer tripId) throws ServerException {
+        return tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
     }
 
     private void filterTripDays(List<Trip> tripList, RequestParams params) {

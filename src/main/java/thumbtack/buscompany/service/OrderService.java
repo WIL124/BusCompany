@@ -1,12 +1,15 @@
 package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.OrderDao;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.OrderMapper;
+import thumbtack.buscompany.mapper.ParamsMapper;
 import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.OrderRequest;
 import thumbtack.buscompany.response.OrderResponse;
@@ -22,6 +25,7 @@ public class OrderService {
     OrderDao orderDao;
     SessionDao sessionDao;
     OrderMapper orderMapper;
+    ParamsMapper paramsMapper;
 
     public OrderResponse createOrder(OrderRequest orderRequest, String sessionId) throws ServerException {
         User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"))
@@ -36,9 +40,16 @@ public class OrderService {
         return orderMapper.orderToResponse(order);
     }
 
-    public List<Order> getOrdersWithParams(RequestParams params) {
+    public List<OrderResponse> getOrdersWithParams(String sessionId, String fromStation, String toStation, String busName,
+                                                   String fromDate, String toDate, Integer clientId) throws ServerException {
+
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, clientId);
+        if (user instanceof Client) {
+            params.setClientId(null);
+        }
         List<Order> dirtyOrders = orderDao.getAllByClientId(params.getClientId());
-        return dirtyOrders.stream().parallel()
+        dirtyOrders = dirtyOrders.stream().parallel()
                 .filter(
                         busNameFilter(params.getBusName())
                                 .and(fromStationFilter(params.getFromStation()))
@@ -46,14 +57,26 @@ public class OrderService {
                                 .and(fromDateFilter(params.getFromDate()))
                                 .and(toDateFilter(params.getToDate())))
                 .collect(Collectors.toList());
+        sessionDao.updateTime(sessionId);
+        return orderMapper.ordersToResponses(dirtyOrders);
     }
 
     public Order getOrderById(Integer orderId) throws ServerException {
         return orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "orderId"));
     }
 
-    public void deleteOrder(Order order) {
-        orderDao.delete(order);
+    public ResponseEntity<Void> deleteOrder(Integer orderId, String sessionId) throws ServerException {
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"))
+                .getUser();
+        if (user instanceof Admin) {
+            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+        }
+        Client client = (Client) user;
+        Order order = orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
+        if (order.getClient().equals(client)) {
+            orderDao.delete(order);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else throw new ServerException(ErrorCode.ORDER_NOT_FOUND, orderId.toString());
     }
 
     private Predicate<Order> busNameFilter(String busName) {

@@ -56,8 +56,8 @@ public class TripDaoImpl implements TripDao {
     }
 
     @Override
-    public boolean approve(int tripId) {
-        return tripRepository.approve(tripId);
+    public boolean approve(Trip trip) {
+        return tripRepository.approve(trip.getTripId());
     }
 
     @Override

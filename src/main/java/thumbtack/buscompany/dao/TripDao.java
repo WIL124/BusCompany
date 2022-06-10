@@ -16,7 +16,7 @@ public interface TripDao {
 
     boolean deleteTrip(int tripId);
 
-    boolean approve(int tripId);
+    boolean approve(Trip trip);
 
     List<Trip> getTripsWithParams(User user, RequestParams paramsFromRequest);
 }
