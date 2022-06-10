@@ -1,8 +1,13 @@
 package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.AccountDao;
+import thumbtack.buscompany.dao.SessionDao;
+import thumbtack.buscompany.exception.ErrorCode;
+import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
@@ -14,14 +19,22 @@ import thumbtack.buscompany.response.UserResponse;
 public class AccountService {
     AccountDao accountDao;
     UserMapper userMapper;
+    SessionDao sessionDao;
 
-    public boolean delete(User user) {
-        return accountDao.deactivateUser(user.getId());
+    public ResponseEntity<Void> delete(String sessionId) throws ServerException {
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"))
+                .getUser();
+        sessionDao.delete(sessionId);
+        accountDao.deactivateUser(user.getId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public UserResponse get(User user) {
-        return user instanceof Client ?
+    public UserResponse get(String sessionId) throws ServerException {
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"))
+                .getUser();
+        sessionDao.updateTime(sessionId);
+        return (user instanceof Client ?
                 userMapper.clientToResponse((Client) user) :
-                userMapper.adminToResponse((Admin) user);
+                userMapper.adminToResponse((Admin) user));
     }
 }

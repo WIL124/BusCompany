@@ -54,4 +54,14 @@ public class UserDaoImpl implements UserDao {
     public boolean updateClient(Client client) {
         return (userRepository.updateUserProperties(client) && userRepository.updateClientProperties(client));
     }
+
+    @Override
+    public Optional<User> getBySessionId(String sessionId) {
+        return Optional.ofNullable(userRepository.getUserBySessionId(sessionId));
+    }
+
+    @Override
+    public Optional<Admin> getAdminBySessionId(String sessionId) {
+        return Optional.ofNullable(userRepository.getAdminBySessionId(sessionId));
+    }
 }

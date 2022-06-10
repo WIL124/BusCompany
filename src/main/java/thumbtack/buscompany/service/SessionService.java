@@ -1,5 +1,7 @@
 package thumbtack.buscompany.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.AppProperties;
 import thumbtack.buscompany.dao.SessionDao;
@@ -32,7 +34,7 @@ public class SessionService {
 
     static long DISCONNECT_TIME;
 
-    public UserResponse login(LoginRequest request, HttpServletResponse response) throws ServerException {
+    public ResponseEntity<UserResponse> login(LoginRequest request, HttpServletResponse response) throws ServerException {
         User user = userDao.getUserByLogin(request.getLogin()).orElseThrow(() -> new ServerException(ErrorCode.USER_NOT_FOUND, "login"));
         if (!user.getPassword().equals(request.getPassword())) {
             throw new ServerException(ErrorCode.WRONG_PASSWORD, "password");
@@ -41,14 +43,16 @@ public class SessionService {
         sessionDao.insert(session);
         Cookie cookie = new Cookie("JAVASESSIONID", session.getSessionId());
         response.addCookie(cookie);
-        return userToResponse(user);
+        return new ResponseEntity<>(userToResponse(user), HttpStatus.OK);
     }
 
-    public boolean logout(String sessionId) throws ServerException {
-        Session session = getSession(sessionId);
-        return session.getUser().getUserType() == UserType.CLIENT ?
+    public ResponseEntity<Void> logout(String sessionId) throws ServerException {
+        Session session = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
+        if (session.getUser().getUserType() == UserType.CLIENT ?
                 sessionDao.delete(sessionId) :
-                adminLogout(sessionId);
+                adminLogout(sessionId)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else throw new ServerException(ErrorCode.NOT_FOUND, "JAVASESSIONID");
     }
 
     public User getUserBySessionId(String sessionId) throws ServerException {
@@ -65,7 +69,7 @@ public class SessionService {
     }
 
     protected Session getSession(String sessionId) throws ServerException {
-        return sessionDao.getBySessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
+        return sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
     }
 
     private UserResponse userToResponse(User user) {

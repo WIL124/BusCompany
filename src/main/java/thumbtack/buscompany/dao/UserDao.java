@@ -19,4 +19,8 @@ public interface UserDao {
     boolean updateAdmin(Admin admin);
 
     boolean updateClient(Client client);
+
+    Optional<User> getBySessionId(String sessionId);
+
+    Optional<Admin> getAdminBySessionId(String sessionId);
 }

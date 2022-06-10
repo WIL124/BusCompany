@@ -74,7 +74,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void updateAndGetTrip() {
+    public void updateAndGetTrip() throws ServerException {
         ResponseEntity<TripResponse> response = insertTrip(createTripRequestWithDates());
         assert response.getBody() != null;
         TripRequest tripRequest = createTripRequestWithSchedule();

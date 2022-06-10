@@ -21,12 +21,11 @@ public class SessionController {
 
     @PostMapping
     public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) throws ServerException {
-        return new ResponseEntity<>(sessionService.login(loginRequest, response), HttpStatus.OK);
+        return sessionService.login(loginRequest, response);
     }
 
     @DeleteMapping
     public ResponseEntity<Void> logout(@CookieValue(value = "JAVASESSIONID") @NotNull String sessionId) throws ServerException {
-        sessionService.logout(sessionId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return sessionService.logout(sessionId);
     }
 }

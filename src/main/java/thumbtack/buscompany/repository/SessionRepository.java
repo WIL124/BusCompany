@@ -13,14 +13,15 @@ public interface SessionRepository {
             "ON DUPLICATE KEY UPDATE session_id= #{session.sessionId}, last_activity_time= #{session.lastActivityTime}")
     void insertSession(@Param("session") Session session);
 
-    @Delete("DELETE FROM sessions WHERE session_id = #{session_id}")
-    boolean delete(@Param("session_id") String session_id);
+    @Delete("DELETE FROM sessions WHERE session_id = #{sessionId}")
+    boolean delete(@Param("sessionId") String sessionId);
 
-    @Select("SELECT user_id, session_id AS sessionId, last_activity_time AS lastActivityTime " +
-            "FROM sessions WHERE session_id = #{sessionId}")
+    @Select("SELECT user_id as id, session_id AS sessionId, last_activity_time AS lastActivityTime " +
+            "FROM sessions " +
+            "WHERE session_id = #{sessionId}")
     @Results({
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "thumbtack.buscompany.repository.UserRepository.getUserById", fetchType = FetchType.EAGER))
+            @Result(property = "user", column = "id", javaType = User.class,
+                    one = @One(select = "thumbtack.buscompany.repository.UserRepository.getUserById", fetchType = FetchType.LAZY))
     })
     Session getBySessionId(@Param("sessionId") String sessionId);
 

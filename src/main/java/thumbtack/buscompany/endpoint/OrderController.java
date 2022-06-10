@@ -27,19 +27,19 @@ public class OrderController {
     SessionService sessionService;
     OrderService orderService;
     OrderMapper orderMapper;
-    TripService tripService;
     ParamsMapper paramsMapper;
 
     @PostMapping
     public OrderResponse createOrder(@RequestBody OrderRequest orderRequest, @CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
-        User user = sessionService.getUserBySessionId(sessionId);
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
-        } else {
-            Order order = orderService.createOrder((Client) user, orderRequest);
-            sessionService.updateTime(sessionId);
-            return orderMapper.orderToResponse(order);
-        }
+        return orderService.createOrder(orderRequest, sessionId);
+//        User user = sessionService.getUserBySessionId(sessionId);
+//        if (user instanceof Admin) {
+//            throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
+//        } else {
+//            Order order = orderService.createOrder((Client) user, orderRequest);
+//            sessionService.updateTime(sessionId);
+//            return orderMapper.orderToResponse(order);
+//        }
     }
 
     @GetMapping

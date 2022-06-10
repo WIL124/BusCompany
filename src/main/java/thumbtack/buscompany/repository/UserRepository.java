@@ -49,7 +49,8 @@ public interface UserRepository {
             "FROM users U " +
             "LEFT JOIN admins A on U.id = A.id " +
             "LEFT JOIN clients C on U.id = C.id " +
-            "WHERE U.id = #{id} AND active")
+            "WHERE U.id = #{id} " +
+            "AND active = 1")
     @TypeDiscriminator(column = "userType",
             cases = {
                     @Case(value = "ADMIN", type = Admin.class,
@@ -87,4 +88,33 @@ public interface UserRepository {
 
     @Update("UPDATE clients SET email = #{client.email}, phone = #{client.phone} WHERE id = #{client.id}")
     boolean updateClientProperties(@Param("client") Client client);
+
+
+    @Select("SELECT users.id AS id, firstname, lastname, patronymic, login, password, userType " +
+            "FROM users " +
+            "LEFT JOIN admins a on users.id = a.id " +
+            "LEFT JOIN clients c on users.id = c.id " +
+            "JOIN sessions s on users.id = s.user_id " +
+            "WHERE session_id = #{sessionId} " +
+            "AND active = 1")
+    @TypeDiscriminator(column = "userType",
+            cases = {
+                    @Case(value = "ADMIN", type = Admin.class,
+                            results = {
+                                    @Result(property = "position", column = "position")}),
+                    @Case(value = "CLIENT", type = Client.class,
+                            results = {
+                                    @Result(property = "phone", column = "phone"),
+                                    @Result(property = "email", column = "email"),
+                            })
+            })
+    User getUserBySessionId(@Param("sessionId") String sessionId);
+
+    @Select("SELECT users.id AS id, firstname, lastname, patronymic, login, password, userType " +
+            "FROM users " +
+            "JOIN admins a on users.id = a.id " +
+            "JOIN sessions s on users.id = s.user_id " +
+            "WHERE session_id = #{sessionId} " +
+            "AND active = 1")
+    Admin getAdminBySessionId(String sessionId);
 }

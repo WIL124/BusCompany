@@ -36,7 +36,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public Optional<Session> getBySessionById(String sessionId) {
+    public Optional<Session> getSessionById(String sessionId) {
         return Optional.ofNullable(sessionRepository.getBySessionId(sessionId));
     }
 }

@@ -17,7 +17,7 @@ import thumbtack.buscompany.service.TripDayService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@Mapper(componentModel = "spring", typeConversionPolicy = ReportingPolicy.ERROR, uses = TripDayService.class)
+@Mapper(componentModel = "spring", uses = TripDayService.class)
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class OrderMapper {

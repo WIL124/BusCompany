@@ -26,13 +26,7 @@ public class TripService {
 
     public TripResponse create(TripRequest tripRequest) throws ServerException {
         Trip trip = tripMapper.tripFromRequest(tripRequest);
-        List<LocalDate> dates;
-        if (trip.getSchedule() != null) {
-            dates = createDatesFromSchedule(trip.getSchedule());
-            createTripDays(trip, dates);
-        } else {
-            createTripDays(trip, tripMapper.datesFromString(tripRequest.getDates()));
-        }
+        createAndSetTripDays(trip, tripRequest);
         tripDao.insert(trip);
         return tripMapper.tripToResponse(trip);
     }
@@ -40,24 +34,13 @@ public class TripService {
     public TripResponse update(int tripId, TripRequest tripRequest) throws ServerException {
         Trip trip = tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
         tripMapper.updateTrip(trip, tripRequest);
-        if (trip.getSchedule() != null) {
-            List<LocalDate> dates = createDatesFromSchedule(trip.getSchedule());
-            createTripDays(trip, dates);
-        }
+        createAndSetTripDays(trip, tripRequest);
         try {
             tripDao.update(trip);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { //TODO fix
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
         return tripMapper.tripToResponse(trip);
-    }
-
-    private void createTripDays(Trip trip, List<LocalDate> dates) {
-        trip.setTripDays(new ArrayList<>());
-        for (LocalDate date : dates) {
-            trip.getTripDays().add(new TripDay(date, null, new ArrayList<>()));
-        }
-        trip.getTripDays().forEach(tripDay -> tripDay.setTrip(trip));
     }
 
     public boolean deleteTrip(int tripId) {
@@ -76,6 +59,14 @@ public class TripService {
 
     public List<Trip> getTripsWithParams(User user, RequestParams params) {
         List<Trip> tripList = tripDao.getTripsWithParams(user, params);
+        filterTripDays(tripList, params);
+        if (user instanceof Client) {
+            tripList.forEach(e -> e.setApproved(null));
+        }
+        return tripList;
+    }
+
+    private void filterTripDays(List<Trip> tripList, RequestParams params) {
         if (params != null) {
             for (Trip trip : tripList) {
                 if (params.getFromDate() != null) {
@@ -86,10 +77,24 @@ public class TripService {
                 }
             }
         }
-        if (user instanceof Client) {
-            tripList.forEach(e -> e.setApproved(null));
+    }
+
+    private void createAndSetTripDays(Trip trip, TripRequest request) throws ServerException {
+        if (trip.getSchedule() != null) {
+            List<LocalDate> dates = createDatesFromSchedule(trip.getSchedule());
+            createTripDays(trip, dates);
+        } else {
+            createTripDays(trip, tripMapper.datesFromString(request.getDates()));
         }
-        return tripList;
+    }
+
+    private void createTripDays(Trip trip, List<LocalDate> dates) {
+        List<TripDay> tripDays = new ArrayList<>();
+        for (LocalDate date : dates) {
+            tripDays.add(new TripDay(date, null, new ArrayList<>()));
+        }
+        tripDays.forEach(tripDay -> tripDay.setTrip(trip));
+        trip.setTripDays(tripDays);
     }
 
     private List<LocalDate> createDatesFromSchedule(Schedule schedule) throws ServerException {
