@@ -6,9 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Passenger;
-import thumbtack.buscompany.model.Trip;
+import thumbtack.buscompany.model.TripDay;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -16,10 +15,8 @@ import java.util.List;
 public interface PlaceRepository {
 
     @Select("SELECT place FROM booked_places " +
-            "WHERE trips_dates_id IN " +
-            "(SELECT id from trips_dates " +
-            "WHERE tripId = #{trip.tripId} AND date = #{date})")
-    List<Integer> getBookedPlaces(@Param("trip") Trip trip, @Param("date") LocalDate date);
+            "WHERE trips_dates_id = #{tripDay.tripDayId}")
+    List<Integer> getBookedPlaces(@Param("tripDay") TripDay tripDay);
 
 
     @Insert("INSERT INTO booked_places (passengerId, trips_dates_id, place) " +

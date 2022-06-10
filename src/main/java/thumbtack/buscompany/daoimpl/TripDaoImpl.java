@@ -1,6 +1,8 @@
 package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDao;
@@ -16,20 +18,24 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
+@NoArgsConstructor
 public class TripDaoImpl implements TripDao {
+
+    @Autowired
     TripRepository tripRepository;
+    @Autowired
     TripDayRepository tripDayRepository;
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
     public void insert(Trip trip) {
         tripRepository.insertTrip(trip);
-        trip.getTripDays().parallelStream().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
+        trip.getTripDays().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
     }
 
     @Override
     public Optional<Trip> getTrip(int tripId) {
-        return Optional.ofNullable(tripRepository.getTrip(tripId));
+        return Optional.ofNullable(tripRepository.getTripById(tripId));
     }
 
     @Override
@@ -40,8 +46,7 @@ public class TripDaoImpl implements TripDao {
             return false;
         }
         boolean second = tripDayRepository.deleteAllTripDays(trip.getTripId());
-        //TODO may be do it Async?
-        trip.getTripDays().parallelStream().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
+        trip.getTripDays().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
         return second;
     }
 

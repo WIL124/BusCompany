@@ -10,6 +10,7 @@ import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Bus;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.request.TripRequest;
+import thumbtack.buscompany.response.TripResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,10 +40,10 @@ public class TripServiceTest extends BuscompanyApplicationTests {
         TripRequest request = createTripRequestWithSchedule();
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");
-        Trip trip = tripService.create(request);
-        assertEquals(10, trip.getDates().size());
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
+        TripResponse tripResponse = tripService.create(request);
+        assertEquals(10, tripResponse.getDates().size());
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
     }
 
     @Test
@@ -51,11 +52,11 @@ public class TripServiceTest extends BuscompanyApplicationTests {
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");
         request.getScheduleDto().setPeriod("even");
-        Trip trip = tripService.create(request);
-        assertEquals(5, trip.getDates().size());
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
-        assertTrue(trip.getDates().stream().allMatch(e -> e.getDayOfMonth() % 2 == 0));
+        TripResponse tripResponse = tripService.create(request);
+        assertEquals(5, tripResponse.getDates().size());
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.getDayOfMonth() % 2 == 0));
     }
 
     @Test
@@ -64,11 +65,11 @@ public class TripServiceTest extends BuscompanyApplicationTests {
         request.getScheduleDto().setFromDate("2000.01.01");
         request.getScheduleDto().setToDate("2000.01.10");
         request.getScheduleDto().setPeriod("odd");
-        Trip trip = tripService.create(request);
-        assertEquals(5, trip.getDates().size());
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
-        assertTrue(trip.getDates().stream().allMatch(e -> e.getDayOfMonth() % 2 != 0));
+        TripResponse tripResponse = tripService.create(request);
+        assertEquals(5, tripResponse.getDates().size());
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.getDayOfMonth() % 2 != 0));
     }
 
     @Test
@@ -78,10 +79,10 @@ public class TripServiceTest extends BuscompanyApplicationTests {
         request.getScheduleDto().setToDate("2000.01.10");
         request.getScheduleDto().setPeriod("1,2,5,9");
         List<Integer> nums = List.of(1, 2, 5, 9);
-        Trip trip = tripService.create(request);
-        assertEquals(4, trip.getDates().size());
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
-        assertTrue(trip.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
-        assertTrue(nums.containsAll(trip.getDates().stream().map(LocalDate::getDayOfMonth).collect(Collectors.toList())));
+        TripResponse tripResponse = tripService.create(request);
+        assertEquals(4, tripResponse.getDates().size());
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isAfter(LocalDate.of(1999, 12, 31))));
+        assertTrue(tripResponse.getDates().stream().allMatch(e -> e.isBefore(LocalDate.of(2000, 1, 11))));
+        assertTrue(nums.containsAll(tripResponse.getDates().stream().map(LocalDate::getDayOfMonth).collect(Collectors.toList())));
     }
 }

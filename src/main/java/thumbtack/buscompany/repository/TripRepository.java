@@ -24,9 +24,9 @@ public interface TripRepository {
             @Result(property = "bus", javaType = Bus.class, column = "busName",
                     one = @One(select = "thumbtack.buscompany.repository.BusRepository.get", fetchType = FetchType.LAZY)),
             @Result(property = "tripDays", javaType = List.class, column = "tripId",
-                    many = @Many(select = "thumbtack.buscompany.repository.TripRepository.getTripDay", fetchType = FetchType.LAZY))
+                    many = @Many(select = "thumbtack.buscompany.repository.TripDayRepository.getTripDaysByTripId", fetchType = FetchType.LAZY))
     })
-    Trip getTrip(@Param("tripId") int tripId);
+    Trip getTripById(@Param("tripId") int tripId);
 
     @Update("UPDATE trips SET busName = #{trip.bus.busName}, fromStation = #{trip.fromStation}, " +
             "toStation = #{trip.toStation}, start = #{trip.start}, duration = #{trip.duration}, " +
@@ -47,7 +47,7 @@ public interface TripRepository {
 
     class SqlProvider {
         public static String getTripsWithParams(@Param("user") User user, @Param("params") RequestParams params) {
-            String sql = new SQL() {
+            return new SQL() {
                 {
                     SELECT("tripId", "busName", "duration", "fromStation", "toStation",
                             "start", "price");
@@ -71,7 +71,6 @@ public interface TripRepository {
                     }
                 }
             }.toString();
-            return sql;
         }
     }
 }

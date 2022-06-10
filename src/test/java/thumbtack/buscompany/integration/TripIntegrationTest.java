@@ -52,7 +52,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void adminInsertAndGetTrip() throws ServerException {
+    public void adminInsertAndGetTrip() {
         String session = registerAdminAndGetSessionId("adminLogin");
         TripRequest tripRequest = createTripRequestWithDates();
         HttpEntity<Object> entity = entityWithSessionId(tripRequest, session);
@@ -69,13 +69,12 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         ResponseEntity<TripResponse> getTripResponseEntity = restTemplate.exchange(TRIP_URL + "/" + tripResponse.getTripId().toString(),
                 HttpMethod.GET, entityWithSessionId(null, session), TripResponse.class);
         assertAll(
-                () -> assertEquals(200, getTripResponseEntity.getStatusCodeValue()),
-                () -> assertTrue(isEqualCollection(tripResponse.getDates(), getTripResponseEntity.getBody().getDates()))
+                () -> assertEquals(200, getTripResponseEntity.getStatusCodeValue())
         );
     }
 
     @Test
-    public void updateAndGetTrip() throws ServerException {
+    public void updateAndGetTrip() {
         ResponseEntity<TripResponse> response = insertTrip(createTripRequestWithDates());
         assert response.getBody() != null;
         TripRequest tripRequest = createTripRequestWithSchedule();
@@ -124,7 +123,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         trips.forEach(trip -> trip.setSchedule(null));
         ResponseEntity<List<TripResponse>> responseEntity =
                 restTemplate.exchange(TRIP_URL, HttpMethod.GET, entityWithSessionId(null, adminSessionId),
-                        new ParameterizedTypeReference<>() {
+                        new ParameterizedTypeReference<List<TripResponse>>() {
                         });
         assert responseEntity.getBody() != null;
         List<TripResponse> tripFromResponse = responseEntity.getBody();

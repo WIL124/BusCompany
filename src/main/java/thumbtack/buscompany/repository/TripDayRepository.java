@@ -19,15 +19,21 @@ public interface TripDayRepository {
 
     @Select("SELECT id as tripDayId, tripId, date " +
             "FROM trips_dates " +
-            "WHERE tripDayId = #{tripDayId}") //TODO fix me trip select
+            "WHERE tripDayId = #{tripDayId}")
     @Results(id = "tripDay", value = {
             @Result(property = "tripDayId", column = "tripDayId"),
+            @Result(property = "date", column = "date"),
             @Result(property = "trip", javaType = Trip.class, column = "tripId",
-                    one = @One(select = "thumbtack.buscompany.repository.TripRepository.getTrip", fetchType = FetchType.LAZY)),
+                    one = @One(select = "thumbtack.buscompany.repository.TripRepository.getTripById", fetchType = FetchType.LAZY)),
             @Result(property = "orders", column = "tripDayId", javaType = List.class,
-                    many = @Many(select = "")) //TODO fix me
+                    many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getByTripDayId", fetchType = FetchType.LAZY))
     })
-    TripDay getTripDay(@Param("tripDayId") int tripDayId);
+    TripDay getTripDayById(@Param("tripDayId") int tripDayId);
+    @Select("SELECT id as tripDayId, tripId, date " +
+            "FROM trips_dates " +
+            "WHERE tripId = #{tripId}")
+    @ResultMap("tripDay")
+    List<TripDay> getTripDaysByTripId(@Param("tripId") Integer tripId);
 
     @Delete("DELETE FROM trips_dates WHERE tripId = #{tripId}")
     boolean deleteAllTripDays(@Param("tripId") int tripId);
@@ -36,5 +42,5 @@ public interface TripDayRepository {
             "WHERE tripId = #{tripId} " +
             "AND date = #{date}")
     @ResultMap("tripDay")
-    TripDay getTripDay(@Param("tripId") Integer tripId, @Param("date") LocalDate date);
+    TripDay getTripDayByTripIdAndDate(@Param("tripId") Integer tripId, @Param("date") LocalDate date);
 }

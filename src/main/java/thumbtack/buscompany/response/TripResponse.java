@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import thumbtack.buscompany.model.Bus;
 import thumbtack.buscompany.model.Schedule;
+import thumbtack.buscompany.request.ScheduleDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

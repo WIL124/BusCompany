@@ -9,6 +9,7 @@ import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.TripRequest;
+import thumbtack.buscompany.response.TripResponse;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,31 +24,40 @@ public class TripService {
     private TripMapper tripMapper;
     private TripDao tripDao;
 
-    public Trip create(TripRequest tripRequest) throws ServerException {
-
+    public TripResponse create(TripRequest tripRequest) throws ServerException {
         Trip trip = tripMapper.tripFromRequest(tripRequest);
+        List<LocalDate> dates;
         if (trip.getSchedule() != null) {
-            List<LocalDate> dates = createDatesFromSchedule(trip.getSchedule());
-            tripMapper.createTripDays(trip, dates);
+            dates = createDatesFromSchedule(trip.getSchedule());
+            createTripDays(trip, dates);
+        } else {
+            createTripDays(trip, tripMapper.datesFromString(tripRequest.getDates()));
         }
         tripDao.insert(trip);
-        return trip;
+        return tripMapper.tripToResponse(trip);
     }
 
-    public Trip update(int tripId, TripRequest tripRequest) throws ServerException {
+    public TripResponse update(int tripId, TripRequest tripRequest) throws ServerException {
         Trip trip = tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
         tripMapper.updateTrip(trip, tripRequest);
-        trip.setTripId(tripId);
         if (trip.getSchedule() != null) {
             List<LocalDate> dates = createDatesFromSchedule(trip.getSchedule());
-            tripMapper.createTripDays(trip, dates);
+            createTripDays(trip, dates);
         }
         try {
             tripDao.update(trip);
         } catch (RuntimeException e) {
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
-        return trip;
+        return tripMapper.tripToResponse(trip);
+    }
+
+    private void createTripDays(Trip trip, List<LocalDate> dates) {
+        trip.setTripDays(new ArrayList<>());
+        for (LocalDate date : dates) {
+            trip.getTripDays().add(new TripDay(date, null, new ArrayList<>()));
+        }
+        trip.getTripDays().forEach(tripDay -> tripDay.setTrip(trip));
     }
 
     public boolean deleteTrip(int tripId) {

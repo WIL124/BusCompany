@@ -23,17 +23,22 @@ public interface TripMapper {
     @Mapping(target = "tripDays", expression = "java(new ArrayList<>())")
     @Named(value = "trip")
     Trip tripFromRequest(TripRequest request);
+
+    @Mapping(target = "schedule", source = "scheduleDto")
     void updateTrip(@MappingTarget Trip trip, TripRequest tripRequest);
-    @Mapping(target = "dates", source = "trip.tripDays.date")
+
+    @Mapping(target = "dates", source = "trip.tripDays", qualifiedByName = "datesFromTripDays")
+    @Mapping(target = "schedule", source = "schedule")
     TripResponse tripToResponse(Trip trip);
-    @IterableMapping(qualifiedByName = "tripToResponse")
-    List<TripResponse> triResponseListFromTrips(List<Trip> trips);
-    @AfterMapping
-    default void setTripDates(@MappingTarget Trip trip, TripRequest request) {
-        for (LocalDate date : datesFromString(request.getDates())) {
-            trip.getTripDays().add(new TripDay(date, trip, new ArrayList<>()));
-        }
+
+    default LocalDate dateFromTripDay(TripDay tripDay) {
+        return tripDay.getDate();
     }
+
+    @Named("datesFromTripDays")
+    List<LocalDate> datesFromTripDays(List<TripDay> tripDays);
+
+    List<TripResponse> tripResponseListFromTrips(List<Trip> trips);
 
     default void createTripDays(@MappingTarget Trip trip, List<LocalDate> dates) {
         for (LocalDate date : dates) {
@@ -48,7 +53,11 @@ public interface TripMapper {
     @IterableMapping(dateFormat = "yyyy.MM.dd")
     List<LocalDate> datesFromString(List<String> strings);
 
+
     @Mapping(target = "fromDate", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "toDate", dateFormat = "yyyy.MM.dd")
     Schedule scheduleFromDto(ScheduleDto scheduleDto);
+
+    @InheritInverseConfiguration
+    ScheduleDto scheduleToDto(Schedule schedule);
 }

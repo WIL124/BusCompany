@@ -15,6 +15,6 @@ public class TripDayDaoImpl implements TripDayDao {
     TripDayRepository tripDayRepository;
     @Override
     public Optional<TripDay> getTripDayByTripIdAndDate(Integer tripId, LocalDate date) {
-        return Optional.ofNullable(tripDayRepository.getTripDay(tripId, date));
+        return Optional.ofNullable(tripDayRepository.getTripDayByTripIdAndDate(tripId, date));
     }
 }

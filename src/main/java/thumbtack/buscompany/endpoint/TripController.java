@@ -36,7 +36,7 @@ public class TripController {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
-            return tripMapper.tripToResponse(tripService.create(body));
+            return tripService.create(body);
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
@@ -46,7 +46,7 @@ public class TripController {
         User user = sessionService.getUserBySessionId(sessionId);
         if (user instanceof Admin) {
             sessionService.updateTime(sessionId);
-            return tripMapper.tripToResponse(tripService.update(tripId, body));
+            return tripService.update(tripId, body);
         } else throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVASESSIONID);
     }
 
@@ -90,6 +90,6 @@ public class TripController {
         User user = sessionService.getUserBySessionId(sessionId);
         sessionService.updateTime(sessionId);
         RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, null);
-        return tripMapper.triResponseListFromTrips(tripService.getTripsWithParams(user, params));
+        return tripMapper.tripResponseListFromTrips(tripService.getTripsWithParams(user, params));
     }
 }

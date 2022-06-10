@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.dao.PlaceDao;
 import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.model.Trip;
+import thumbtack.buscompany.model.TripDay;
 import thumbtack.buscompany.repository.OrderRepository;
 import thumbtack.buscompany.repository.PlaceRepository;
 
@@ -18,8 +19,8 @@ public class PlaceDaoImpl implements PlaceDao {
     OrderRepository orderRepository;
 
     @Override
-    public List<Integer> getBookedPlaces(Trip trip, LocalDate date) {
-        return placeRepository.getBookedPlaces(trip, date);
+    public List<Integer> getBookedPlaces(TripDay tripDay) {
+        return placeRepository.getBookedPlaces(tripDay);
     }
 
     @Override

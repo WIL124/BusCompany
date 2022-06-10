@@ -36,8 +36,7 @@ public class OrderController {
         if (user instanceof Admin) {
             throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
         } else {
-            Trip trip = tripService.getTrip(orderRequest.getTripId());
-            Order order = orderService.createOrder((Client) user, orderRequest, trip);
+            Order order = orderService.createOrder((Client) user, orderRequest);
             sessionService.updateTime(sessionId);
             return orderMapper.orderToResponse(order);
         }

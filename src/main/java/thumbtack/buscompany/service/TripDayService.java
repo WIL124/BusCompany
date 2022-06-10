@@ -2,6 +2,7 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.TripDayDao;
 import thumbtack.buscompany.exception.ErrorCode;
@@ -14,8 +15,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TripDayService {
+    @Autowired
     private TripDayDao tripDayDao;
-    protected TripDay getTripDayByTripIdAndDate(Integer tripId, LocalDate date) throws ServerException {
+
+    public TripDay getTripDayByTripIdAndDate(Integer tripId, LocalDate date) throws ServerException {
         return tripDayDao.getTripDayByTripIdAndDate(tripId, date).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "tripId, date")); //TODO fix errorCode
-    };
+    }
 }

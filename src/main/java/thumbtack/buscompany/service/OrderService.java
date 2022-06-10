@@ -23,7 +23,7 @@ public class OrderService {
     OrderDao orderDao;
     OrderMapper orderMapper;
 
-    public Order createOrder(Client client, OrderRequest orderRequest, Trip trip) throws ServerException {
+    public Order createOrder(Client client, OrderRequest orderRequest) throws ServerException {
         Order order = orderMapper.orderFromRequest(orderRequest, client);
         orderDao.insert(order);
         return order;

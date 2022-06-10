@@ -35,7 +35,7 @@ public class PlaceEndpoint {
         User user = sessionService.getUserBySessionId(sessionId);
         Order order = orderService.getOrderById(orderId);
         if (user instanceof Client) {
-            return placeService.getFreePlaces(order.getTrip(), order.getDate());
+            return placeService.getFreePlaces(order.getTripDay());
         } else throw new ServerException(ErrorCode.NOT_A_CLIENT, JAVASESSIONID);
     }
 
