@@ -28,25 +28,26 @@ public class TripService {
         Trip trip = tripMapper.tripFromRequest(tripRequest);
         if (trip.getSchedule() != null) {
             List<LocalDate> dates = createDatesFromSchedule(trip.getSchedule());
-            trip.setDates(dates);
+            tripMapper.createTripDays(trip, dates);
         }
         tripDao.insert(trip);
         return trip;
     }
 
-    public Trip update(int tripId, TripRequest body) throws ServerException {
-        Trip updatedTrip = tripMapper.tripFromRequest(body);
-        updatedTrip.setTripId(tripId);
-        if (updatedTrip.getSchedule() != null) {
-            List<LocalDate> dates = createDatesFromSchedule(updatedTrip.getSchedule());
-            updatedTrip.setDates(dates);
+    public Trip update(int tripId, TripRequest tripRequest) throws ServerException {
+        Trip trip = tripDao.getTrip(tripId).orElseThrow(() -> new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId"));
+        tripMapper.updateTrip(trip, tripRequest);
+        trip.setTripId(tripId);
+        if (trip.getSchedule() != null) {
+            List<LocalDate> dates = createDatesFromSchedule(trip.getSchedule());
+            tripMapper.createTripDays(trip, dates);
         }
         try {
-            tripDao.update(updatedTrip);
+            tripDao.update(trip);
         } catch (RuntimeException e) {
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
-        return updatedTrip;
+        return trip;
     }
 
     public boolean deleteTrip(int tripId) {
@@ -68,10 +69,10 @@ public class TripService {
         if (params != null) {
             for (Trip trip : tripList) {
                 if (params.getFromDate() != null) {
-                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isAfter(params.getFromDate())).collect(Collectors.toList()));
+                    trip.setTripDays(trip.getTripDays().parallelStream().filter(tripDay -> tripDay.getDate().isAfter(params.getFromDate())).collect(Collectors.toList()));
                 }
                 if (params.getToDate() != null) {
-                    trip.setDates(trip.getDates().parallelStream().filter(localDate -> localDate.isBefore(params.getToDate())).collect(Collectors.toList()));
+                    trip.setTripDays(trip.getTripDays().parallelStream().filter(tripDay -> tripDay.getDate().isBefore(params.getToDate())).collect(Collectors.toList()));
                 }
             }
         }

@@ -54,8 +54,8 @@ public class TestUtils {
         return List.of("2022.12.01", "2021.01.05", "2022.05.04", "2022.05.05");
     }
 
-    public static OrderRequest createOrderRequest(Trip trip, LocalDate date) {
-        return new OrderRequest(trip.getTripId(), date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), createPassengersList());
+    public static OrderRequest createOrderRequest(Integer tripId, LocalDate date) {
+        return new OrderRequest(tripId, date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), createPassengersList());
     }
 
     public static List<Passenger> createPassengersList() {

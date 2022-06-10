@@ -7,6 +7,7 @@ import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.model.RequestParams;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.User;
+import thumbtack.buscompany.repository.TripDayRepository;
 import thumbtack.buscompany.repository.TripRepository;
 
 import java.sql.SQLException;
@@ -17,12 +18,13 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TripDaoImpl implements TripDao {
     TripRepository tripRepository;
+    TripDayRepository tripDayRepository;
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
     public void insert(Trip trip) {
         tripRepository.insertTrip(trip);
-        trip.getDates().forEach(date -> tripRepository.insertTripDate(trip, date));
+        trip.getTripDays().parallelStream().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
     }
 
     @Override
@@ -37,9 +39,9 @@ public class TripDaoImpl implements TripDao {
         if (!first) {
             return false;
         }
-        boolean second = tripRepository.deleteAllTripDates(trip.getTripId());
+        boolean second = tripDayRepository.deleteAllTripDays(trip.getTripId());
         //TODO may be do it Async?
-        trip.getDates().forEach(date -> tripRepository.insertTripDate(trip, date));
+        trip.getTripDays().parallelStream().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
         return second;
     }
 

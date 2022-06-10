@@ -1,20 +1,22 @@
-package thumbtack.buscompany.model;
+package thumbtack.buscompany.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import thumbtack.buscompany.model.Bus;
+import thumbtack.buscompany.model.Schedule;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Trip {
+@Builder
+public class TripResponse {
     private Integer tripId;
     private String fromStation;
     private String toStation;
@@ -24,5 +26,5 @@ public class Trip {
     private Bus bus;
     private Boolean approved;
     private Schedule schedule;
-    private List<TripDay> tripDays;
+    private List<LocalDate> dates;
 }

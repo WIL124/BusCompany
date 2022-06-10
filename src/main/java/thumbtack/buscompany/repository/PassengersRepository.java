@@ -1,12 +1,11 @@
 package thumbtack.buscompany.repository;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.Passenger;
+
+import java.util.List;
 
 @Mapper
 @Repository
@@ -15,4 +14,9 @@ public interface PassengersRepository {
             "VALUE (#{order.orderId}, #{passenger.firstName}, #{passenger.lastName}, #{passenger.passport})")
     @Options(useGeneratedKeys = true, keyProperty = "passenger.id")
     void insertPassenger(@Param("order") Order order, @Param("passenger") Passenger passenger);
+
+    @Select("SELECT id, firstName, lastName, passport " +
+            "FROM passengers " +
+            "WHERE orderId = #{orderId} ")
+    List<Passenger> getAllByOrderId(@Param("orderId") Integer orderId);
 }

@@ -25,7 +25,6 @@ public class OrderService {
 
     public Order createOrder(Client client, OrderRequest orderRequest, Trip trip) throws ServerException {
         Order order = orderMapper.orderFromRequest(orderRequest, client);
-        order.setTrip(trip);
         orderDao.insert(order);
         return order;
     }
@@ -51,22 +50,22 @@ public class OrderService {
     }
 
     private Predicate<Order> busNameFilter(String busName) {
-        return order -> order.getTrip().getBus().getBusName().equals(busName);
+        return order -> order.getTripDay().getTrip().getBus().getBusName().equals(busName);
     }
 
     private Predicate<Order> fromStationFilter(String fromStation) {
-        return order -> order.getTrip().getFromStation().equals(fromStation);
+        return order -> order.getTripDay().getTrip().getFromStation().equals(fromStation);
     }
 
     private Predicate<Order> toStationFilter(String toStation) {
-        return order -> order.getTrip().getToStation().equals(toStation);
+        return order -> order.getTripDay().getTrip().getToStation().equals(toStation);
     }
 
     private Predicate<Order> fromDateFilter(LocalDate fromDate) {
-        return order -> order.getTrip().getDates().stream().min(LocalDate::compareTo).get().equals(fromDate);
+        return order -> order.getTripDay().getDate().isAfter(fromDate);
     }
 
     private Predicate<Order> toDateFilter(LocalDate toDate) {
-        return order -> order.getTrip().getDates().stream().max(LocalDate::compareTo).get().equals(toDate);
+        return order -> order.getTripDay().getDate().isBefore(toDate);
     }
 }

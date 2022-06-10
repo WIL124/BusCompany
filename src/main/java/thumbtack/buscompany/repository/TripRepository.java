@@ -6,7 +6,6 @@ import org.apache.ibatis.mapping.FetchType;
 import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -18,23 +17,16 @@ public interface TripRepository {
     @Options(useGeneratedKeys = true, keyProperty = "trip.tripId")
     void insertTrip(@Param("trip") Trip trip);
 
-    @Insert("INSERT INTO trips_dates (tripId, date)" +
-            "VALUE(#{trip.tripId}, #{date})")
-    void insertTripDate(@Param("trip") Trip trip, @Param("date") LocalDate date);
-
     @Select("SELECT tripId, fromStation, busName, toStation, start, duration, price, approved " +
             "FROM trips WHERE tripId = #{tripId}")
     @Results(id = "trip", value = {
             @Result(property = "tripId", column = "tripId"),
             @Result(property = "bus", javaType = Bus.class, column = "busName",
-                    one = @One(select = "thumbtack.buscompany.repository.BusRepository.get", fetchType = FetchType.DEFAULT)),
-            @Result(property = "dates", javaType = List.class, column = "tripId",
-                    many = @Many(select = "thumbtack.buscompany.repository.TripRepository.getTripDates", fetchType = FetchType.DEFAULT))
+                    one = @One(select = "thumbtack.buscompany.repository.BusRepository.get", fetchType = FetchType.LAZY)),
+            @Result(property = "tripDays", javaType = List.class, column = "tripId",
+                    many = @Many(select = "thumbtack.buscompany.repository.TripRepository.getTripDay", fetchType = FetchType.LAZY))
     })
     Trip getTrip(@Param("tripId") int tripId);
-
-    @Select("SELECT date FROM trips_dates WHERE tripId = #{tripId}")
-    List<LocalDate> getTripDates(@Param("tripId") int tripId);
 
     @Update("UPDATE trips SET busName = #{trip.bus.busName}, fromStation = #{trip.fromStation}, " +
             "toStation = #{trip.toStation}, start = #{trip.start}, duration = #{trip.duration}, " +
@@ -42,9 +34,6 @@ public interface TripRepository {
             "WHERE tripId = #{trip.tripId} " +
             "AND approved = false")
     boolean updateTripProperties(@Param("trip") Trip trip);
-
-    @Delete("DELETE FROM trips_dates WHERE tripId = #{tripId}")
-    boolean deleteAllTripDates(@Param("tripId") int tripId);
 
     @Delete("DELETE FROM trips WHERE tripId = #{tripId} AND approved = false")
     boolean deleteTrip(@Param("tripId") int tripId);
