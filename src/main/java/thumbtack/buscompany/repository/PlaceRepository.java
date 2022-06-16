@@ -13,17 +13,26 @@ import java.util.List;
 public interface PlaceRepository {
 
     @Select("SELECT place FROM booked_places " +
-            "WHERE trips_dates_id = #{tripDay.tripDayId} AND passengerId IS NULL")
+            "WHERE trips_dates_id = #{tripDay.tripDayId} " +
+            "AND passengerId IS NULL")
     List<Integer> getFreePlaces(@Param("tripDay") TripDay tripDay);
 
 
     @Update("UPDATE booked_places " +
-            "SET passengerId = ifnull(passengerId, #{passenger.id}) " +
-            "WHERE trips_dates_id = #{tripDay.tripDayId} and place = #{place}")
+            "SET passengerId = #{passenger.id} " +
+            "WHERE trips_dates_id = #{tripDay.tripDayId} " +
+            "AND place = #{place} " +
+            "AND passengerId IS NULL")
     Integer choicePlace(@Param("tripDay") TripDay tripDay, @Param("passenger") Passenger passenger, @Param("place") Integer place);
 
     @InsertProvider(type = SqlProvider.class, method = "insertPlaces")
     void insertPlaces(@Param("tripDay") TripDay tripDay, @Param("placeCount") Integer placeCount);
+
+    @Update("UPDATE booked_places " +
+            "SET passengerId = null " +
+            "WHERE trips_dates_id = #{tripDay.tripDayId} " +
+            "AND passengerId = #{passenger.id}")
+    void removePassengerFromPlace(@Param("tripDay") TripDay tripDay, @Param("passenger") Passenger passenger);
 
     class SqlProvider {
         public static String insertPlaces(@Param("tripDay") TripDay tripDay, @Param("placeCount") Integer placeCount) {

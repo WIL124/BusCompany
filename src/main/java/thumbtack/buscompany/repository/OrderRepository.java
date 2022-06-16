@@ -42,9 +42,10 @@ public interface OrderRepository {
     @Insert("INSERT INTO orders (trips_dates_id, clientId) " +
             "SELECT id, #{order.client.id} " +
             "FROM trips_dates " +
-            "WHERE tripId=#{order.tripDay.trip.tripId} AND date = #{order.tripDay.date}")
+            "WHERE tripId=#{order.tripDay.trip.tripId} " +
+            "AND date = #{order.tripDay.date} ")
     @Options(useGeneratedKeys = true, keyProperty = "order.orderId")
-    void insert(@Param("order") Order order);
+    Integer insert(@Param("order") Order order);
 
     @Delete("DELETE FROM orders WHERE orderId=#{order.orderId}")
     boolean deleteOrder(@Param("order") Order order);

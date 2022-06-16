@@ -4,24 +4,28 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.OrderDao;
+import thumbtack.buscompany.exception.ErrorCode;
+import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.repository.OrderRepository;
 import thumbtack.buscompany.repository.PassengersRepository;
+import thumbtack.buscompany.repository.TripDayRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@Transactional
+@Transactional(rollbackFor = {RuntimeException.class, ServerException.class})
 public class OrderDaoImpl implements OrderDao {
     OrderRepository orderRepository;
+    TripDayRepository tripDayRepository;
     PassengersRepository passengersRepository;
 
     @Override
-    public void insert(Order order) {
-        orderRepository.insert(order);
+    public void insert(Order order) throws ServerException {
+        if (orderRepository.insert(order) == 0) throw new ServerException(ErrorCode.OLD_INFO, "passengers");
+        tripDayRepository.updateVersion(order.getTripDay());
         order.getPassengers().forEach(passenger -> passengersRepository.insertPassenger(order, passenger));
     }
 
@@ -38,5 +42,6 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public void delete(Order order) {
         orderRepository.deleteOrder(order);
+        tripDayRepository.updateVersion(order.getTripDay());
     }
 }

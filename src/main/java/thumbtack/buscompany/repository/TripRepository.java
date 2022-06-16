@@ -33,7 +33,7 @@ public interface TripRepository {
             "price = #{trip.price} " +
             "WHERE tripId = #{trip.tripId} " +
             "AND approved = false")
-    boolean updateTripProperties(@Param("trip") Trip trip);
+    Integer updateTripProperties(@Param("trip") Trip trip);
 
     @Delete("DELETE FROM trips WHERE tripId = #{tripId} AND approved = false")
     boolean deleteTrip(@Param("tripId") int tripId);

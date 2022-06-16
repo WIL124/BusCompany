@@ -25,6 +25,7 @@ public class PlaceDaoImpl implements PlaceDao {
 
     @Override
     public boolean choicePlace(TripDay tripDay, Passenger passenger, Integer place) {
-        return placeRepository.choicePlace(tripDay, passenger, place) > 0;
+        placeRepository.removePassengerFromPlace(tripDay, passenger);
+        return placeRepository.choicePlace(tripDay, passenger, place) != 0;
     }
 }

@@ -51,8 +51,8 @@ public class PlaceService {
             throw new ServerException(ErrorCode.INVALID_PLACE, "place");
         }
         if (placeDao.choicePlace(order.getTripDay(), passenger, request.getPlace())) {
-            throw new ServerException(ErrorCode.INVALID_PLACE, "place");
-        } //TODO fix me
+            throw new ServerException(ErrorCode.CANT_CHOICE_PLACE, "place");
+        }
         String ticket = "Билет " + order.getTripDay().getTripDayId() + "_" + request.getPlace();
         sessionDao.updateTime(sessionId);
         return placeMapper.responseFromRequestAndTicket(request, ticket);

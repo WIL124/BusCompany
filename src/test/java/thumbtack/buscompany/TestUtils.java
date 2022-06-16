@@ -63,4 +63,24 @@ public class TestUtils {
                 new Passenger("Misha", "Popov", 321),
                 new Passenger("Denis", "Den", 231));
     }
+    public static OrderRequest createOrderRequestWith15Passengers(Integer tripId, LocalDate date) {
+        return new OrderRequest(tripId, date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), fifteenPassengersList());
+    }
+    private static List<Passenger> fifteenPassengersList() {
+        return List.of(new Passenger("Vlad", "Inyutin", 123),
+                new Passenger("Misha", "Popov", 321),
+                new Passenger("Denis", "Den", 231),
+                new Passenger("Vlad", "Inyutin", 123),
+                new Passenger("Misha", "Popov", 321),
+                new Passenger("Denis", "Den", 231),
+                new Passenger("Vlad", "Inyutin", 123),
+                new Passenger("Misha", "Popov", 321),
+                new Passenger("Denis", "Den", 231),
+                new Passenger("Vlad", "Inyutin", 123),
+                new Passenger("Misha", "Popov", 321),
+                new Passenger("Denis", "Den", 231),
+                new Passenger("Vlad", "Inyutin", 123),
+                new Passenger("Misha", "Popov", 321),
+                new Passenger("Denis", "Den", 231));
+    }
 }

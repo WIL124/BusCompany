@@ -20,6 +20,8 @@ public enum ErrorCode {
     WRONG_DATE_INTERVAL("the specified interval and period does not contain a single day"),
     TRIP_NOT_FOUND("trip not found"),
     ORDER_NOT_FOUND("order not found"),
-    NOT_ENOUGH_SEATS("not enough seats for all passengers in order");
+    NOT_ENOUGH_SEATS("not enough seats for all passengers in order"),
+    OLD_INFO("Old info, please try again"),
+    CANT_CHOICE_PLACE("Can't choice place,  please try again");
     private final String message;
 }

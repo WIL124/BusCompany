@@ -70,6 +70,7 @@ CREATE TABLE trips_dates
     id     INT NOT NULL AUTO_INCREMENT,
     tripId INT,
     date   DATE,
+    version INT NOT NULL default 0,
     PRIMARY KEY (id),
     FOREIGN KEY (tripId) REFERENCES trips (tripId) ON DELETE CASCADE,
     UNIQUE (tripId, date)

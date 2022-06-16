@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import thumbtack.buscompany.BuscompanyApplicationTests;
 import thumbtack.buscompany.exception.ApiErrors;
+import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.TripMapper;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.isEqualCollection;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.spy;
 import static thumbtack.buscompany.TestUtils.*;
 import static thumbtack.buscompany.exception.ErrorCode.TRIP_NOT_FOUND;
 
@@ -123,7 +125,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         trips.forEach(trip -> trip.setSchedule(null));
         ResponseEntity<List<TripResponse>> responseEntity =
                 restTemplate.exchange(TRIP_URL, HttpMethod.GET, entityWithSessionId(null, adminSessionId),
-                        new ParameterizedTypeReference<List<TripResponse>>() {
+                        new ParameterizedTypeReference<>() {
                         });
         assert responseEntity.getBody() != null;
         List<TripResponse> tripFromResponse = responseEntity.getBody();
@@ -229,8 +231,25 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 () -> assertEquals(tripResponse.getDuration(), orderResponse.getDuration()),
                 () -> assertEquals(tripResponse.getPrice(), orderResponse.getPrice()),
                 () -> assertEquals(tripResponse.getPrice() * orderRequest.getPassengers().size(), orderResponse.getTotalPrice()),
-                () -> assertEquals(orderResponse.getDate(), LocalDate.of(2022,5,4))
+                () -> assertEquals(orderResponse.getDate(), LocalDate.of(2022, 5, 4))
         );
+    }
+
+    @Test
+    public void createTwoOrdersFirstSuccessSecondNotEnoughSeats() {
+        TripResponse tripResponse = insertTrip(createTripRequestWithDates()).getBody();
+        assert tripResponse != null;
+        approveTrip(tripResponse.getTripId());
+        registerClientAndGetSessionId("clientLogin");
+        OrderRequest orderRequest = createOrderRequestWith15Passengers(tripResponse.getTripId(), tripResponse.getDates().get(2));
+
+        ResponseEntity<OrderResponse> successResponse = restTemplate.exchange(ORDER_URL, HttpMethod.POST, entityWithSessionId(orderRequest, clientSessionId), OrderResponse.class);
+        ResponseEntity<Errors> errorResponse = restTemplate.exchange(ORDER_URL, HttpMethod.POST, entityWithSessionId(orderRequest, clientSessionId), Errors.class);
+
+        assertEquals(200, successResponse.getStatusCodeValue());
+        assertEquals(400, errorResponse.getStatusCodeValue());
+        assertEquals(1, errorResponse.getBody().getErrors().size());
+        assertEquals(ErrorCode.NOT_ENOUGH_SEATS.name(), errorResponse.getBody().getErrors().get(0).getErrorCode());
     }
 
     private List<TripResponse> createListOfTrips() {

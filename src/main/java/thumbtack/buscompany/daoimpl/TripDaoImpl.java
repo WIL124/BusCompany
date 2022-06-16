@@ -42,13 +42,10 @@ public class TripDaoImpl implements TripDao {
 
     @Override
     public boolean update(Trip trip) {
-        boolean first = tripRepository.updateTripProperties(trip);
-        if (!first) {
-            return false;
-        }
-        boolean second = tripDayRepository.deleteAllTripDays(trip.getTripId());
+        if (tripRepository.updateTripProperties(trip) == 0) return false;
+        tripDayRepository.deleteAllTripDays(trip.getTripId());
         trip.getTripDays().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
-        return second;
+        return true;
     }
 
     @Override

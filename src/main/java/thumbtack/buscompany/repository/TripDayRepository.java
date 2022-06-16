@@ -15,7 +15,7 @@ public interface TripDayRepository {
     @Insert("INSERT INTO trips_dates (tripId, date) " +
             "VALUE(#{tripDay.trip.tripId}, #{tripDay.date})")
     @Options(useGeneratedKeys = true, keyProperty = "tripDay.tripDayId")
-    void insertTripDay(@Param("tripDay") TripDay tripDay);
+    Integer insertTripDay(@Param("tripDay") TripDay tripDay);
 
     @Select("SELECT id AS tripDayId, tripId, date " +
             "FROM trips_dates " +
@@ -43,4 +43,8 @@ public interface TripDayRepository {
             "AND date = #{date}")
     @ResultMap("tripDay")
     TripDay getTripDayByTripIdAndDate(@Param("tripId") Integer tripId, @Param("date") LocalDate date);
+
+    @Update("UPDATE trips_dates SET version = version + 1 " +
+            "WHERE id = #{tripDay.tripDayId}")
+    void updateVersion(@Param("tripDay") TripDay tripDay);
 }
