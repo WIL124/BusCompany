@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.OrderDao;
 import thumbtack.buscompany.dao.SessionDao;
+import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.OrderMapper;
@@ -25,6 +26,7 @@ public class OrderService {
     OrderDao orderDao;
     SessionDao sessionDao;
     OrderMapper orderMapper;
+    TripDao tripDao;
     ParamsMapper paramsMapper;
 
     public OrderResponse createOrder(OrderRequest orderRequest, String sessionId) throws ServerException {
@@ -35,7 +37,10 @@ public class OrderService {
         }
         Client client = (Client) user;
         Order order = orderMapper.orderFromRequest(orderRequest, client);
-        orderDao.insert(order);
+        TripDay tripDay = order.getTripDay();
+        if (isEnoughSeats(tripDay, order)) {
+            orderDao.insert(order);
+        } else throw new ServerException(ErrorCode.NOT_ENOUGH_SEATS, "passengers");
         sessionDao.updateTime(sessionId);
         return orderMapper.orderToResponse(order);
     }
@@ -77,6 +82,13 @@ public class OrderService {
             orderDao.delete(order);
             return new ResponseEntity<>(HttpStatus.OK);
         } else throw new ServerException(ErrorCode.ORDER_NOT_FOUND, orderId.toString());
+    }
+
+    private boolean isEnoughSeats(TripDay tripDay, Order order) {
+        return tripDay.getOrders() != null ?
+                (tripDay.getTrip().getBus().getPlaceCount() - tripDay.getOrders().stream().mapToInt(o -> o.getPassengers().size()).sum())
+                >= order.getPassengers().size() :
+                tripDay.getTrip().getBus().getPlaceCount() >= order.getPassengers().size();
     }
 
     private Predicate<Order> busNameFilter(String busName) {

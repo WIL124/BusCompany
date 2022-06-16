@@ -1,14 +1,12 @@
 package thumbtack.buscompany.dao;
 
 import thumbtack.buscompany.model.Passenger;
-import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.TripDay;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface PlaceDao {
-    List<Integer> getBookedPlaces(TripDay tripDay);
+    List<Integer> getFreePlaces(TripDay tripDay);
 
-    void choicePlace(Passenger passenger, Integer place);
+    boolean choicePlace(TripDay tripDay, Passenger passenger, Integer place);
 }

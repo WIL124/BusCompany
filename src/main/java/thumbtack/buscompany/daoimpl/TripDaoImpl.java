@@ -9,25 +9,27 @@ import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.model.RequestParams;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.User;
+import thumbtack.buscompany.repository.PlaceRepository;
 import thumbtack.buscompany.repository.TripDayRepository;
 import thumbtack.buscompany.repository.TripRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
 @NoArgsConstructor
+@Transactional
 public class TripDaoImpl implements TripDao {
 
     @Autowired
     TripRepository tripRepository;
     @Autowired
     TripDayRepository tripDayRepository;
+    @Autowired
+    PlaceRepository placeRepository;
 
     @Override
-    @Transactional(rollbackFor = SQLException.class)
     public void insert(Trip trip) {
         tripRepository.insertTrip(trip);
         trip.getTripDays().forEach(tripDay -> tripDayRepository.insertTripDay(tripDay));
@@ -39,7 +41,6 @@ public class TripDaoImpl implements TripDao {
     }
 
     @Override
-    @Transactional(rollbackFor = SQLException.class)
     public boolean update(Trip trip) {
         boolean first = tripRepository.updateTripProperties(trip);
         if (!first) {
@@ -57,6 +58,7 @@ public class TripDaoImpl implements TripDao {
 
     @Override
     public boolean approve(Trip trip) {
+        trip.getTripDays().parallelStream().forEach(tripDay -> placeRepository.insertPlaces(tripDay, trip.getBus().getPlaceCount()));
         return tripRepository.approve(trip.getTripId());
     }
 

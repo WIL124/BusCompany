@@ -17,6 +17,7 @@ public interface OrderRepository {
             "FROM orders " +
             "WHERE clientId = #{id}")
     @Results(id = "order", value = {
+            @Result(property = "orderId", column = "orderId"),
             @Result(property = "tripDay", column = "tripDayId", javaType = TripDay.class,
                     one = @One(select = "thumbtack.buscompany.repository.TripDayRepository.getTripDayById", fetchType = FetchType.LAZY)),
             @Result(property = "client", column = "clientId", javaType = Client.class,
@@ -34,7 +35,7 @@ public interface OrderRepository {
 
     @Select("SELECT orderId, trips_dates_id AS tripDayId, clientId " +
             "FROM orders " +
-            "WHERE tripDayId = #{tripDayId}")
+            "WHERE trips_dates_id = #{tripDayId}")
     @ResultMap("order")
     Order getByTripDayId(@Param("tripDayId") Integer tripDayId);
 

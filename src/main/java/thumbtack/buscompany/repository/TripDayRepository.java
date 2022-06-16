@@ -12,12 +12,12 @@ import java.util.List;
 @Mapper
 @Repository
 public interface TripDayRepository {
-    @Insert("INSERT INTO trips_dates (tripId, date)" +
+    @Insert("INSERT INTO trips_dates (tripId, date) " +
             "VALUE(#{tripDay.trip.tripId}, #{tripDay.date})")
     @Options(useGeneratedKeys = true, keyProperty = "tripDay.tripDayId")
     void insertTripDay(@Param("tripDay") TripDay tripDay);
 
-    @Select("SELECT id as tripDayId, tripId, date " +
+    @Select("SELECT id AS tripDayId, tripId, date " +
             "FROM trips_dates " +
             "WHERE tripDayId = #{tripDayId}")
     @Results(id = "tripDay", value = {
@@ -37,7 +37,7 @@ public interface TripDayRepository {
 
     @Delete("DELETE FROM trips_dates WHERE tripId = #{tripId}")
     boolean deleteAllTripDays(@Param("tripId") int tripId);
-    @Select("SELECT id as tripDayId, tripId, date " +
+    @Select("SELECT id AS tripDayId, tripId, date " +
             "FROM trips_dates " +
             "WHERE tripId = #{tripId} " +
             "AND date = #{date}")

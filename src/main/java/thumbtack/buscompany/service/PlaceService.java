@@ -15,7 +15,6 @@ import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.ChoosingPlaceRequest;
 import thumbtack.buscompany.response.ChoosingPlaceResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,14 +31,9 @@ public class PlaceService {
         if (user instanceof Admin) {
             throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
         }
-        int totalPlaces = order.getTripDay().getTrip().getBus().getPlaceCount();
-        List<Integer> places = new ArrayList<>();
-        for (int i = 1; i <= totalPlaces; i++) {
-            places.add(i);
-        }
-        places.removeAll(placeDao.getBookedPlaces(order.getTripDay()));
+        List<Integer> freePlaces = placeDao.getFreePlaces(order.getTripDay());
         sessionDao.updateTime(sessionId);
-        return places;
+        return freePlaces;
     }
 
     public ChoosingPlaceResponse choicePlace(String sessionId, ChoosingPlaceRequest request) throws ServerException {
@@ -56,7 +50,9 @@ public class PlaceService {
         if (order.getTripDay().getTrip().getBus().getPlaceCount() < request.getPlace()) {
             throw new ServerException(ErrorCode.INVALID_PLACE, "place");
         }
-        placeDao.choicePlace(passenger, request.getPlace());
+        if (placeDao.choicePlace(order.getTripDay(), passenger, request.getPlace())) {
+            throw new ServerException(ErrorCode.INVALID_PLACE, "place");
+        } //TODO fix me
         String ticket = "Билет " + order.getTripDay().getTripDayId() + "_" + request.getPlace();
         sessionDao.updateTime(sessionId);
         return placeMapper.responseFromRequestAndTicket(request, ticket);

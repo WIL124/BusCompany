@@ -213,7 +213,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
     }
 
     @Test
-    public void bookingTickets() {
+    public void createOrder() {
         TripResponse tripResponse = insertTrip(createTripRequestWithDates()).getBody();
         assert tripResponse != null;
         approveTrip(tripResponse.getTripId());
@@ -228,9 +228,9 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 () -> assertEquals(tripResponse.getFromStation(), orderResponse.getFromStation()),
                 () -> assertEquals(tripResponse.getDuration(), orderResponse.getDuration()),
                 () -> assertEquals(tripResponse.getPrice(), orderResponse.getPrice()),
-                () -> assertEquals(tripResponse.getPrice() * orderRequest.getPassengers().size(), orderResponse.getTotalPrice())
+                () -> assertEquals(tripResponse.getPrice() * orderRequest.getPassengers().size(), orderResponse.getTotalPrice()),
+                () -> assertEquals(orderResponse.getDate(), LocalDate.of(2022,5,4))
         );
-
     }
 
     private List<TripResponse> createListOfTrips() {

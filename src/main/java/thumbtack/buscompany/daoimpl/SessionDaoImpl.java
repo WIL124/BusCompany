@@ -2,6 +2,7 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.model.Session;
 import thumbtack.buscompany.repository.SessionRepository;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
+@Transactional
 public class SessionDaoImpl implements SessionDao {
 
     SessionRepository sessionRepository;

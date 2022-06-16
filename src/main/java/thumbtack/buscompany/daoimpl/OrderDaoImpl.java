@@ -14,12 +14,12 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
+@Transactional
 public class OrderDaoImpl implements OrderDao {
     OrderRepository orderRepository;
     PassengersRepository passengersRepository;
 
     @Override
-    @Transactional(rollbackFor = SQLException.class)
     public void insert(Order order) {
         orderRepository.insert(order);
         order.getPassengers().forEach(passenger -> passengersRepository.insertPassenger(order, passenger));
