@@ -1,9 +1,6 @@
 package thumbtack.buscompany.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
@@ -18,6 +15,11 @@ public interface UserMapper {
     AdminResponse adminToResponse(Admin admin);
 
     Client clientFromRequest(ClientRegisterRequest request);
+    @AfterMapping
+    default Client canonizePhone(@MappingTarget Client client){
+        client.canonizePhoneFormat();
+        return client;
+    }
 
     ClientResponse clientToResponse(Client client);
 

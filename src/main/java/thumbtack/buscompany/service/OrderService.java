@@ -81,6 +81,7 @@ public class OrderService {
         if (order.getClient().equals(client)) {
             order.getPassengers().parallelStream().forEach(passenger -> placeDao.removePassenger(passenger));
             orderDao.delete(order);
+            sessionDao.updateTime(sessionId);
             return new ResponseEntity<>(HttpStatus.OK);
         } else throw new ServerException(ErrorCode.ORDER_NOT_FOUND, orderId.toString());
     }

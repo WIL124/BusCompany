@@ -30,7 +30,6 @@ public class ClientService {
 
     public ClientResponse register(ClientRegisterRequest request, HttpServletResponse response) throws ServerException {
         Client client = userMapper.clientFromRequest(request);
-        client.canonizePhoneFormat();
         try {
             userDao.insert(client);
         } catch (RuntimeException ex) {
@@ -64,10 +63,8 @@ public class ClientService {
         }
         Client client = (Client) user;
         userMapper.updateClientFromRequest(request, client);
-        client.canonizePhoneFormat();
         userDao.updateClient(client);
         UserResponse response = userMapper.clientToResponse(client);
-        response.setId(null);
         sessionDao.updateTime(sessionId);
         return response;
     }

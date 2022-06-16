@@ -35,6 +35,7 @@ public class TripService {
         Trip trip = tripMapper.tripFromRequest(tripRequest);
         createAndSetTripDays(trip, tripRequest);
         tripDao.insert(trip);
+        sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
     }
 
@@ -54,7 +55,7 @@ public class TripService {
 
     public ResponseEntity<Void> deleteTrip(int tripId, String sessionId) throws ServerException {
         checkIsAdminOrThrow(sessionId);
-        Trip trip = getTripOrThrow(tripId);
+        getTripOrThrow(tripId);
         sessionDao.updateTime(sessionId);
         if (tripDao.deleteTrip(tripId)) {
             return new ResponseEntity<>(HttpStatus.OK);
