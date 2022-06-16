@@ -37,8 +37,7 @@ public class OrderService {
         }
         Client client = (Client) user;
         Order order = orderMapper.orderFromRequest(orderRequest, client);
-        TripDay tripDay = order.getTripDay();
-        if (isEnoughSeats(tripDay, order)) {
+        if (isEnoughSeats(order.getTripDay(), order)) {
             orderDao.insert(order);
         } else throw new ServerException(ErrorCode.NOT_ENOUGH_SEATS, "passengers");
         sessionDao.updateTime(sessionId);
@@ -64,10 +63,6 @@ public class OrderService {
                 .collect(Collectors.toList());
         sessionDao.updateTime(sessionId);
         return orderMapper.ordersToResponses(dirtyOrders);
-    }
-
-    public Order getOrderById(Integer orderId) throws ServerException {
-        return orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "orderId"));
     }
 
     public ResponseEntity<Void> deleteOrder(Integer orderId, String sessionId) throws ServerException {

@@ -4,25 +4,27 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
+import thumbtack.buscompany.dao.TripDayDao;
+import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.TripDay;
 import thumbtack.buscompany.request.OrderRequest;
 import thumbtack.buscompany.response.OrderResponse;
-import thumbtack.buscompany.service.TripDayService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = TripDayService.class)
+@Mapper(componentModel = "spring", uses = TripDayDao.class)
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class OrderMapper {
     @Autowired
-    protected TripDayService tripDayService;
+    protected TripDayDao tripDayDao;
 
     @Mapping(target = "tripId", source = "order.tripDay.trip.tripId")
     @Mapping(target = "fromStation", source = "order.tripDay.trip.fromStation")
@@ -37,9 +39,14 @@ public abstract class OrderMapper {
 
     public abstract List<OrderResponse> ordersToResponses(List<Order> orders);
 
-    @Mapping(target = "tripDay", resultType = TripDay.class,
-            expression = "java(tripDayService.getTripDayByTripIdAndDate(request.getTripId(), dateFromString(request.getDate())))")
+    @Mapping(target = "tripDay", resultType = TripDay.class, source = "request", qualifiedByName= "tripDay")
     public abstract Order orderFromRequest(OrderRequest request, Client client) throws ServerException;
+
+    @Named("tripDay")
+    TripDay getTripDayFromRequest(OrderRequest request) throws ServerException {
+        return tripDayDao.getTripDayByTripIdAndDate(request.getTripId(), dateFromString(request.getDate()))
+                .orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "trip, date"));
+    }
 
     public LocalDate dateFromString(String str) {
         return LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
