@@ -34,6 +34,11 @@ public interface PlaceRepository {
             "AND passengerId = #{passenger.id}")
     void removePassengerFromPlace(@Param("tripDay") TripDay tripDay, @Param("passenger") Passenger passenger);
 
+    @Update("UPDATE booked_places " +
+            "SET passengerId = null " +
+            "WHERE passengerId = #{passenger.id}")
+    boolean removePassenger(@Param("passenger") Passenger passenger);
+
     class SqlProvider {
         public static String insertPlaces(@Param("tripDay") TripDay tripDay, @Param("placeCount") Integer placeCount) {
             return new SQL() {

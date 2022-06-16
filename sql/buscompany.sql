@@ -105,9 +105,10 @@ CREATE TABLE booked_places
     passengerId    INT default null,
     place          INT NOT NULL,
     FOREIGN KEY (trips_dates_id) REFERENCES trips_dates (id) ON DELETE CASCADE,
-    FOREIGN KEY (passengerId) REFERENCES passengers (id) ON DELETE CASCADE
+    FOREIGN KEY (passengerId) REFERENCES passengers (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
+
 INSERT INTO buses
 values ('VOLVO', 20),
        ('PAZ', 25),

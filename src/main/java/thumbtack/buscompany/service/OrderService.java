@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.OrderDao;
+import thumbtack.buscompany.dao.PlaceDao;
 import thumbtack.buscompany.dao.SessionDao;
-import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.OrderMapper;
@@ -26,7 +26,7 @@ public class OrderService {
     OrderDao orderDao;
     SessionDao sessionDao;
     OrderMapper orderMapper;
-    TripDao tripDao;
+    PlaceDao placeDao;
     ParamsMapper paramsMapper;
 
     public OrderResponse createOrder(OrderRequest orderRequest, String sessionId) throws ServerException {
@@ -79,6 +79,7 @@ public class OrderService {
         Client client = (Client) user;
         Order order = orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
         if (order.getClient().equals(client)) {
+            order.getPassengers().parallelStream().forEach(passenger -> placeDao.removePassenger(passenger));
             orderDao.delete(order);
             return new ResponseEntity<>(HttpStatus.OK);
         } else throw new ServerException(ErrorCode.ORDER_NOT_FOUND, orderId.toString());
@@ -87,7 +88,7 @@ public class OrderService {
     private boolean isEnoughSeats(TripDay tripDay, Order order) {
         return tripDay.getOrders() != null ?
                 (tripDay.getTrip().getBus().getPlaceCount() - tripDay.getOrders().stream().mapToInt(o -> o.getPassengers().size()).sum())
-                >= order.getPassengers().size() :
+                        >= order.getPassengers().size() :
                 tripDay.getTrip().getBus().getPlaceCount() >= order.getPassengers().size();
     }
 

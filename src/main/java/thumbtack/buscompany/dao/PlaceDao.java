@@ -9,4 +9,5 @@ public interface PlaceDao {
     List<Integer> getFreePlaces(TripDay tripDay);
 
     boolean choicePlace(TripDay tripDay, Passenger passenger, Integer place);
+    boolean removePassenger(Passenger passenger);
 }
