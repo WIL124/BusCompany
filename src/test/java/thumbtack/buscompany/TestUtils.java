@@ -1,9 +1,6 @@
 package thumbtack.buscompany;
 
-import thumbtack.buscompany.model.Admin;
-import thumbtack.buscompany.model.Client;
-import thumbtack.buscompany.model.Passenger;
-import thumbtack.buscompany.model.Trip;
+import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.*;
 
 import java.time.LocalDate;
@@ -82,5 +79,8 @@ public class TestUtils {
                 new Passenger("Vlad", "Inyutin", 123),
                 new Passenger("Misha", "Popov", 321),
                 new Passenger("Denis", "Den", 231));
+    }
+    public static ChoosingPlaceRequest createChoosingPlaceRequest(Integer orderId, Passenger passenger, Integer place){
+        return new ChoosingPlaceRequest(orderId,  passenger.getLastName(),passenger.getFirstName(), passenger.getPassport(), place);
     }
 }

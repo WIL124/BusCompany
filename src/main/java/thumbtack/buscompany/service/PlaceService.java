@@ -14,6 +14,7 @@ import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.ChoosingPlaceRequest;
 import thumbtack.buscompany.response.ChoosingPlaceResponse;
+import thumbtack.buscompany.response.FreePlacesResponse;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class PlaceService {
     OrderDao orderDao;
     PlaceMapper placeMapper;
 
-    public List<Integer> getFreePlaces(Integer orderId, String sessionId) throws ServerException {
+    public FreePlacesResponse getFreePlaces(Integer orderId, String sessionId) throws ServerException {
         User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
         Order order = orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
         if (user instanceof Admin) {
@@ -33,27 +34,27 @@ public class PlaceService {
         }
         List<Integer> freePlaces = placeDao.getFreePlaces(order.getTripDay());
         sessionDao.updateTime(sessionId);
-        return freePlaces;
+        return new FreePlacesResponse(freePlaces);
     }
 
     public ChoosingPlaceResponse choicePlace(String sessionId, ChoosingPlaceRequest request) throws ServerException {
         User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        if (user instanceof Admin) {
+            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+        }
         Order order = orderDao.getById(request.getOrderId()).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
         Passenger passenger = order.getPassengers().stream()
                 .filter(p -> p.getFirstName().equals(request.getFirstName()))
                 .filter(p -> p.getLastName().equals(request.getLastName()))
                 .filter(p -> p.getPassport().equals(request.getPassport()))
                 .findFirst().orElseThrow(() -> new ServerException(ErrorCode.NOT_FOUND, "passenger"));
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
-        }
         if (order.getTripDay().getTrip().getBus().getPlaceCount() < request.getPlace()) {
             throw new ServerException(ErrorCode.INVALID_PLACE, "place");
         }
-        if (placeDao.choicePlace(order.getTripDay(), passenger, request.getPlace())) {
+        if (!placeDao.choicePlace(order.getTripDay(), passenger, request.getPlace())) {
             throw new ServerException(ErrorCode.CANT_CHOICE_PLACE, "place");
         }
-        String ticket = "Билет " + order.getTripDay().getTripDayId() + "_" + request.getPlace();
+        String ticket = "Билет_" + order.getTripDay().getTripDayId() + "_" + request.getPlace();
         sessionDao.updateTime(sessionId);
         return placeMapper.responseFromRequestAndTicket(request, ticket);
     }

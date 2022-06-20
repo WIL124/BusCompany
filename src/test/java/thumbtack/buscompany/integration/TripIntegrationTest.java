@@ -16,14 +16,8 @@ import thumbtack.buscompany.exception.Errors;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.model.Trip;
-import thumbtack.buscompany.request.AdminRegisterRequest;
-import thumbtack.buscompany.request.ClientRegisterRequest;
-import thumbtack.buscompany.request.OrderRequest;
-import thumbtack.buscompany.request.TripRequest;
-import thumbtack.buscompany.response.AdminResponse;
-import thumbtack.buscompany.response.ClientResponse;
-import thumbtack.buscompany.response.OrderResponse;
-import thumbtack.buscompany.response.TripResponse;
+import thumbtack.buscompany.request.*;
+import thumbtack.buscompany.response.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.isEqualCollection;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
 import static thumbtack.buscompany.TestUtils.*;
 import static thumbtack.buscompany.exception.ErrorCode.TRIP_NOT_FOUND;
 
@@ -250,6 +243,40 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         assertEquals(400, errorResponse.getStatusCodeValue());
         assertEquals(1, errorResponse.getBody().getErrors().size());
         assertEquals(ErrorCode.NOT_ENOUGH_SEATS.name(), errorResponse.getBody().getErrors().get(0).getErrorCode());
+    }
+
+    @Test
+    public void getFreePlacesAndChoosingPlace() {
+        TripResponse tripResponse = insertTrip(createTripRequestWithDates()).getBody();
+        assert tripResponse != null;
+        approveTrip(tripResponse.getTripId());
+        registerClientAndGetSessionId("clientLogin");
+        OrderResponse orderResponse = insertOrder(createOrderRequest(tripResponse.getTripId(), tripResponse.getDates().get(1)));
+        List<Integer> expectedList = new ArrayList<>();
+        for (int i = 1; i <= 20; i++) {
+            expectedList.add(i);
+        }
+
+        ResponseEntity<FreePlacesResponse> freePlaces = restTemplate.exchange("/api/places/" + orderResponse.getOrderId(), HttpMethod.GET, entityWithSessionId(null, clientSessionId), FreePlacesResponse.class);
+        assertEquals(200, freePlaces.getStatusCodeValue());
+        assertEquals(expectedList, freePlaces.getBody().getFreePlaces());
+
+        ChoosingPlaceRequest choosingPlaceRequest = createChoosingPlaceRequest(orderResponse.getOrderId(), orderResponse.getPassengers().get(0), 2);
+        ResponseEntity<ChoosingPlaceResponse> choosingPlaceResponseResponseEntity =
+                restTemplate.exchange("/api/places", HttpMethod.POST, entityWithSessionId(choosingPlaceRequest, clientSessionId), ChoosingPlaceResponse.class);
+        String ticket = choosingPlaceResponseResponseEntity.getBody().getTicket();
+        assertEquals(200, choosingPlaceResponseResponseEntity.getStatusCodeValue());
+        assertTrue(ticket.startsWith("Билет_"));
+        assertTrue(ticket.endsWith("_2"));
+
+        expectedList.remove(1);
+        freePlaces = restTemplate.exchange("/api/places/" + orderResponse.getOrderId(), HttpMethod.GET, entityWithSessionId(null, clientSessionId), FreePlacesResponse.class);
+        assertEquals(200, freePlaces.getStatusCodeValue());
+        assertEquals(expectedList, freePlaces.getBody().getFreePlaces());
+    }
+
+    private OrderResponse insertOrder(OrderRequest request) {
+        return restTemplate.exchange(ORDER_URL, HttpMethod.POST, entityWithSessionId(request, clientSessionId), OrderResponse.class).getBody();
     }
 
     private List<TripResponse> createListOfTrips() {

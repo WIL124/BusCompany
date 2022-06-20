@@ -19,7 +19,7 @@ public interface TripDayRepository {
 
     @Select("SELECT id AS tripDayId, tripId, date " +
             "FROM trips_dates " +
-            "WHERE tripDayId = #{tripDayId}")
+            "WHERE id = #{tripDayId}")
     @Results(id = "tripDay", value = {
             @Result(property = "tripDayId", column = "tripDayId"),
             @Result(property = "date", column = "date"),
@@ -29,7 +29,7 @@ public interface TripDayRepository {
                     many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getByTripDayId", fetchType = FetchType.LAZY))
     })
     TripDay getTripDayById(@Param("tripDayId") int tripDayId);
-    @Select("SELECT id as tripDayId, tripId, date " +
+    @Select("SELECT id AS tripDayId, tripId, date " +
             "FROM trips_dates " +
             "WHERE tripId = #{tripId}")
     @ResultMap("tripDay")
