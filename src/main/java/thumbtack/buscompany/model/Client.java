@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 public class Client extends User {
     private String email;
     private String phone;
+    // REVU можно добавить List<Order>
     public Client(){
         this.setUserType(UserType.CLIENT);
     }

@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class Passenger {
     @JsonIgnore
+
     private Integer id;
     @NotEmpty
     private String firstName;
