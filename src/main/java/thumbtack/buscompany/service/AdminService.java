@@ -22,9 +22,8 @@ import javax.validation.constraints.NotNull;
 
 @Service
 @AllArgsConstructor
-public class AdminService {
+public class AdminService extends ServiceBase {
     private UserDao userDao;
-    private static final String JAVASESSIONID = "JAVASESSIONID";
     private UserMapper userMapper;
     private SessionDao sessionDao;
 
@@ -53,7 +52,7 @@ public class AdminService {
     }
 
     public ResponseEntity<UserResponse> update(AdminUpdateRequest request, @NotNull String sessionId) throws ServerException {
-        Admin admin = userDao.getAdminBySessionId(sessionId).orElseThrow(() -> new ServerException(ErrorCode.USER_NOT_FOUND, JAVASESSIONID));
+        Admin admin = getAdminOrThrow(sessionId);
         if (!request.getOldPassword().equals(admin.getPassword())) {
             throw new ServerException(ErrorCode.DIFFERENT_PASSWORDS, "oldPassword");
         }
@@ -61,7 +60,6 @@ public class AdminService {
         userDao.updateAdmin(admin);
         AdminResponse response = userMapper.adminToResponse(admin);
         response.setId(null);
-        sessionDao.updateTime(sessionId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

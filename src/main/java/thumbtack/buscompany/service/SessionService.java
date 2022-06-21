@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Service
-public class SessionService {
+public class SessionService extends ServiceBase{
     public SessionService(UserDao userDao, SessionDao sessionDao, UserMapper userMapper, AppProperties properties) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;

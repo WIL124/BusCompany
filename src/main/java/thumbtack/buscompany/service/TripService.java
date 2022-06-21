@@ -24,14 +24,14 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class TripService {
+public class TripService extends ServiceBase {
+    private SessionDao sessionDao;
     private TripMapper tripMapper;
     private TripDao tripDao;
-    private SessionDao sessionDao;
     private ParamsMapper paramsMapper;
 
     public TripResponse create(TripRequest tripRequest, String sessionId) throws ServerException {
-        checkIsAdminOrThrow(sessionId);
+        getAdminOrThrow(sessionId);
         // что будет, если в ScheduleDto.period есть дубликаты ? Например, "SUN, TUE, TUE"
         // или в dates есть дубликаты ?
         // тесты на это !
@@ -43,7 +43,7 @@ public class TripService {
     }
 
     public TripResponse update(int tripId, TripRequest tripRequest, String sessionId) throws ServerException {
-        checkIsAdminOrThrow(sessionId);
+        getAdminOrThrow(sessionId);
         Trip trip = getTripOrThrow(tripId);
         tripMapper.updateTrip(trip, tripRequest);
         createAndSetTripDays(trip, tripRequest);
@@ -57,7 +57,7 @@ public class TripService {
     }
 
     public ResponseEntity<Void> deleteTrip(int tripId, String sessionId) throws ServerException {
-        checkIsAdminOrThrow(sessionId);
+        getAdminOrThrow(sessionId);
         getTripOrThrow(tripId);
         sessionDao.updateTime(sessionId);
         if (tripDao.deleteTrip(tripId)) {
@@ -66,7 +66,7 @@ public class TripService {
     }
 
     public TripResponse getTrip(int tripId, String sessionId) throws ServerException {
-        checkIsAdminOrThrow(sessionId);
+        getAdminOrThrow(sessionId);
         Trip trip = getTripOrThrow(tripId);
         sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
@@ -74,7 +74,7 @@ public class TripService {
 
 
     public TripResponse approve(int tripId, String sessionId) throws ServerException {
-        checkIsAdminOrThrow(sessionId);
+        getAdminOrThrow(sessionId);
         Trip trip = getTripOrThrow(tripId);
         tripDao.approve(trip);
         trip.setApproved(true);
@@ -83,29 +83,16 @@ public class TripService {
     }
 
     public List<TripResponse> getTripsWithParams(String fromStation, String toStation, String busName, String fromDate, String toDate, String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        User user = getUserOrThrow(sessionId);
         RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, user.getId());
         List<Trip> tripList = tripDao.getTripsWithParams(user, params);
         filterTripDays(tripList, params);
-        if (user instanceof Client) {
-            tripList.forEach(e -> e.setApproved(null));
-        }
         sessionDao.updateTime(sessionId);
-        return tripMapper.tripResponseListFromTrips(tripList);
-    }
-
-    // REVU можно и так, а можно
-    // private Admin getAdminOrThrow(String sessionId) throws ServerException {
-    // и Вы сразу получите Admin, а если он Вам не нужен - можно результат и не присваивать
-    // ну и отправьте его в SerbiceBase, см. REVU в BusService
-    private void checkIsAdminOrThrow(String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
-        // REVU if(!user instanceof Admin)
-        // кто его знает, какие еще типы со временем заведутся и что им будет разрешено
-        // этот метод проверяет на Admin и все
+        List<TripResponse> responses = tripMapper.tripResponseListFromTrips(tripList);
         if (user instanceof Client) {
-            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+            responses.forEach(tripResponse -> tripResponse.setApproved(null));
         }
+        return responses;
     }
 
     private Trip getTripOrThrow(Integer tripId) throws ServerException {

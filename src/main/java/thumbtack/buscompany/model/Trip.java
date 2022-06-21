@@ -2,6 +2,7 @@ package thumbtack.buscompany.model;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -13,16 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Trip {
-    private Integer tripId;
+    private int tripId;
     private String fromStation;
     private String toStation;
     private LocalTime start;
     private LocalTime duration;
-    // REVU обычно берут BigDecimal
-    private Long price;
+    private BigDecimal price;
     private Bus bus;
-    // REVU bool
-    private Boolean approved;
+    private boolean approved;
     private Schedule schedule;
     private List<TripDay> tripDays;
 }

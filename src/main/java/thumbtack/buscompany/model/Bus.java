@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Bus {
     private String busName;
-    private Integer placeCount;
+    private int placeCount;
 }

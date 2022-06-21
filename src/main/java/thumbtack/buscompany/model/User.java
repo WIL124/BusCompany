@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class User {
-    // REVU просто int. Integer - если имеет смысл значение null. Тут не имеет
-    // здесь и везде
-    private Integer id;
+    private int id;
     private String firstName;
     private String lastName;
     private String patronymic;

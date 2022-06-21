@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
-@Repository
 public interface TripDayRepository {
     @Insert("INSERT INTO trips_dates (tripId, date) " +
             "VALUE(#{tripDay.trip.tripId}, #{tripDay.date})")

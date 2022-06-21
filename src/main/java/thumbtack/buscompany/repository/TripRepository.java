@@ -9,7 +9,6 @@ import thumbtack.buscompany.model.*;
 import java.util.List;
 
 @Mapper
-@Repository
 public interface TripRepository {
     @Insert("INSERT INTO trips (busName, fromStation, toStation, start, duration, price)" +
             " VALUES(#{trip.bus.busName}, #{trip.fromStation}, #{trip.toStation}, #{trip.start}," +

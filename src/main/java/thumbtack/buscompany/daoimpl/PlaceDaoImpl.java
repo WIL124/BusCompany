@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 @AllArgsConstructor
-@Transactional
 public class PlaceDaoImpl implements PlaceDao {
     PlaceRepository placeRepository;
     OrderRepository orderRepository;

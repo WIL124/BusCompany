@@ -9,7 +9,6 @@ import thumbtack.buscompany.model.TripDay;
 import java.util.List;
 
 @Mapper
-@Repository
 public interface PlaceRepository {
 
     @Select("SELECT place FROM booked_places " +

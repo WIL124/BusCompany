@@ -9,7 +9,8 @@ import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static thumbtack.buscompany.TestUtils.createAdmin;
 import static thumbtack.buscompany.TestUtils.createClient;
 
@@ -32,14 +33,14 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         userRepository.insertUserProperties(insertedUser);
         userRepository.insertAdminProperties(insertedUser);
         User user = userRepository.getAdminById(insertedUser.getId());
-        assertThat(user).isEqualTo(insertedUser);
+        assertEquals(user, insertedUser);
     }
 
     @Test
     public void insertUserProperties_shouldReturnId() {
         User user = createClient();
         userRepository.insertUserProperties(user);
-        assertThat(user.getId()).isNotNull();
+        assertNotEquals(0, user.getId());
     }
 
     @Test
@@ -47,7 +48,7 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         Client client = createClient();
         userRepository.insertUserProperties(client);
         userRepository.insertClientProperties(client);
-        assertThat(client.getId()).isNotNull();
+        assertNotEquals(0, client.getId());
     }
 
     @Test
@@ -55,7 +56,7 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         Admin admin = createAdmin();
         userRepository.insertUserProperties(admin);
         userRepository.insertAdminProperties(admin);
-        assertThat(admin.getId()).isNotNull();
+        assertNotEquals(0, admin.getId());
     }
 
     @Test
@@ -63,8 +64,8 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         Admin admin = createAdmin();
         userRepository.insertUserProperties(admin);
         userRepository.insertAdminProperties(admin);
-        assertThat(admin.getId()).isNotNull();
-        assertThat(userRepository.getAdminById(admin.getId())).isEqualTo(admin);
+        assertNotEquals(0, admin.getId());
+        assertEquals(admin, userRepository.getAdminById(admin.getId()));
     }
 
     @Test
@@ -72,8 +73,8 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         Client client = createClient();
         userRepository.insertUserProperties(client);
         userRepository.insertClientProperties(client);
-        assertThat(client.getId()).isNotNull();
-        assertThat(userRepository.getClientById(client.getId())).isEqualTo(client);
+        assertNotEquals(0, client.getId());
+        assertEquals(client, userRepository.getClientById(client.getId()));
     }
 
     @Test

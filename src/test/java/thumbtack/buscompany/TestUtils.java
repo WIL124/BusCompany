@@ -5,18 +5,19 @@ import thumbtack.buscompany.request.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 
 public class TestUtils {
 
     public static Client createClient() {
-        return new Client(null, "Владислав", "Инютин", "Игоревич",
+        return new Client(0, "Владислав", "Инютин", "Игоревич",
                 "clientLogin", "goodPassword",
                 "vladislav@mail.ru", "89087961203");
     }
 
     public static Admin createAdmin() {
-        return new Admin(null, "Владислав", "Инютин", "Игоревич",
+        return new Admin(0, "Владислав", "Инютин", "Игоревич",
                 "adminLogin", "goodPassword",
                 "leader");
     }

@@ -19,6 +19,7 @@ import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.request.*;
 import thumbtack.buscompany.response.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import java.util.stream.Collectors;
 import static org.apache.commons.collections4.CollectionUtils.isEqualCollection;
 import static org.junit.jupiter.api.Assertions.*;
 import static thumbtack.buscompany.TestUtils.*;
-import static thumbtack.buscompany.exception.ErrorCode.ORDER_NOT_FOUND;
 import static thumbtack.buscompany.exception.ErrorCode.TRIP_NOT_FOUND;
 
 public class TripIntegrationTest extends BuscompanyApplicationTests {
@@ -224,7 +224,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
                 () -> assertEquals(tripResponse.getFromStation(), orderResponse.getFromStation()),
                 () -> assertEquals(tripResponse.getDuration(), orderResponse.getDuration()),
                 () -> assertEquals(tripResponse.getPrice(), orderResponse.getPrice()),
-                () -> assertEquals(tripResponse.getPrice() * orderRequest.getPassengers().size(), orderResponse.getTotalPrice()),
+                () -> assertEquals(tripResponse.getPrice().multiply(BigDecimal.valueOf(orderRequest.getPassengers().size())), orderResponse.getTotalPrice()),
                 () -> assertEquals(orderResponse.getDate(), LocalDate.of(2022, 5, 4))
         );
     }
@@ -283,7 +283,7 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         approveTrip(tripResponse.getTripId());
         registerClientAndGetSessionId("clientLogin");
         OrderResponse orderResponse = insertOrder(createOrderRequest(tripResponse.getTripId(), tripResponse.getDates().get(1)));
-        List<Integer> freePlaces = restTemplate.exchange("/api/places/" + orderResponse.getOrderId(), HttpMethod.GET, entityWithSessionId(null, clientSessionId), FreePlacesResponse.class).getBody().getFreePlaces();
+        restTemplate.exchange("/api/places/" + orderResponse.getOrderId(), HttpMethod.GET, entityWithSessionId(null, clientSessionId), FreePlacesResponse.class).getBody().getFreePlaces();
 
         ChoosingPlaceRequest choosingPlaceRequest = createChoosingPlaceRequest(orderResponse.getOrderId(), orderResponse.getPassengers().get(0), 2);
         restTemplate.exchange("/api/places", HttpMethod.POST, entityWithSessionId(choosingPlaceRequest, clientSessionId), ChoosingPlaceResponse.class);

@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@Transactional
 public class SessionDaoImpl implements SessionDao {
 
     SessionRepository sessionRepository;

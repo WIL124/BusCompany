@@ -8,6 +8,7 @@ import thumbtack.buscompany.model.Bus;
 import thumbtack.buscompany.model.Schedule;
 import thumbtack.buscompany.request.ScheduleDto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -23,7 +24,7 @@ public class TripResponse {
     private String toStation;
     private LocalTime start;
     private LocalTime duration;
-    private Long price;
+    private BigDecimal price;
     private Bus bus;
     private Boolean approved;
     private Schedule schedule;

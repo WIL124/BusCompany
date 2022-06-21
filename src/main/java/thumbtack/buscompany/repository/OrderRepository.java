@@ -10,7 +10,6 @@ import thumbtack.buscompany.model.TripDay;
 import java.util.List;
 
 @Mapper
-@Repository
 public interface OrderRepository {
 
     @Select("SELECT orderId, trips_dates_id AS tripDayId, clientId " +

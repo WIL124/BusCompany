@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import thumbtack.buscompany.model.Passenger;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -21,7 +22,7 @@ public class OrderResponse {
     private LocalDate date;
     private LocalTime start;
     private LocalTime duration;
-    private Long price;
-    private Long totalPrice;
+    private BigDecimal price;
+    private BigDecimal totalPrice;
     private List<Passenger> passengers;
 }

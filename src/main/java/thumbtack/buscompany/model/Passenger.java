@@ -1,7 +1,10 @@
 package thumbtack.buscompany.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -11,8 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class Passenger {
     @JsonIgnore
-
-    private Integer id;
+    private int id;
     @NotEmpty
     private String firstName;
     @NotEmpty
@@ -21,7 +23,7 @@ public class Passenger {
     private Integer passport;
 
     public Passenger(String firstName, String lastName, Integer passport) {
-        this.id = null;
+        this.id = 0;
         this.firstName = firstName;
         this.lastName = lastName;
         this.passport = passport;

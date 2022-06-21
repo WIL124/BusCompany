@@ -10,15 +10,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TripDay {
-    private Integer tripDayId;
+    private int tripDayId;
     private LocalDate date;
     private Trip trip;
-    // REVU нужно ли ? Зачем Вам все заказы на этот день ?
-    // впрочем, если нужно - пусть будет
     private List<Order> orders;
 
     public TripDay(LocalDate date, Trip trip, List<Order> orders) {
-        tripDayId = null;
+        tripDayId = 0;
         this.date = date;
         this.trip = trip;
         this.orders = orders;

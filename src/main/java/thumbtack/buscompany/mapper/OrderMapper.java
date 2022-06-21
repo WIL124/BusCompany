@@ -33,7 +33,7 @@ public abstract class OrderMapper {
     @Mapping(target = "start", source = "order.tripDay.trip.start")
     @Mapping(target = "duration", source = "order.tripDay.trip.duration")
     @Mapping(target = "price", source = "order.tripDay.trip.price")
-    @Mapping(target = "totalPrice", expression = "java(order.getTripDay().getTrip().getPrice()*order.getPassengers().size())")
+    @Mapping(target = "totalPrice", expression = "java(order.getTripDay().getTrip().getPrice().multiply(BigDecimal.valueOf(order.getPassengers().size())))")
     @Mapping(target = "date", source = "order.tripDay.date")
     public abstract OrderResponse orderToResponse(Order order);
 

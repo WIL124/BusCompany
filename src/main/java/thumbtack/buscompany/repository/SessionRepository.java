@@ -7,7 +7,6 @@ import thumbtack.buscompany.model.Session;
 import thumbtack.buscompany.model.User;
 
 @Mapper
-@Repository
 public interface SessionRepository {
     @Insert("INSERT INTO sessions VALUES (#{session.user.id},#{session.sessionId},#{session.lastActivityTime})" +
             "ON DUPLICATE KEY UPDATE session_id= #{session.sessionId}, last_activity_time= #{session.lastActivityTime}")

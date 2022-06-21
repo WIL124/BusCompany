@@ -1,15 +1,17 @@
 package thumbtack.buscompany.repository;
 
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
-@Repository
 public interface UserRepository {
     @Insert("INSERT INTO users (firstname, lastname, patronymic, login, password, userType)" +
             "values(#{user.firstName}, #{user.lastName}, #{user.patronymic}," +
@@ -38,8 +40,11 @@ public interface UserRepository {
                                     @Result(property = "position", column = "position")}),
                     @Case(value = "CLIENT", type = Client.class,
                             results = {
+                                    @Result(property = "id", column = "id"),
                                     @Result(property = "phone", column = "phone"),
                                     @Result(property = "email", column = "email"),
+                                    @Result(property = "orders", column = "id", javaType = List.class
+                                            , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
                             })
             })
     User getUserByLogin(@Param("login") String login);
@@ -58,8 +63,11 @@ public interface UserRepository {
                                     @Result(property = "position", column = "position")}),
                     @Case(value = "CLIENT", type = Client.class,
                             results = {
+                                    @Result(property = "id", column = "id"),
                                     @Result(property = "phone", column = "phone"),
                                     @Result(property = "email", column = "email"),
+                                    @Result(property = "orders", column = "id", javaType = List.class
+                                            , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
                             })
             })
     User getUserById(@Param("id") Integer id);
@@ -68,12 +76,18 @@ public interface UserRepository {
     Admin getAdminById(@Param("id") Integer id);
 
     @Select("SELECT * FROM users INNER JOIN clients USING(id) WHERE id = #{id}")
+    @Results(id = "client", value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "orders", column = "id", javaType = List.class
+                    , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
+    })
     Client getClientById(@Param("id") Integer id);
 
     @Update("UPDATE users SET active = false WHERE id = #{id}")
     boolean deactivate(@Param("id") Integer id);
 
     @Select("SELECT * FROM users INNER JOIN clients USING(id)")
+    @ResultMap("client")
     List<Client> getAllClients();
 
     @Update("UPDATE admins SET position = #{admin.position} WHERE id = #{admin.id}")
@@ -104,8 +118,11 @@ public interface UserRepository {
                                     @Result(property = "position", column = "position")}),
                     @Case(value = "CLIENT", type = Client.class,
                             results = {
+                                    @Result(property = "id", column = "id"),
                                     @Result(property = "phone", column = "phone"),
                                     @Result(property = "email", column = "email"),
+                                    @Result(property = "orders", column = "id", javaType = List.class
+                                            , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
                             })
             })
     User getUserBySessionId(@Param("sessionId") String sessionId);

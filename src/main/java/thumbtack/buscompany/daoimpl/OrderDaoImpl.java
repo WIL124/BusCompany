@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@Transactional(rollbackFor = {RuntimeException.class, ServerException.class})
 public class OrderDaoImpl implements OrderDao {
     OrderRepository orderRepository;
     TripDayRepository tripDayRepository;

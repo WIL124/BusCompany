@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class OrderService {
+public class OrderService extends ServiceBase {
     OrderDao orderDao;
     SessionDao sessionDao;
     OrderMapper orderMapper;
@@ -30,12 +30,7 @@ public class OrderService {
     ParamsMapper paramsMapper;
 
     public OrderResponse createOrder(OrderRequest orderRequest, String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"))
-                .getUser();
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
-        }
-        Client client = (Client) user;
+        Client client = getClientOrThrow(sessionId);
         Order order = orderMapper.orderFromRequest(orderRequest, client);
         // REVU нет, некорректно это.
         // Нельзя проверять. Можно только делать (брать места) и получать ошибку, если их нет
@@ -54,14 +49,13 @@ public class OrderService {
         if (isEnoughSeats(order.getTripDay(), order)) {
             orderDao.insert(order);
         } else throw new ServerException(ErrorCode.NOT_ENOUGH_SEATS, "passengers");
-        sessionDao.updateTime(sessionId);
         return orderMapper.orderToResponse(order);
     }
 
     public List<OrderResponse> getOrdersWithParams(String sessionId, String fromStation, String toStation, String busName,
                                                    String fromDate, String toDate, Integer clientId) throws ServerException {
 
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        User user = getUserOrThrow(sessionId);
         RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, clientId);
         if (user instanceof Client) {
             params.setClientId(user.getId());
@@ -75,24 +69,18 @@ public class OrderService {
                                 .and(fromDateFilter(params.getFromDate()))
                                 .and(toDateFilter(params.getToDate())))
                 .collect(Collectors.toList());
-        sessionDao.updateTime(sessionId);
         return orderMapper.ordersToResponses(dirtyOrders);
     }
 
-    public ResponseEntity<Void> deleteOrder(Integer orderId, String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"))
-                .getUser();
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
+    public ResponseEntity<Void> deleteOrder(int orderId, String sessionId) throws ServerException {
+        Client client = getClientOrThrow(sessionId);
+        if (client.getOrders() == null) {
+            throw new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId");
         }
-        Client client = (Client) user;
-        Order order = orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
-        if (order.getClient().equals(client)) {
-            order.getPassengers().parallelStream().forEach(passenger -> placeDao.removePassenger(passenger));
-            orderDao.delete(order);
-            sessionDao.updateTime(sessionId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else throw new ServerException(ErrorCode.ORDER_NOT_FOUND, orderId.toString());
+        Order order = client.getOrders().stream().filter(o -> o.getOrderId() == orderId).findFirst().orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
+        order.getPassengers().parallelStream().forEach(passenger -> placeDao.removePassenger(passenger));
+        orderDao.delete(order);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private boolean isEnoughSeats(TripDay tripDay, Order order) {

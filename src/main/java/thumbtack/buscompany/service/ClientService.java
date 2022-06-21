@@ -7,10 +7,8 @@ import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.UserMapper;
-import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Session;
-import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.ClientRegisterRequest;
 import thumbtack.buscompany.request.ClientUpdateRequest;
 import thumbtack.buscompany.response.ClientResponse;
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ClientService {
+public class ClientService extends ServiceBase {
     private UserDao userDao;
     private UserMapper userMapper;
     private SessionDao sessionDao;
@@ -45,27 +43,18 @@ public class ClientService {
     }
 
     public List<UserResponse> getAllClients(String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
-        if (user instanceof Admin) {
-            sessionDao.updateTime(sessionId);
-            return userDao.getAllClients().stream()
-                    .map(client -> userMapper.clientToResponse(client)).collect(Collectors.toList());
-        } else throw new ServerException(ErrorCode.NOT_AN_ADMIN, "JAVASESSIONID");
+        getAdminOrThrow(sessionId);
+        return userDao.getAllClients().stream()
+                .map(client -> userMapper.clientToResponse(client)).collect(Collectors.toList());
     }
 
     public UserResponse updateClient(String sessionId, ClientUpdateRequest request) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
-        }
-        if (!request.getOldPassword().equals(user.getPassword())) {
+        Client client = getClientOrThrow(sessionId);
+        if (!request.getOldPassword().equals(client.getPassword())) {
             throw new ServerException(ErrorCode.DIFFERENT_PASSWORDS, "oldPassword");
         }
-        Client client = (Client) user;
         userMapper.updateClientFromRequest(request, client);
         userDao.updateClient(client);
-        UserResponse response = userMapper.clientToResponse(client);
-        sessionDao.updateTime(sessionId);
-        return response;
+        return userMapper.clientToResponse(client);
     }
 }

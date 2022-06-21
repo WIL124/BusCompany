@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@Transactional
 public class UserDaoImpl implements UserDao {
 
     UserRepository userRepository;

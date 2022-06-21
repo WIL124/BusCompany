@@ -8,7 +8,9 @@ import thumbtack.buscompany.BuscompanyApplicationTests;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ServerException;
+import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Bus;
+import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.Session;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.response.TripResponse;
@@ -37,7 +39,7 @@ public class TripServiceTest extends BuscompanyApplicationTests {
     @BeforeEach
     void setUp() throws ServerException {
         when(busService.get(anyString())).thenReturn(new Bus("Volvo", 10));
-        when(sessionDao.getSessionById(anyString())).thenReturn(Optional.of(new Session()));
+        when(sessionDao.getSessionById(anyString())).thenReturn(Optional.of(new Session(new Admin())));
     }
 
     @Test

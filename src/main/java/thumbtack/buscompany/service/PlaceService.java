@@ -8,10 +8,7 @@ import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.PlaceMapper;
-import thumbtack.buscompany.model.Admin;
-import thumbtack.buscompany.model.Order;
-import thumbtack.buscompany.model.Passenger;
-import thumbtack.buscompany.model.User;
+import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.ChoosingPlaceRequest;
 import thumbtack.buscompany.response.ChoosingPlaceResponse;
 import thumbtack.buscompany.response.FreePlacesResponse;
@@ -20,29 +17,22 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class PlaceService {
+public class PlaceService extends ServiceBase {
     PlaceDao placeDao;
     SessionDao sessionDao;
     OrderDao orderDao;
     PlaceMapper placeMapper;
 
     public FreePlacesResponse getFreePlaces(Integer orderId, String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
-        Order order = orderDao.getById(orderId).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
-        }
+        Client client = getClientOrThrow(sessionId);
+        Order order = getClientsOrderOrThrow(client, orderId);
         List<Integer> freePlaces = placeDao.getFreePlaces(order.getTripDay());
-        sessionDao.updateTime(sessionId);
         return new FreePlacesResponse(freePlaces);
     }
 
     public ChoosingPlaceResponse choicePlace(String sessionId, ChoosingPlaceRequest request) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
-        if (user instanceof Admin) {
-            throw new ServerException(ErrorCode.NOT_A_CLIENT, "JAVASESSIONID");
-        }
-        Order order = orderDao.getById(request.getOrderId()).orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
+        Client client = getClientOrThrow(sessionId);
+        Order order = getClientsOrderOrThrow(client, request.getOrderId());
         Passenger passenger = order.getPassengers().stream()
                 .filter(p -> p.getFirstName().equals(request.getFirstName()))
                 .filter(p -> p.getLastName().equals(request.getLastName()))

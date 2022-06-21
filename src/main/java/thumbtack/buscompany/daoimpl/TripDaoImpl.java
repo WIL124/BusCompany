@@ -19,7 +19,6 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 @NoArgsConstructor
-@Transactional
 public class TripDaoImpl implements TripDao {
 
     @Autowired

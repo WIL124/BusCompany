@@ -10,8 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {
-    // REVU просто int. Integer - если имеет смысл значение null. Тут не имеет
-    private Integer orderId;
+    private int orderId;
     private Client client;
     private TripDay tripDay;
     private List<Passenger> passengers;

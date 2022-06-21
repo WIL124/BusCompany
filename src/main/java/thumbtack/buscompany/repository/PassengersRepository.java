@@ -8,7 +8,6 @@ import thumbtack.buscompany.model.Passenger;
 import java.util.List;
 
 @Mapper
-@Repository
 public interface PassengersRepository {
     @Insert("INSERT INTO passengers (orderId, firstName, lastName, passport) " +
             "VALUE (#{order.orderId}, #{passenger.firstName}, #{passenger.lastName}, #{passenger.passport})")

@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@Transactional
 public class BusDaoImpl implements BusDao {
     BusRepository busRepository;
 
