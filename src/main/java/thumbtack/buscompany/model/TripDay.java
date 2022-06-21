@@ -13,6 +13,8 @@ public class TripDay {
     private Integer tripDayId;
     private LocalDate date;
     private Trip trip;
+    // REVU нужно ли ? Зачем Вам все заказы на этот день ?
+    // впрочем, если нужно - пусть будет
     private List<Order> orders;
 
     public TripDay(LocalDate date, Trip trip, List<Order> orders) {

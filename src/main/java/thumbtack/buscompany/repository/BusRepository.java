@@ -9,6 +9,7 @@ import thumbtack.buscompany.model.Bus;
 import java.util.List;
 
 @Mapper
+// REVU вообще-то @Repository - это DAO. А тут просто мапперы.
 @Repository
 public interface BusRepository {
     @Select("SELECT busName, placeCount FROM buses")

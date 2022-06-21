@@ -32,6 +32,9 @@ public class TripService {
 
     public TripResponse create(TripRequest tripRequest, String sessionId) throws ServerException {
         checkIsAdminOrThrow(sessionId);
+        // что будет, если в ScheduleDto.period есть дубликаты ? Например, "SUN, TUE, TUE"
+        // или в dates есть дубликаты ?
+        // тесты на это !
         Trip trip = tripMapper.tripFromRequest(tripRequest);
         createAndSetTripDays(trip, tripRequest);
         tripDao.insert(trip);
@@ -91,8 +94,15 @@ public class TripService {
         return tripMapper.tripResponseListFromTrips(tripList);
     }
 
+    // REVU можно и так, а можно
+    // private Admin getAdminOrThrow(String sessionId) throws ServerException {
+    // и Вы сразу получите Admin, а если он Вам не нужен - можно результат и не присваивать
+    // ну и отправьте его в SerbiceBase, см. REVU в BusService
     private void checkIsAdminOrThrow(String sessionId) throws ServerException {
         User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        // REVU if(!user instanceof Admin)
+        // кто его знает, какие еще типы со временем заведутся и что им будет разрешено
+        // этот метод проверяет на Admin и все
         if (user instanceof Client) {
             throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
         }
@@ -137,6 +147,8 @@ public class TripService {
         List<LocalDate> totalDates = new ArrayList<>();
         LocalDate start = schedule.getFromDate();
         LocalDate end = schedule.getToDate();
+        // REVU for лучше
+        // for(LocalDate current = start, !current.isAfter(end); current.plusDays(1) )
         while (!start.isAfter(end)) {
             totalDates.add(start);
             start = start.plusDays(1);
@@ -145,6 +157,7 @@ public class TripService {
             throw new ServerException(ErrorCode.WRONG_DATE_INTERVAL, "from");
         }
         Predicate<LocalDate> filter = createFilterFromPeriod(schedule.getPeriod());
+        // REVU parallelStream на такой маленькой выборке - одни накладные расходы
         return totalDates.parallelStream().filter(filter).collect(Collectors.toList());
     }
 

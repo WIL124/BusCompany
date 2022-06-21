@@ -18,8 +18,10 @@ public class Trip {
     private String toStation;
     private LocalTime start;
     private LocalTime duration;
+    // REVU обычно берут BigDecimal
     private Long price;
     private Bus bus;
+    // REVU bool
     private Boolean approved;
     private Schedule schedule;
     private List<TripDay> tripDays;

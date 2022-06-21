@@ -37,6 +37,20 @@ public class OrderService {
         }
         Client client = (Client) user;
         Order order = orderMapper.orderFromRequest(orderRequest, client);
+        // REVU нет, некорректно это.
+        // Нельзя проверять. Можно только делать (брать места) и получать ошибку, если их нет
+        // Мы в конкурентной среде
+        // Client A доходит до isEnoughSeats и получает, что места есть
+        // тут его поток останавливают почему-то
+        // Client B доходит до isEnoughSeats и получает, что места есть
+        // и берет их
+        // теперь Client A делает orderDao.insert - а мест уже нет
+        // я вижу у Вас какие-то проверки насчет version, но все можно сделать проще
+        // в trip_date добавить поле free_places
+        // при создании туда записываем количество мест в автобусе
+        // и тогда insert будет
+        // update free_places set free_places = free_places - количество_пассажиров_в заказе WHERE free_places >= количество_пассажиров_в заказе and id = ...
+        // и проверяем, что из этого вышло
         if (isEnoughSeats(order.getTripDay(), order)) {
             orderDao.insert(order);
         } else throw new ServerException(ErrorCode.NOT_ENOUGH_SEATS, "passengers");

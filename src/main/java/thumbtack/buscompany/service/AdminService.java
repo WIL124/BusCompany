@@ -28,11 +28,19 @@ public class AdminService {
     private UserMapper userMapper;
     private SessionDao sessionDao;
 
+    // REVU Вы поставили @Transactional в DAO
+    // хорошо, но тут Вы вызываете 2 метода, причем разных DAO
+    // все верно, так и должно быть, но трансакции не будет
+    // @Transactional надо ставить на методы сервисов или вообще на класс сервиса
+    // а DAO пусть само по себе - методы DAO все равно только из сервисов и вызываются
     public ResponseEntity<UserResponse> register(AdminRegisterRequest request, HttpServletResponse response) throws ServerException {
         Admin admin = userMapper.adminFromRequest(request);
         try {
             userDao.insert(admin);
         } catch (RuntimeException ex) {
+            // REVU ex.getCause instanceof MySQLIntegrityConstraintViolationException
+            // а вообще-то у Spring есть
+            // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/dao/DuplicateKeyException.html
             if (ex.getMessage().contains("Duplicate entry")) {
                 throw new ServerException(ErrorCode.LOGIN_ALREADY_EXISTS, "login");
             }

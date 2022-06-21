@@ -13,6 +13,7 @@ import java.util.UUID;
 public class Session {
     private User user;
     private String sessionId;
+    // REVU long
     private Long lastActivityTime;
 
     public Session(User user) {
