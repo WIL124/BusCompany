@@ -52,7 +52,7 @@ CREATE TABLE buses
   DEFAULT CHARSET = utf8;
 CREATE TABLE trips
 (
-    tripId      INT AUTO_INCREMENT,
+    id      INT AUTO_INCREMENT,
     busName     VARCHAR(50) NOT NULL,
     fromStation VARCHAR(50) NOT NULL,
     toStation   VARCHAR(50) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE trips
     approved    boolean default false,
     price       DECIMAL(10, 2) UNSIGNED,
     FOREIGN KEY (busName) REFERENCES buses (busName),
-    PRIMARY KEY (tripId)
+    PRIMARY KEY (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 
@@ -70,19 +70,19 @@ CREATE TABLE trips_dates
     id     INT NOT NULL AUTO_INCREMENT,
     tripId INT,
     date   DATE,
-    version INT NOT NULL default 0,
+    free_places INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (tripId) REFERENCES trips (tripId) ON DELETE CASCADE,
+    FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE,
     UNIQUE (tripId, date)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE orders
 (
-    orderId        INT AUTO_INCREMENT,
+    id        INT AUTO_INCREMENT,
     trips_dates_id INT NOT NULL,
     clientId       INT NOT NULL,
-    PRIMARY KEY (orderId),
+    PRIMARY KEY (id),
     FOREIGN KEY (trips_dates_id) REFERENCES trips_dates (id),
     FOREIGN KEY (clientId) REFERENCES clients (id)
 ) ENGINE = INNODB
@@ -95,11 +95,11 @@ CREATE TABLE passengers
     firstName VARCHAR(50) NOT NULL,
     lastName  VARCHAR(50) NOT NULL,
     passport  INT         NOT NULL,
-    FOREIGN KEY (orderId) REFERENCES orders (orderId) ON DELETE CASCADE,
+    FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE,
     PRIMARY KEY (id)
 ) ENGINE = INNODB
   DEFAULT CHARSET = utf8;
-CREATE TABLE booked_places
+CREATE TABLE places
 (
     trips_dates_id INT NOT NULL,
     passengerId    INT default null,

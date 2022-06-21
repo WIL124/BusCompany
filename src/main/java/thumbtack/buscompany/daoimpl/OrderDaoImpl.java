@@ -2,7 +2,6 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.OrderDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -23,8 +22,10 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void insert(Order order) throws ServerException {
-        if (orderRepository.insert(order) == 0) throw new ServerException(ErrorCode.OLD_INFO, "passengers");
-        tripDayRepository.updateVersion(order.getTripDay());
+        if (tripDayRepository.reducePlaces(order) == 0) {
+            throw new ServerException(ErrorCode.NOT_ENOUGH_SEATS, "passengers");
+        }
+        orderRepository.insert(order);
         order.getPassengers().forEach(passenger -> passengersRepository.insertPassenger(order, passenger));
     }
 
@@ -39,8 +40,8 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public void delete(Order order) {
+    public void delete(Order order) throws ServerException {
         orderRepository.deleteOrder(order);
-        tripDayRepository.updateVersion(order.getTripDay());
+        tripDayRepository.increasePlaces(order);
     }
 }

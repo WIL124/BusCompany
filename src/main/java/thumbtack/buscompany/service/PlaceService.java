@@ -2,13 +2,13 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import thumbtack.buscompany.dao.OrderDao;
 import thumbtack.buscompany.dao.PlaceDao;
-import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.PlaceMapper;
-import thumbtack.buscompany.model.*;
+import thumbtack.buscompany.model.Client;
+import thumbtack.buscompany.model.Order;
+import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.request.ChoosingPlaceRequest;
 import thumbtack.buscompany.response.ChoosingPlaceResponse;
 import thumbtack.buscompany.response.FreePlacesResponse;
@@ -19,8 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PlaceService extends ServiceBase {
     PlaceDao placeDao;
-    SessionDao sessionDao;
-    OrderDao orderDao;
     PlaceMapper placeMapper;
 
     public FreePlacesResponse getFreePlaces(Integer orderId, String sessionId) throws ServerException {
@@ -45,7 +43,6 @@ public class PlaceService extends ServiceBase {
             throw new ServerException(ErrorCode.CANT_CHOICE_PLACE, "place");
         }
         String ticket = "Билет_" + order.getTripDay().getTripDayId() + "_" + request.getPlace();
-        sessionDao.updateTime(sessionId);
         return placeMapper.responseFromRequestAndTicket(request, ticket);
     }
 }

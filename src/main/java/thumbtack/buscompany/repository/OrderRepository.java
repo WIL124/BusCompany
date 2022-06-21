@@ -12,27 +12,27 @@ import java.util.List;
 @Mapper
 public interface OrderRepository {
 
-    @Select("SELECT orderId, trips_dates_id AS tripDayId, clientId " +
+    @Select("SELECT id, trips_dates_id AS tripDayId, clientId " +
             "FROM orders " +
             "WHERE clientId = #{id}")
     @Results(id = "order", value = {
-            @Result(property = "orderId", column = "orderId"),
+            @Result(property = "orderId", column = "id"),
             @Result(property = "tripDay", column = "tripDayId", javaType = TripDay.class,
                     one = @One(select = "thumbtack.buscompany.repository.TripDayRepository.getTripDayById", fetchType = FetchType.LAZY)),
             @Result(property = "client", column = "clientId", javaType = Client.class,
                     one = @One(select = "thumbtack.buscompany.repository.UserRepository.getUserById", fetchType = FetchType.LAZY)),
-            @Result(property = "passengers", column = "orderId", javaType = List.class,
+            @Result(property = "passengers", column = "id", javaType = List.class,
                     many = @Many(select = "thumbtack.buscompany.repository.PassengersRepository.getAllByOrderId", fetchType = FetchType.LAZY))}
     )
     List<Order> getAllByClientId(@Param("id") Integer id);
 
-    @Select("SELECT orderId, trips_dates_id AS tripDayId, clientId " +
+    @Select("SELECT id, trips_dates_id AS tripDayId, clientId " +
             "FROM orders " +
-            "WHERE orderId = #{orderId}")
+            "WHERE id = #{orderId}")
     @ResultMap("order")
     Order getById(@Param("orderId") Integer orderId);
 
-    @Select("SELECT orderId, trips_dates_id AS tripDayId, clientId " +
+    @Select("SELECT id, trips_dates_id AS tripDayId, clientId " +
             "FROM orders " +
             "WHERE trips_dates_id = #{tripDayId}")
     @ResultMap("order")
@@ -41,11 +41,11 @@ public interface OrderRepository {
     @Insert("INSERT INTO orders (trips_dates_id, clientId) " +
             "SELECT id, #{order.client.id} " +
             "FROM trips_dates " +
-            "WHERE tripId=#{order.tripDay.trip.tripId} " +
+            "WHERE tripId = #{order.tripDay.trip.tripId} " +
             "AND date = #{order.tripDay.date} ")
     @Options(useGeneratedKeys = true, keyProperty = "order.orderId")
-    Integer insert(@Param("order") Order order);
+    int insert(@Param("order") Order order);
 
-    @Delete("DELETE FROM orders WHERE orderId=#{order.orderId}")
+    @Delete("DELETE FROM orders WHERE id=#{order.orderId}")
     boolean deleteOrder(@Param("order") Order order);
 }

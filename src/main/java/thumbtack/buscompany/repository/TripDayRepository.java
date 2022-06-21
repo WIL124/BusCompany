@@ -2,7 +2,7 @@ package thumbtack.buscompany.repository;
 
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
-import org.springframework.stereotype.Repository;
+import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.Trip;
 import thumbtack.buscompany.model.TripDay;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 @Mapper
 public interface TripDayRepository {
-    @Insert("INSERT INTO trips_dates (tripId, date) " +
-            "VALUE(#{tripDay.trip.tripId}, #{tripDay.date})")
+    @Insert("INSERT INTO trips_dates (tripId, date, free_places) " +
+            "VALUE(#{tripDay.trip.tripId}, #{tripDay.date}, #{tripDay.trip.bus.placeCount})")
     @Options(useGeneratedKeys = true, keyProperty = "tripDay.tripDayId")
-    Integer insertTripDay(@Param("tripDay") TripDay tripDay);
+    int insertTripDay(@Param("tripDay") TripDay tripDay);
 
     @Select("SELECT id AS tripDayId, tripId, date " +
             "FROM trips_dates " +
@@ -43,7 +43,11 @@ public interface TripDayRepository {
     @ResultMap("tripDay")
     TripDay getTripDayByTripIdAndDate(@Param("tripId") Integer tripId, @Param("date") LocalDate date);
 
-    @Update("UPDATE trips_dates SET version = version + 1 " +
-            "WHERE id = #{tripDay.tripDayId}")
-    void updateVersion(@Param("tripDay") TripDay tripDay);
+    @Update("UPDATE trips_dates SET free_places = free_places - ${order.passengers.size} " +
+            "WHERE id = #{order.tripDay.tripDayId} " +
+            "AND free_places >= ${order.passengers.size}")
+    int reducePlaces(@Param("order") Order order);
+    @Update("UPDATE trips_dates SET free_places = free_places + ${order.passengers.size} " +
+            "WHERE id = #{order.tripDay.tripDayId} ")
+    int increasePlaces(@Param("order") Order order);
 }

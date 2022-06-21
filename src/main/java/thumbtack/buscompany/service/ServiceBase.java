@@ -2,6 +2,7 @@ package thumbtack.buscompany.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -11,6 +12,7 @@ import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.User;
 
 @Service
+@Transactional(rollbackFor = ServerException.class)
 public abstract class ServiceBase {
     @Autowired
     private SessionDao sessionDao;

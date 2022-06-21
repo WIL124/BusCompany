@@ -15,6 +15,8 @@ import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.response.TripResponse;
 
+import java.text.DateFormatSymbols;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,20 +27,15 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class TripService extends ServiceBase {
-    private SessionDao sessionDao;
     private TripMapper tripMapper;
     private TripDao tripDao;
     private ParamsMapper paramsMapper;
 
     public TripResponse create(TripRequest tripRequest, String sessionId) throws ServerException {
         getAdminOrThrow(sessionId);
-        // что будет, если в ScheduleDto.period есть дубликаты ? Например, "SUN, TUE, TUE"
-        // или в dates есть дубликаты ?
-        // тесты на это !
         Trip trip = tripMapper.tripFromRequest(tripRequest);
         createAndSetTripDays(trip, tripRequest);
         tripDao.insert(trip);
-        sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
     }
 
@@ -52,14 +49,12 @@ public class TripService extends ServiceBase {
         } catch (RuntimeException e) { //TODO fix
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
-        sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
     }
 
     public ResponseEntity<Void> deleteTrip(int tripId, String sessionId) throws ServerException {
         getAdminOrThrow(sessionId);
         getTripOrThrow(tripId);
-        sessionDao.updateTime(sessionId);
         if (tripDao.deleteTrip(tripId)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else throw new ServerException(ErrorCode.TRIP_NOT_FOUND, "tripId");
@@ -68,7 +63,6 @@ public class TripService extends ServiceBase {
     public TripResponse getTrip(int tripId, String sessionId) throws ServerException {
         getAdminOrThrow(sessionId);
         Trip trip = getTripOrThrow(tripId);
-        sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
     }
 
@@ -78,7 +72,6 @@ public class TripService extends ServiceBase {
         Trip trip = getTripOrThrow(tripId);
         tripDao.approve(trip);
         trip.setApproved(true);
-        sessionDao.updateTime(sessionId);
         return tripMapper.tripToResponse(trip);
     }
 
@@ -87,7 +80,6 @@ public class TripService extends ServiceBase {
         RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, user.getId());
         List<Trip> tripList = tripDao.getTripsWithParams(user, params);
         filterTripDays(tripList, params);
-        sessionDao.updateTime(sessionId);
         List<TripResponse> responses = tripMapper.tripResponseListFromTrips(tripList);
         if (user instanceof Client) {
             responses.forEach(tripResponse -> tripResponse.setApproved(null));
@@ -134,18 +126,14 @@ public class TripService extends ServiceBase {
         List<LocalDate> totalDates = new ArrayList<>();
         LocalDate start = schedule.getFromDate();
         LocalDate end = schedule.getToDate();
-        // REVU for лучше
-        // for(LocalDate current = start, !current.isAfter(end); current.plusDays(1) )
-        while (!start.isAfter(end)) {
-            totalDates.add(start);
-            start = start.plusDays(1);
+        for (LocalDate current = start; !current.isAfter(end); current = current.plusDays(1)) {
+            totalDates.add(current);
         }
         if (totalDates.isEmpty()) {
             throw new ServerException(ErrorCode.WRONG_DATE_INTERVAL, "from");
         }
         Predicate<LocalDate> filter = createFilterFromPeriod(schedule.getPeriod());
-        // REVU parallelStream на такой маленькой выборке - одни накладные расходы
-        return totalDates.parallelStream().filter(filter).collect(Collectors.toList());
+        return totalDates.stream().filter(filter).collect(Collectors.toList());
     }
 
     private Predicate<LocalDate> createFilterFromPeriod(String period) {
@@ -169,7 +157,7 @@ public class TripService extends ServiceBase {
 
     private Predicate<LocalDate> dayOfWeekFilter(List<String> strings) {
         return localDate -> strings.parallelStream()
-                .map(str -> Weekday.valueOf(str).getDayOfWeek())
+                .map(str ->  Weekday.valueOf(str).getDayOfWeek())
                 .anyMatch(dayOfWeek -> dayOfWeek == localDate.getDayOfWeek());
     }
 

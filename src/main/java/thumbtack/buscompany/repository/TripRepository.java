@@ -16,13 +16,13 @@ public interface TripRepository {
     @Options(useGeneratedKeys = true, keyProperty = "trip.tripId")
     void insertTrip(@Param("trip") Trip trip);
 
-    @Select("SELECT tripId, fromStation, busName, toStation, start, duration, price, approved " +
-            "FROM trips WHERE tripId = #{tripId}")
+    @Select("SELECT id, fromStation, busName, toStation, start, duration, price, approved " +
+            "FROM trips WHERE id = #{tripId}")
     @Results(id = "trip", value = {
-            @Result(property = "tripId", column = "tripId"),
+            @Result(property = "tripId", column = "id"),
             @Result(property = "bus", javaType = Bus.class, column = "busName",
                     one = @One(select = "thumbtack.buscompany.repository.BusRepository.get", fetchType = FetchType.LAZY)),
-            @Result(property = "tripDays", javaType = List.class, column = "tripId",
+            @Result(property = "tripDays", javaType = List.class, column = "id",
                     many = @Many(select = "thumbtack.buscompany.repository.TripDayRepository.getTripDaysByTripId", fetchType = FetchType.LAZY))
     })
     Trip getTripById(@Param("tripId") int tripId);
@@ -30,14 +30,14 @@ public interface TripRepository {
     @Update("UPDATE trips SET busName = #{trip.bus.busName}, fromStation = #{trip.fromStation}, " +
             "toStation = #{trip.toStation}, start = #{trip.start}, duration = #{trip.duration}, " +
             "price = #{trip.price} " +
-            "WHERE tripId = #{trip.tripId} " +
+            "WHERE id = #{trip.tripId} " +
             "AND approved = false")
     Integer updateTripProperties(@Param("trip") Trip trip);
 
-    @Delete("DELETE FROM trips WHERE tripId = #{tripId} AND approved = false")
+    @Delete("DELETE FROM trips WHERE id = #{tripId} AND approved = false")
     boolean deleteTrip(@Param("tripId") int tripId);
 
-    @Update("UPDATE trips SET approved = true WHERE tripId = #{tripId}")
+    @Update("UPDATE trips SET approved = true WHERE id = #{tripId}")
     boolean approve(int tripId);
 
     @SelectProvider(type = SqlProvider.class, method = "getTripsWithParams")
@@ -48,7 +48,7 @@ public interface TripRepository {
         public static String getTripsWithParams(@Param("user") User user, @Param("params") RequestParams params) {
             return new SQL() {
                 {
-                    SELECT("tripId", "busName", "duration", "fromStation", "toStation",
+                    SELECT("id", "busName", "duration", "fromStation", "toStation",
                             "start", "price");
                     if (user instanceof Admin) {
                         SELECT("approved");

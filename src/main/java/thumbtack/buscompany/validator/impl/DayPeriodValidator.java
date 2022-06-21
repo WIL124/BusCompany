@@ -5,7 +5,9 @@ import thumbtack.buscompany.validator.annototion.DayPeriod;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DayPeriodValidator implements ConstraintValidator<DayPeriod, String> {
     @Override
@@ -22,6 +24,9 @@ public class DayPeriodValidator implements ConstraintValidator<DayPeriod, String
 
     private boolean isNumberOfDays(String str) {
         String[] array = str.trim().replaceAll(" ", "").split(",");
+        if (isContainsDuplicates(array)) {
+            return false;
+        }
         for (String day : array) {
             if (Pattern.matches("^(0[1-9]|[12]\\d|3[01])$", day)) {
                 return true;
@@ -32,6 +37,9 @@ public class DayPeriodValidator implements ConstraintValidator<DayPeriod, String
 
     private boolean isDayOfWeek(String str) {
         String[] array = str.trim().replaceAll(" ", "").split(",");
+        if (isContainsDuplicates(array)) {
+            return false;
+        }
         for (String elem : array) {
             try {
                 Weekday.valueOf(elem);
@@ -40,6 +48,10 @@ public class DayPeriodValidator implements ConstraintValidator<DayPeriod, String
             }
         }
         return true;
+    }
+
+    private boolean isContainsDuplicates(String[] array) {
+        return Arrays.stream(array).collect(Collectors.toSet()).size() != array.length;
     }
 }
 

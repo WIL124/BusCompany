@@ -13,5 +13,5 @@ public interface OrderDao {
 
     Optional<Order> getById(Integer orderId);
 
-    void delete(Order order);
+    void delete(Order order) throws ServerException;
 }

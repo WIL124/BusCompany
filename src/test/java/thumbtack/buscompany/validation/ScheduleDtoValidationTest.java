@@ -62,7 +62,9 @@ public class ScheduleDtoValidationTest {
                 Arguments.arguments(new ScheduleDto("12.03.2000", "15.03.2000", "1,2,35")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "0")),
                 Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "4,33,2")),
-                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "1.2"))
+                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "1.2")),
+                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "1,2,1")),
+                Arguments.arguments(new ScheduleDto("2000.03.12", "2000.03.15", "Fri, Wed, Fri"))
         );
     }
 

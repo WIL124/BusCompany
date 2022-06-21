@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import thumbtack.buscompany.dao.OrderDao;
 import thumbtack.buscompany.dao.PlaceDao;
-import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.OrderMapper;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderService extends ServiceBase {
     OrderDao orderDao;
-    SessionDao sessionDao;
     OrderMapper orderMapper;
     PlaceDao placeDao;
     ParamsMapper paramsMapper;
@@ -32,23 +30,7 @@ public class OrderService extends ServiceBase {
     public OrderResponse createOrder(OrderRequest orderRequest, String sessionId) throws ServerException {
         Client client = getClientOrThrow(sessionId);
         Order order = orderMapper.orderFromRequest(orderRequest, client);
-        // REVU нет, некорректно это.
-        // Нельзя проверять. Можно только делать (брать места) и получать ошибку, если их нет
-        // Мы в конкурентной среде
-        // Client A доходит до isEnoughSeats и получает, что места есть
-        // тут его поток останавливают почему-то
-        // Client B доходит до isEnoughSeats и получает, что места есть
-        // и берет их
-        // теперь Client A делает orderDao.insert - а мест уже нет
-        // я вижу у Вас какие-то проверки насчет version, но все можно сделать проще
-        // в trip_date добавить поле free_places
-        // при создании туда записываем количество мест в автобусе
-        // и тогда insert будет
-        // update free_places set free_places = free_places - количество_пассажиров_в заказе WHERE free_places >= количество_пассажиров_в заказе and id = ...
-        // и проверяем, что из этого вышло
-        if (isEnoughSeats(order.getTripDay(), order)) {
-            orderDao.insert(order);
-        } else throw new ServerException(ErrorCode.NOT_ENOUGH_SEATS, "passengers");
+        orderDao.insert(order);
         return orderMapper.orderToResponse(order);
     }
 
@@ -81,13 +63,6 @@ public class OrderService extends ServiceBase {
         order.getPassengers().parallelStream().forEach(passenger -> placeDao.removePassenger(passenger));
         orderDao.delete(order);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private boolean isEnoughSeats(TripDay tripDay, Order order) {
-        return tripDay.getOrders() != null ?
-                (tripDay.getTrip().getBus().getPlaceCount() - tripDay.getOrders().stream().mapToInt(o -> o.getPassengers().size()).sum())
-                        >= order.getPassengers().size() :
-                tripDay.getTrip().getBus().getPlaceCount() >= order.getPassengers().size();
     }
 
     private Predicate<Order> busNameFilter(String busName) {

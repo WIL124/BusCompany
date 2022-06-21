@@ -24,7 +24,7 @@ public interface DebugRepository {
     @Delete("DELETE FROM trips_dates")
     boolean clearTripsDates();
 
-    @Delete("DELETE FROM booked_places")
+    @Delete("DELETE FROM places")
     boolean clearBookedPlaces();
 
     @Delete("DELETE FROM orders")
