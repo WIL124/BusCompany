@@ -50,7 +50,7 @@ public class OrderService {
         User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
         RequestParams params = paramsMapper.paramsFromRequest(fromDate, toDate, busName, fromStation, toStation, clientId);
         if (user instanceof Client) {
-            params.setClientId(null);
+            params.setClientId(user.getId());
         }
         List<Order> dirtyOrders = orderDao.getAllByClientId(params.getClientId());
         dirtyOrders = dirtyOrders.stream().parallel()

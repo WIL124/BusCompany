@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.collections4.CollectionUtils.isEqualCollection;
 import static org.junit.jupiter.api.Assertions.*;
 import static thumbtack.buscompany.TestUtils.*;
+import static thumbtack.buscompany.exception.ErrorCode.ORDER_NOT_FOUND;
 import static thumbtack.buscompany.exception.ErrorCode.TRIP_NOT_FOUND;
 
 public class TripIntegrationTest extends BuscompanyApplicationTests {
@@ -273,6 +274,27 @@ public class TripIntegrationTest extends BuscompanyApplicationTests {
         freePlaces = restTemplate.exchange("/api/places/" + orderResponse.getOrderId(), HttpMethod.GET, entityWithSessionId(null, clientSessionId), FreePlacesResponse.class);
         assertEquals(200, freePlaces.getStatusCodeValue());
         assertEquals(expectedList, freePlaces.getBody().getFreePlaces());
+    }
+
+    @Test
+    public void deleteOrder() {
+        TripResponse tripResponse = insertTrip(createTripRequestWithDates()).getBody();
+        assert tripResponse != null;
+        approveTrip(tripResponse.getTripId());
+        registerClientAndGetSessionId("clientLogin");
+        OrderResponse orderResponse = insertOrder(createOrderRequest(tripResponse.getTripId(), tripResponse.getDates().get(1)));
+        List<Integer> freePlaces = restTemplate.exchange("/api/places/" + orderResponse.getOrderId(), HttpMethod.GET, entityWithSessionId(null, clientSessionId), FreePlacesResponse.class).getBody().getFreePlaces();
+
+        ChoosingPlaceRequest choosingPlaceRequest = createChoosingPlaceRequest(orderResponse.getOrderId(), orderResponse.getPassengers().get(0), 2);
+        restTemplate.exchange("/api/places", HttpMethod.POST, entityWithSessionId(choosingPlaceRequest, clientSessionId), ChoosingPlaceResponse.class);
+
+        ResponseEntity<Void> deleteResponse = restTemplate.exchange("/api/orders/" + orderResponse.getOrderId(), HttpMethod.DELETE, entityWithSessionId(null, clientSessionId), Void.class);
+        assertEquals(200, deleteResponse.getStatusCodeValue());
+
+        //try to get order
+        ResponseEntity<List<OrderResponse>> nonExistentOrder = restTemplate.exchange("/api/orders", HttpMethod.GET, entityWithSessionId(null, clientSessionId), new ParameterizedTypeReference<List<OrderResponse>>() {
+        });
+        assertEquals(0, nonExistentOrder.getBody().size());
     }
 
     private OrderResponse insertOrder(OrderRequest request) {
