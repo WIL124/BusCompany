@@ -4,12 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ServerException;
-import thumbtack.buscompany.mapper.OrderMapper;
-import thumbtack.buscompany.mapper.ParamsMapper;
 import thumbtack.buscompany.request.OrderRequest;
 import thumbtack.buscompany.response.OrderResponse;
 import thumbtack.buscompany.service.OrderService;
-import thumbtack.buscompany.service.SessionService;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

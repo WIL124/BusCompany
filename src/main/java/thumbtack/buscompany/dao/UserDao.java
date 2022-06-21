@@ -20,7 +20,5 @@ public interface UserDao {
 
     boolean updateClient(Client client);
 
-    Optional<User> getBySessionId(String sessionId);
-
-    Optional<Admin> getAdminBySessionId(String sessionId);
+    Optional<? extends User> getBySessionId(String sessionId);
 }

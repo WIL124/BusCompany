@@ -2,6 +2,7 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.exception.ErrorCode;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ClientService extends ServiceBase {
     private UserDao userDao;
     private UserMapper userMapper;

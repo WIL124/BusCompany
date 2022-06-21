@@ -40,7 +40,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public void delete(Order order) throws ServerException {
+    public void delete(Order order) {
         orderRepository.deleteOrder(order);
         tripDayRepository.increasePlaces(order);
     }

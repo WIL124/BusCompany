@@ -1,17 +1,17 @@
 package thumbtack.buscompany.validator.impl;
 
 
-import thumbtack.buscompany.validator.annototion.Fio;
+import thumbtack.buscompany.validator.annototion.ValidName;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
-public class FioValidator implements ConstraintValidator<Fio, String> {
+public class FioValidator implements ConstraintValidator<ValidName, String> {
     private String pattern;
 
     @Override
-    public void initialize(Fio constraintAnnotation) {
+    public void initialize(ValidName constraintAnnotation) {
         this.pattern = constraintAnnotation.pattern();
     }
 

@@ -2,6 +2,7 @@ package thumbtack.buscompany.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.PlaceDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class PlaceService extends ServiceBase {
     PlaceDao placeDao;
     PlaceMapper placeMapper;

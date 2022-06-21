@@ -2,7 +2,6 @@ package thumbtack.buscompany.repository;
 
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.jdbc.SQL;
-import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Passenger;
 import thumbtack.buscompany.model.TripDay;
 

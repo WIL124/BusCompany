@@ -2,14 +2,11 @@ package thumbtack.buscompany.repository;
 
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
-import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
 import thumbtack.buscompany.model.User;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface UserRepository {
@@ -47,7 +44,7 @@ public interface UserRepository {
                                             , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
                             })
             })
-    User getUserByLogin(@Param("login") String login);
+    <T extends User> T getUserByLogin(@Param("login") String login);
 
     @Select("SELECT U.id AS id, firstname, lastname, patronymic, login, password, " +
             "userType, position, email, phone " +
@@ -70,24 +67,17 @@ public interface UserRepository {
                                             , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
                             })
             })
-    User getUserById(@Param("id") Integer id);
-
-    @Select("SELECT * FROM users INNER JOIN admins USING(id) WHERE id = #{id}")
-    Admin getAdminById(@Param("id") Integer id);
-
-    @Select("SELECT * FROM users INNER JOIN clients USING(id) WHERE id = #{id}")
-    @Results(id = "client", value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "orders", column = "id", javaType = List.class
-                    , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
-    })
-    Client getClientById(@Param("id") Integer id);
+    <T extends User> T getUserById(@Param("id") Integer id);
 
     @Update("UPDATE users SET active = false WHERE id = #{id}")
     boolean deactivate(@Param("id") Integer id);
 
     @Select("SELECT * FROM users INNER JOIN clients USING(id)")
-    @ResultMap("client")
+    @Results(id = "client", value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "orders", column = "id", javaType = List.class
+                    , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
+    })
     List<Client> getAllClients();
 
     @Update("UPDATE admins SET position = #{admin.position} WHERE id = #{admin.id}")
@@ -125,13 +115,5 @@ public interface UserRepository {
                                             , many = @Many(select = "thumbtack.buscompany.repository.OrderRepository.getAllByClientId", fetchType = FetchType.LAZY))
                             })
             })
-    User getUserBySessionId(@Param("sessionId") String sessionId);
-
-    @Select("SELECT users.id AS id, firstname, lastname, patronymic, login, password, userType " +
-            "FROM users " +
-            "JOIN admins a on users.id = a.id " +
-            "JOIN sessions s on users.id = s.user_id " +
-            "WHERE session_id = #{sessionId} " +
-            "AND active = 1")
-    Admin getAdminBySessionId(String sessionId);
+    <T extends User> T getUserBySessionId(@Param("sessionId") String sessionId);
 }

@@ -4,7 +4,7 @@ package thumbtack.buscompany.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import thumbtack.buscompany.validator.annototion.Fio;
+import thumbtack.buscompany.validator.annototion.ValidName;
 import thumbtack.buscompany.validator.annototion.MaxSize;
 import thumbtack.buscompany.validator.annototion.MinPassLength;
 
@@ -15,15 +15,15 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdminUpdateRequest {
-    @Fio
+    @ValidName
     @MaxSize
     @NotBlank
     private String firstName;
-    @Fio
+    @ValidName
     @MaxSize
     @NotBlank
     private String lastName;
-    @Fio
+    @ValidName
     @MaxSize
     private String patronymic;
     private String position;

@@ -3,6 +3,7 @@ package thumbtack.buscompany.service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.AppProperties;
 import thumbtack.buscompany.dao.SessionDao;
 import thumbtack.buscompany.dao.UserDao;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Service
+@Transactional
 public class SessionService extends ServiceBase{
     public SessionService(UserDao userDao, SessionDao sessionDao, UserMapper userMapper, AppProperties properties) {
         this.userDao = userDao;
@@ -27,10 +29,10 @@ public class SessionService extends ServiceBase{
         DISCONNECT_TIME = properties.getUserIdleTimeout() * 100L;
     }
 
-    UserDao userDao;
-    SessionDao sessionDao;
-    UserMapper userMapper;
-    AppProperties properties;
+    final UserDao userDao;
+    final SessionDao sessionDao;
+    final UserMapper userMapper;
+    final AppProperties properties;
 
     static long DISCONNECT_TIME;
 

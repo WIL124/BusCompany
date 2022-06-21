@@ -2,7 +2,6 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.UserDao;
 import thumbtack.buscompany.model.Admin;
 import thumbtack.buscompany.model.Client;
@@ -53,10 +52,5 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> getBySessionId(String sessionId) {
         return Optional.ofNullable(userRepository.getUserBySessionId(sessionId));
-    }
-
-    @Override
-    public Optional<Admin> getAdminBySessionId(String sessionId) {
-        return Optional.ofNullable(userRepository.getAdminBySessionId(sessionId));
     }
 }

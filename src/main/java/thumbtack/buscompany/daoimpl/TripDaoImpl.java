@@ -1,10 +1,7 @@
 package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.model.RequestParams;
 import thumbtack.buscompany.model.Trip;
@@ -18,14 +15,9 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@NoArgsConstructor
 public class TripDaoImpl implements TripDao {
-
-    @Autowired
     TripRepository tripRepository;
-    @Autowired
     TripDayRepository tripDayRepository;
-    @Autowired
     PlaceRepository placeRepository;
 
     @Override

@@ -32,7 +32,7 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         Admin insertedUser = createAdmin();
         userRepository.insertUserProperties(insertedUser);
         userRepository.insertAdminProperties(insertedUser);
-        User user = userRepository.getAdminById(insertedUser.getId());
+        User user = userRepository.getUserById(insertedUser.getId());
         assertEquals(user, insertedUser);
     }
 
@@ -65,7 +65,7 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         userRepository.insertUserProperties(admin);
         userRepository.insertAdminProperties(admin);
         assertNotEquals(0, admin.getId());
-        assertEquals(admin, userRepository.getAdminById(admin.getId()));
+        assertEquals(admin, userRepository.getUserById(admin.getId()));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class UserRepositoryTest extends BuscompanyApplicationTests {
         userRepository.insertUserProperties(client);
         userRepository.insertClientProperties(client);
         assertNotEquals(0, client.getId());
-        assertEquals(client, userRepository.getClientById(client.getId()));
+        assertEquals(client, userRepository.getUserById(client.getId()));
     }
 
     @Test

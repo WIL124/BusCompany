@@ -3,7 +3,6 @@ package thumbtack.buscompany.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Repository;
 import thumbtack.buscompany.model.Bus;
 
 import java.util.List;

@@ -10,10 +10,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = FioValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-// REVU не используйте Runglish
-// кто знает, где этот код будет использоваться
-// американцы не знают, что такое Fio
-public @interface Fio {
+public @interface ValidName {
     String pattern() default "[а-яА-ЯёЁ -]+$";
 
     String message() default "Может содержать только русские буквы, пробел и знак \"минус\"";

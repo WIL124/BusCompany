@@ -1,14 +1,11 @@
 package thumbtack.buscompany.endpoint;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ServerException;
-import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.response.UserResponse;
 import thumbtack.buscompany.service.AccountService;
-import thumbtack.buscompany.service.SessionService;
 
 import javax.validation.constraints.NotNull;
 

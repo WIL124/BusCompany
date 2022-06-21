@@ -16,7 +16,7 @@ import thumbtack.buscompany.response.UserResponse;
 
 @Service
 @AllArgsConstructor
-@Transactional(rollbackFor = ServerException.class)
+@Transactional
 public class AccountService extends ServiceBase {
     AccountDao accountDao;
     UserMapper userMapper;

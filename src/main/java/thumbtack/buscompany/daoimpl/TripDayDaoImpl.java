@@ -2,7 +2,6 @@ package thumbtack.buscompany.daoimpl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDayDao;
 import thumbtack.buscompany.model.TripDay;
 import thumbtack.buscompany.repository.TripDayRepository;

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import thumbtack.buscompany.dao.SessionDao;
+import org.springframework.transaction.annotation.Transactional;
 import thumbtack.buscompany.dao.TripDao;
 import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
@@ -15,8 +15,6 @@ import thumbtack.buscompany.model.*;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.response.TripResponse;
 
-import java.text.DateFormatSymbols;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class TripService extends ServiceBase {
     private TripMapper tripMapper;
     private TripDao tripDao;

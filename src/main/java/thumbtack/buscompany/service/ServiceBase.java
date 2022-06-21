@@ -12,7 +12,7 @@ import thumbtack.buscompany.model.Order;
 import thumbtack.buscompany.model.User;
 
 @Service
-@Transactional(rollbackFor = ServerException.class)
+@Transactional
 public abstract class ServiceBase {
     @Autowired
     private SessionDao sessionDao;
@@ -46,12 +46,4 @@ public abstract class ServiceBase {
         return client.getOrders().stream().filter(order -> order.getOrderId() == orderId)
                 .findFirst().orElseThrow(() -> new ServerException(ErrorCode.ORDER_NOT_FOUND, "orderId"));
     }
-//    protected <T extends User> T getUserAndCastOrThrow(Class<T> t,String sessionId) throws ServerException {
-//        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
-//        if (t.isInstance(user)) {
-//            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
-//        }
-//        sessionDao.updateTime(sessionId);
-//        return (T) user;
-//    }
 }
