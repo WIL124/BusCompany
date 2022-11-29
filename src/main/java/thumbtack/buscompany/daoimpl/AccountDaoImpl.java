@@ -8,7 +8,7 @@ import thumbtack.buscompany.repository.UserRepository;
 @Repository
 @AllArgsConstructor
 public class AccountDaoImpl implements AccountDao {
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Override
     public boolean deactivateUser(Integer userId) {
         return userRepository.deactivate(userId);

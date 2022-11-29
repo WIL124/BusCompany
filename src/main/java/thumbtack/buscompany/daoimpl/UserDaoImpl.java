@@ -15,7 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserDaoImpl implements UserDao {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public void insert(Admin admin) {

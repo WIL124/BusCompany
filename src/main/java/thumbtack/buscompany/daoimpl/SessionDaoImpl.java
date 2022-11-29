@@ -13,7 +13,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SessionDaoImpl implements SessionDao {
 
-    SessionRepository sessionRepository;
+    private SessionRepository sessionRepository;
 
     @Override
     public void insert(Session session) {
@@ -32,7 +32,7 @@ public class SessionDaoImpl implements SessionDao {
 
     @Override
     public boolean updateTime(String session_id) {
-       return sessionRepository.updateTime(session_id, new Date().getTime());
+        return sessionRepository.updateTime(session_id, new Date().getTime());
     }
 
     @Override

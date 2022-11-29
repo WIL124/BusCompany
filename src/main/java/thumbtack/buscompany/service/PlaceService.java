@@ -20,8 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 @Transactional
 public class PlaceService extends ServiceBase {
-    PlaceDao placeDao;
-    PlaceMapper placeMapper;
+    private PlaceDao placeDao;
+    private PlaceMapper placeMapper;
 
     public FreePlacesResponse getFreePlaces(Integer orderId, String sessionId) throws ServerException {
         Client client = getClientOrThrow(sessionId);

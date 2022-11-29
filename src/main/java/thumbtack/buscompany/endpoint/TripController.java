@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import thumbtack.buscompany.exception.ServerException;
-import thumbtack.buscompany.mapper.ParamsMapper;
-import thumbtack.buscompany.mapper.TripMapper;
 import thumbtack.buscompany.request.TripRequest;
 import thumbtack.buscompany.response.TripResponse;
-import thumbtack.buscompany.service.SessionService;
 import thumbtack.buscompany.service.TripService;
 
 import javax.validation.Valid;
@@ -20,10 +17,7 @@ import java.util.List;
 @RequestMapping("/api/trips")
 public class TripController {
     private static final String JAVASESSIONID = "JAVASESSIONID";
-    TripService tripService;
-    TripMapper tripMapper;
-    SessionService sessionService;
-    ParamsMapper paramsMapper;
+    private TripService tripService;
 
     @PostMapping
     public TripResponse createTrip(@Valid @RequestBody TripRequest tripRequest,

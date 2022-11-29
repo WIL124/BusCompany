@@ -4,9 +4,9 @@ package thumbtack.buscompany.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import thumbtack.buscompany.validator.annototion.ValidName;
 import thumbtack.buscompany.validator.annototion.MaxSize;
 import thumbtack.buscompany.validator.annototion.MinPassLength;
+import thumbtack.buscompany.validator.annototion.ValidName;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

@@ -15,7 +15,6 @@ public interface PlaceRepository {
             "AND passengerId IS NULL")
     List<Integer> getFreePlaces(@Param("tripDay") TripDay tripDay);
 
-
     @Update("UPDATE places " +
             "SET passengerId = #{passenger.id} " +
             "WHERE trips_dates_id = #{tripDay.tripDayId} " +

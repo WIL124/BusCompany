@@ -16,9 +16,9 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class TripDaoImpl implements TripDao {
-    TripRepository tripRepository;
-    TripDayRepository tripDayRepository;
-    PlaceRepository placeRepository;
+    private TripRepository tripRepository;
+    private TripDayRepository tripDayRepository;
+    private PlaceRepository placeRepository;
 
     @Override
     public void insert(Trip trip) {

@@ -11,7 +11,10 @@ import thumbtack.buscompany.exception.ErrorCode;
 import thumbtack.buscompany.exception.ServerException;
 import thumbtack.buscompany.mapper.OrderMapper;
 import thumbtack.buscompany.mapper.ParamsMapper;
-import thumbtack.buscompany.model.*;
+import thumbtack.buscompany.model.Client;
+import thumbtack.buscompany.model.Order;
+import thumbtack.buscompany.model.RequestParams;
+import thumbtack.buscompany.model.User;
 import thumbtack.buscompany.request.OrderRequest;
 import thumbtack.buscompany.response.OrderResponse;
 
@@ -24,10 +27,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Transactional
 public class OrderService extends ServiceBase {
-    OrderDao orderDao;
-    OrderMapper orderMapper;
-    PlaceDao placeDao;
-    ParamsMapper paramsMapper;
+    private OrderDao orderDao;
+    private OrderMapper orderMapper;
+    private PlaceDao placeDao;
+    private ParamsMapper paramsMapper;
 
     public OrderResponse createOrder(OrderRequest orderRequest, String sessionId) throws ServerException {
         Client client = getClientOrThrow(sessionId);

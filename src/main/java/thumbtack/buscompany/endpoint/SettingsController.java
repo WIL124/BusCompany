@@ -12,7 +12,7 @@ import thumbtack.buscompany.response.SettingsResponse;
 @AllArgsConstructor
 @RequestMapping("/api/settings")
 public class SettingsController {
-    AppProperties appProperties;
+    private AppProperties appProperties;
 
     @GetMapping
     public SettingsResponse get(@CookieValue(value = "JAVASESSIONID", required = false) String sessionId) {

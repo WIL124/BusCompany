@@ -10,7 +10,7 @@ import thumbtack.buscompany.dao.DebugDao;
 @AllArgsConstructor
 @Transactional
 public class DebugService {
-    DebugDao debugDao;
+    private DebugDao debugDao;
 
     public ResponseEntity<Void> clear() {
         debugDao.clear();

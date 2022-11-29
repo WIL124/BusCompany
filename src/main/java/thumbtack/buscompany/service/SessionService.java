@@ -20,7 +20,7 @@ import java.util.Date;
 
 @Service
 @Transactional
-public class SessionService extends ServiceBase{
+public class SessionService extends ServiceBase {
     public SessionService(UserDao userDao, SessionDao sessionDao, UserMapper userMapper, AppProperties properties) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
@@ -50,9 +50,7 @@ public class SessionService extends ServiceBase{
 
     public ResponseEntity<Void> logout(String sessionId) throws ServerException {
         Session session = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID"));
-        if (session.getUser().getUserType() == UserType.CLIENT ?
-                sessionDao.delete(sessionId) :
-                adminLogout(sessionId)) {
+        if (session.getUser().getUserType() == UserType.CLIENT ? sessionDao.delete(sessionId) : adminLogout(sessionId)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else throw new ServerException(ErrorCode.NOT_FOUND, "JAVASESSIONID");
     }
@@ -75,9 +73,7 @@ public class SessionService extends ServiceBase{
     }
 
     private UserResponse userToResponse(User user) {
-        return (user.getUserType() == UserType.ADMIN) ?
-                userMapper.adminToResponse((Admin) user) :
-                userMapper.clientToResponse((Client) user);
+        return (user.getUserType() == UserType.ADMIN) ? userMapper.adminToResponse((Admin) user) : userMapper.clientToResponse((Client) user);
     }
 
     private boolean adminLogout(String sessionId) throws ServerException {

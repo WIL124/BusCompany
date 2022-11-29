@@ -45,7 +45,7 @@ public class TripService extends ServiceBase {
         createAndSetTripDays(trip, tripRequest);
         try {
             tripDao.update(trip);
-        } catch (RuntimeException e) { //TODO fix
+        } catch (RuntimeException e) {
             throw new ServerException(ErrorCode.NOT_FOUND, "tripId");
         }
         return tripMapper.tripToResponse(trip);

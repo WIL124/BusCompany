@@ -23,14 +23,16 @@ public class GlobalErrorHandler {
                 errors.getErrors().add(new ApiErrors(exc.getClass().toString(), fieldError.getField(), fieldError.getDefaultMessage())));
         return errors;
     }
+
     @ExceptionHandler(MissingRequestCookieException.class)
-    public Errors handleMissingRequestCookieException(MissingRequestCookieException exc){
+    public Errors handleMissingRequestCookieException(MissingRequestCookieException exc) {
         Errors errors = new Errors();
         errors.getErrors().add(new ApiErrors(exc.getClass().toString(), exc.getCookieName(), "send JAVASESSIONID in cookie"));
         return errors;
     }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Errors handleHttpMessageNotReadableException(HttpMessageNotReadableException exc){
+    public Errors handleHttpMessageNotReadableException(HttpMessageNotReadableException exc) {
         Errors errors = new Errors();
         errors.getErrors().add(new ApiErrors(exc.getClass().getName(), "body", "Required request body is missing"));
         return errors;

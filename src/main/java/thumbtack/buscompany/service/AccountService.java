@@ -18,9 +18,9 @@ import thumbtack.buscompany.response.UserResponse;
 @AllArgsConstructor
 @Transactional
 public class AccountService extends ServiceBase {
-    AccountDao accountDao;
-    UserMapper userMapper;
-    SessionDao sessionDao;
+    private AccountDao accountDao;
+    private UserMapper userMapper;
+    private SessionDao sessionDao;
 
     public ResponseEntity<Void> delete(String sessionId) throws ServerException {
         User user = getUserOrThrow(sessionId);

@@ -16,28 +16,28 @@ import thumbtack.buscompany.model.User;
 public abstract class ServiceBase {
     @Autowired
     private SessionDao sessionDao;
-    protected static final String JAVASESSIONID = "JAVASESSIONID";
+    protected static final String JAVA_SESSION_ID = "JAVASESSIONID";
 
     protected Admin getAdminOrThrow(String sessionId) throws ServerException {
         User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
         if (!(user instanceof Admin)) {
-            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVA_SESSION_ID);
         }
         sessionDao.updateTime(sessionId);
         return (Admin) user;
     }
 
     protected Client getClientOrThrow(String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, JAVA_SESSION_ID)).getUser();
         if (!(user instanceof Client)) {
-            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, "JAVASESSIONID");
+            throw new ServerException(ErrorCode.DO_NOT_HAVE_PERMISSIONS, JAVA_SESSION_ID);
         }
         sessionDao.updateTime(sessionId);
         return (Client) user;
     }
 
     protected User getUserOrThrow(String sessionId) throws ServerException {
-        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, "JAVASESSIONID")).getUser();
+        User user = sessionDao.getSessionById(sessionId).orElseThrow(() -> new ServerException(ErrorCode.SESSION_NOT_FOUND, JAVA_SESSION_ID)).getUser();
         sessionDao.updateTime(sessionId);
         return user;
     }

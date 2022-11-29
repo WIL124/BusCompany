@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 @ResponseStatus(HttpStatus.OK)
 public class PlaceController {
     private static final String JAVASESSIONID = "JAVASESSIONID";
-    PlaceService placeService;
+    private PlaceService placeService;
 
     @GetMapping("/{orderId}")
     public ResponseEntity<FreePlacesResponse> freePlaces(@PathVariable("orderId") Integer orderId,

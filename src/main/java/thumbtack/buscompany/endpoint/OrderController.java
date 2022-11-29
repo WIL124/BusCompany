@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("api/orders")
 public class OrderController {
     private static final String JAVASESSIONID = "JAVASESSIONID";
-    OrderService orderService;
+    private OrderService orderService;
 
     @PostMapping
     public OrderResponse createOrder(@RequestBody OrderRequest orderRequest, @CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {

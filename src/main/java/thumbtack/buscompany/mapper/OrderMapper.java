@@ -39,7 +39,7 @@ public abstract class OrderMapper {
 
     public abstract List<OrderResponse> ordersToResponses(List<Order> orders);
 
-    @Mapping(target = "tripDay", resultType = TripDay.class, source = "request", qualifiedByName= "tripDay")
+    @Mapping(target = "tripDay", resultType = TripDay.class, source = "request", qualifiedByName = "tripDay")
     public abstract Order orderFromRequest(OrderRequest request, Client client) throws ServerException;
 
     @Named("tripDay")

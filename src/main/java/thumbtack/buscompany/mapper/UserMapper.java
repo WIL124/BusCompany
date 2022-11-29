@@ -15,8 +15,9 @@ public interface UserMapper {
     AdminResponse adminToResponse(Admin admin);
 
     Client clientFromRequest(ClientRegisterRequest request);
+
     @AfterMapping
-    default Client canonizePhone(@MappingTarget Client client){
+    default Client canonizePhone(@MappingTarget Client client) {
         client.canonizePhoneFormat();
         return client;
     }
@@ -24,8 +25,10 @@ public interface UserMapper {
     ClientResponse clientToResponse(Client client);
 
     LoginRequest userToLoginRequest(User user);
+
     @Mapping(target = "password", source = "newPassword")
     void updateClientFromRequest(ClientUpdateRequest request, @MappingTarget Client client);
+
     @Mapping(target = "password", source = "newPassword")
     void updateAdminFromRequest(AdminUpdateRequest request, @MappingTarget Admin admin);
 }

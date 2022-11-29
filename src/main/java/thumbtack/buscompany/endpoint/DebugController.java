@@ -11,9 +11,10 @@ import thumbtack.buscompany.service.DebugService;
 @AllArgsConstructor
 @RequestMapping("/api/debug")
 public class DebugController {
-    DebugService debugService;
+    private DebugService debugService;
+
     @PostMapping("/clear")
-    public ResponseEntity<Void> clear(){
+    public ResponseEntity<Void> clear() {
         return debugService.clear();
     }
 }

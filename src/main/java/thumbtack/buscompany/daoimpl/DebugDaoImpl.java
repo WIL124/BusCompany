@@ -8,7 +8,7 @@ import thumbtack.buscompany.repository.DebugRepository;
 @Repository
 @AllArgsConstructor
 public class DebugDaoImpl implements DebugDao {
-    DebugRepository repository;
+    private DebugRepository repository;
     @Override
     public void clear() {
         repository.clearBookedPlaces();

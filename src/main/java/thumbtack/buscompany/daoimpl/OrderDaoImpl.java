@@ -16,9 +16,9 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class OrderDaoImpl implements OrderDao {
-    OrderRepository orderRepository;
-    TripDayRepository tripDayRepository;
-    PassengersRepository passengersRepository;
+    private OrderRepository orderRepository;
+    private TripDayRepository tripDayRepository;
+    private PassengersRepository passengersRepository;
 
     @Override
     public void insert(Order order) throws ServerException {

@@ -13,16 +13,16 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @RequestMapping("/api/accounts")
 public class AccountController {
-    private static final String JAVASESSIONID = "JAVASESSIONID";
-    AccountService accountService;
+    private static final String JAVA_SESSION_ID = "JAVASESSIONID";
+    private AccountService accountService;
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
+    public ResponseEntity<Void> delete(@CookieValue(value = JAVA_SESSION_ID) @NotNull String sessionId) throws ServerException {
         return accountService.delete(sessionId);
     }
 
     @GetMapping
-    public UserResponse get(@CookieValue(value = JAVASESSIONID) @NotNull String sessionId) throws ServerException {
+    public UserResponse get(@CookieValue(value = JAVA_SESSION_ID) @NotNull String sessionId) throws ServerException {
         return accountService.get(sessionId);
     }
 }

@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 @AllArgsConstructor
 public class PlaceDaoImpl implements PlaceDao {
-    PlaceRepository placeRepository;
-    OrderRepository orderRepository;
+    private PlaceRepository placeRepository;
+    private OrderRepository orderRepository;
 
     @Override
     public List<Integer> getFreePlaces(TripDay tripDay) {

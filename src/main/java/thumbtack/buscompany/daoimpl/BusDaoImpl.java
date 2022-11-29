@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class BusDaoImpl implements BusDao {
-    BusRepository busRepository;
+    private BusRepository busRepository;
 
     @Override
     public List<Bus> getAll() {

@@ -11,7 +11,8 @@ public class ApiErrors {
     private String errorCode;
     private String field;
     private String message;
-    public ApiErrors(ErrorCode errorCode, String field){
+
+    public ApiErrors(ErrorCode errorCode, String field) {
         this.errorCode = errorCode.name();
         this.field = field;
         this.message = errorCode.getMessage();
